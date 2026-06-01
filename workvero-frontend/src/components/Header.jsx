@@ -1,17 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Logo from '../assets/logo.png'
+import { Link } from 'react-router-dom';
 
 function Header() {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setIsOpen(!isOpen);
+    };
+
     return (
-        <header>
+        <header className={isOpen ? 'menu-open' : ''}>
             <div className="content-wrapper">
                 <div className="header_section">
                     <div className="header_logo">
-                        <img src={Logo} />
+                        <Link to="/">
+                            <img src={Logo} alt="Logo" />
+                        </Link>
+                    </div>
+                    <div className='header_toggle' onClick={toggleMenu}>
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </div>
                     <div className="header_menus">
                         <nav>
-                            <a className="header_nav">
+                            <div className="header_nav">
                                 <span>
                                     Job
                                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5" fill="none">
@@ -19,13 +33,13 @@ function Header() {
                                     </svg>
                                 </span>
                                 <div className="header_submenu">
-                                    <a>Job 1</a>
-                                    <a>Job 2</a>
-                                    <a>Job 3</a>
-                                    <a>Job 4</a>
+                                    <Link to="/jobs/search">Search Jobs</Link>
+                                    <Link to="/jobs/featured">Featured Jobs</Link>
+                                    <Link to="/jobs/remote">Remote Work</Link>
+                                    <Link to="/jobs/internships">Internships</Link>
                                 </div>
-                            </a>
-                            <a className="header_nav">
+                            </div>
+                            <div className="header_nav">
                                 <span>
                                     Companies
                                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5" fill="none">
@@ -33,13 +47,12 @@ function Header() {
                                     </svg>
                                 </span>
                                 <div className="header_submenu">
-                                    <a>Companies 1</a>
-                                    <a>Companies 2</a>
-                                    <a>Companies 3</a>
-                                    <a>Companies 4</a>
+                                    <Link to="/companies/browse">Browse Companies</Link>
+                                    <Link to="/companies/reviews">Company Reviews</Link>
+                                    <Link to="/companies/salaries">Salary Insights</Link>
                                 </div>
-                            </a>
-                            <a className="header_nav">
+                            </div>
+                            <div className="header_nav">
                                 <span>
                                     Candidates
                                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5" fill="none">
@@ -47,13 +60,12 @@ function Header() {
                                     </svg>
                                 </span>
                                 <div className="header_submenu">
-                                    <a>Candidates 1</a>
-                                    <a>Candidates 2</a>
-                                    <a>Candidates 3</a>
-                                    <a>Candidates 4</a>
+                                    <Link to="/candidates/dashboard">Dashboard</Link>
+                                    <Link to="/candidates/resume">Build Resume</Link>
+                                    <Link to="/candidates/applications">Applications</Link>
                                 </div>
-                            </a>
-                            <a className="header_nav">
+                            </div>
+                            <div className="header_nav">
                                 <span>
                                     Pages
                                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5" fill="none">
@@ -61,19 +73,19 @@ function Header() {
                                     </svg>
                                 </span>
                                 <div className="header_submenu">
-                                    <a>Pages 1</a>
-                                    <a>Pages 2</a>
-                                    <a>Pages 3</a>
-                                    <a>Pages 4</a>
+                                    <Link to="/about">About Us</Link>
+                                    <Link to="/pricing">Pricing Plans</Link>
+                                    <Link to="/faq">FAQs</Link>
+                                    <Link to="/terms">Terms of Service</Link>
                                 </div>
-                            </a>
-                            <a>
+                            </div>
+                            <Link to="/contact">
                                 <span>Contact</span>
-                            </a>
+                            </Link>
                         </nav>
                         <div className="header_btns">
-                            <a className="transparent_btn">Employer Login</a>
-                            <a className="bg_btn">Candidate Login</a>
+                            <Link to="/terms" className="transparent_btn">Employer Login</Link>
+                            <Link to="/terms" className="bg_btn">Candidate Login</Link>
                         </div>
                     </div>
                 </div>

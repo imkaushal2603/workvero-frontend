@@ -1,21 +1,6 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+* {
+  box-sizing: border-box;
+  font-family: 'Rubik', sans-serif;
 }
 
 .hero {
@@ -186,6 +171,10 @@
   }
 }
 
+header {
+  padding: 6px 0;
+}
+
 .content-wrapper {
   max-width: 1320px;
   margin: auto;
@@ -209,10 +198,6 @@ header .header_section .header_menus {
   gap: 68px;
 }
 
-header nav a.header_nav .header_submenu {
-  display: none;
-}
-
 header .header_menus .header_btns {
   display: flex;
   flex-wrap: wrap;
@@ -226,6 +211,7 @@ header .header_menus .header_btns a {
   line-height: 100%;
   letter-spacing: 1px;
   display: inline-block;
+  text-decoration: none;
 }
 
 header .header_menus .header_btns a.transparent_btn {
@@ -243,5 +229,179 @@ header .header_menus .header_btns a.bg_btn {
 header .header_section .header_menus nav {
   display: flex;
   align-items: center;
-  gap: 35px;
+  gap: 45px;
+}
+
+header nav .header_nav .header_submenu {
+  display: none;
+}
+
+header .header_section .header_menus nav span {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #200E63;
+}
+
+header .header_section .header_menus nav a {
+  text-decoration: none;
+}
+
+header .header_section .header_toggle {
+  display: none;
+}
+
+.hero_banner {
+  background: linear-gradient(90deg, #FBFBFB 0%, #FBF8FF 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero_banner .hero_banner_section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.hero_banner .hero_banner_section .hero_banner_text {
+  width: 64%;
+  padding: 0 52px 0 0;
+}
+
+.hero_banner .hero_banner_section .hero_banner_img {
+  width: 36%;
+  position: relative;
+  z-index: 1;
+  line-height: 0;
+}
+
+.hero_banner .hero_banner_section .hero_banner_text h1 {
+  font-size: 73px;
+  line-height: 100%;
+  font-weight: 400;
+  color: #200E63;
+  margin: 0 0 29px;
+  letter-spacing: 2px;
+}
+
+.hero_banner .hero_banner_section .hero_banner_text h1 span {
+  font-weight: 700;
+}
+
+.hero_banner .hero_banner_section .hero_banner_text p {
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  color: #8E8E8E;
+  display: inline-block;
+  margin: 0 0 32px;
+  max-width: 560px;
+}
+
+.hero_banner .hero_banner_section .hero_banner_img img {
+  width: 100%;
+}
+
+.hero_banner .hero_banner_form form {
+  background: #F0E5FF;
+  padding: 16px;
+  border-radius: 6px;
+  display: flex;
+  gap: 17px;
+}
+
+.hero_banner .hero_banner_form form input {
+  flex: 1;
+  box-shadow: 0px 0px 4px 0px #6363632E;
+  background: #fff;
+  border: none;
+  padding: 17px 18px;
+  border-radius: 6px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #636363;
+  outline: none;
+}
+
+.hero_banner .hero_banner_form form button {
+  background: #6D17E1;
+  padding: 16px 18px;
+  border-radius: 6px;
+  outline: none;
+  border: none;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.hero_banner .hero_banner_section .hero_form_searches {
+  margin: 33px 0 0;
+}
+
+.hero_banner .hero_banner_section .hero_form_searches span {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  display: inline-block;
+  color: #636363;
+}
+
+.hero_banner .hero_banner_section .hero_form_searches span strong {
+  font-weight: 600;
+}
+
+.hero_banner .hero_banner_bg {
+  position: absolute;
+  right: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+.counter {
+  background: #0146EE;
+  padding: 62px 0 41px;
+}
+
+.counter .counter_section {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.counter .counter_section .counter_content {
+  width: 25%;
+  text-align: center;
+  border-right: 1px solid #6674B4;
+}
+
+.counter .counter_section .counter_content h2 {
+  font-weight: 700;
+  font-size: 61px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  margin: 0 0 16px;
+  color: #FFFFFF;
+}
+
+.counter .counter_section .counter_content p {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  display: inline-block;
+}
+
+.counter .counter_section .counter_content:last-child {
+  border-right: none;
 }
