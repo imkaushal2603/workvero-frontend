@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="app-container">
       <Header />
-      <main style={{ minHeight: '70vh' }}>
+      <main>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
