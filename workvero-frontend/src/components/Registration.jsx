@@ -1,0 +1,117 @@
+import React, { useState } from 'react';
+
+function Registration({ isOpen, onClose, onSwitchToLogin }) {
+    const [userType, setUserType] = useState('candidate');
+    const [showPassword, setShowPassword] = useState(false);
+    const [agreeTerms, setAgreeTerms] = useState(false);
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="auth_modal_overlay">
+            <div className="auth_modal_content register_modal" onClick={(e) => e.stopPropagation()}>
+                <button className="close_btn" onClick={onClose}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
+                        <path d="M1.64016 0.27L5.50016 4.13L9.34016 0.29C9.42498 0.199717 9.52716 0.127495 9.64058 0.0776622C9.75399 0.0278298 9.87629 0.00141434 10.0002 0C10.2654 0 10.5197 0.105357 10.7073 0.292893C10.8948 0.48043 11.0002 0.734784 11.0002 1C11.0025 1.1226 10.9797 1.24439 10.9333 1.35788C10.8869 1.47138 10.8178 1.57419 10.7302 1.66L6.84016 5.5L10.7302 9.39C10.895 9.55124 10.9916 9.76959 11.0002 10C11.0002 10.2652 10.8948 10.5196 10.7073 10.7071C10.5197 10.8946 10.2654 11 10.0002 11C9.87272 11.0053 9.74557 10.984 9.62678 10.9375C9.508 10.8911 9.40017 10.8204 9.31016 10.73L5.50016 6.87L1.65016 10.72C1.56567 10.8073 1.46473 10.8769 1.35316 10.925C1.2416 10.9731 1.12163 10.9986 1.00016 11C0.734946 11 0.480592 10.8946 0.293056 10.7071C0.10552 10.5196 0.000162707 10.2652 0.000162707 10C-0.00216879 9.8774 0.0205781 9.75561 0.0670076 9.64212C0.113437 9.52862 0.18257 9.42581 0.270163 9.34L4.16016 5.5L0.270163 1.61C0.105348 1.44876 0.00870232 1.23041 0.000162707 1C0.000162707 0.734784 0.10552 0.48043 0.293056 0.292893C0.480592 0.105357 0.734946 0 1.00016 0C1.24016 0.003 1.47016 0.1 1.64016 0.27Z" fill="#0146EE" />
+                    </svg>
+                </button>
+                <h2>Create Account</h2>
+                <form onSubmit={(e) => e.preventDefault()}>
+                    <div className="auth_tab_container">
+                        <button
+                            type="button"
+                            className={`auth_tab ${userType === 'candidate' ? 'active' : ''}`}
+                            onClick={() => setUserType('candidate')}
+                        >
+                            Candidate
+                        </button>
+                        <button
+                            type="button"
+                            className={`auth_tab ${userType === 'employer' ? 'active' : ''}`}
+                            onClick={() => setUserType('employer')}
+                        >
+                            Employer
+                        </button>
+                    </div>
+                    <div className="input_group">
+                        <label htmlFor="name">Name*</label>
+                        <input type="text" id="name" placeholder="Enter Your Name" required />
+                    </div>
+                    <div className="input_group">
+                        <label htmlFor="email">Email*</label>
+                        <input type="email" id="email" placeholder="Info@gmail.com" required />
+                    </div>
+                    <div className="input_group">
+                        <label htmlFor="password">Password*</label>
+                        <div className='input_password'>
+                            <input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Enter Password"
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="password_mask_toggle"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A5CFA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A5CFA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                    <div className="form_actions terms_checkbox_group">
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={agreeTerms}
+                                onChange={(e) => setAgreeTerms(e.target.checked)}
+                                required
+                            />
+                            <span>I accept terms and condition</span>
+                        </label>
+                    </div>
+                    <button type="submit" className="login_submit_btn register_submit_btn">Register</button>
+                </form>
+                <div className="auth_divider"><span>Or</span></div>
+                <div className="social_login_btns">
+                    <a>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path opacity="0.987" fillRule="evenodd" clipRule="evenodd" d="M5.95924 0.06075C6.68424 -0.02025 7.11324 -0.02025 7.89224 0.06075C9.27118 0.264845 10.5495 0.902235 11.5422 1.88075C10.8714 2.51489 10.2093 3.15828 9.55624 3.81075C8.30558 2.75075 6.90958 2.50608 5.36824 3.07675C4.23758 3.59675 3.45024 4.43942 3.00624 5.60475C2.28068 5.06458 1.56457 4.51183 0.858242 3.94675C0.809155 3.92091 0.75309 3.91145 0.698242 3.91975C1.82024 1.75642 3.57358 0.46975 5.95824 0.05975" fill="#F44336" />
+                            <path opacity="0.997" fillRule="evenodd" clipRule="evenodd" d="M0.696252 3.91975C0.752919 3.91109 0.806585 3.92009 0.857252 3.94675C1.56358 4.51183 2.27969 5.06458 3.00525 5.60475C2.89108 6.05881 2.8191 6.52245 2.79025 6.98975C2.81492 7.44175 2.88659 7.88542 3.00525 8.32075L0.750252 10.1158C-0.231748 8.06375 -0.249748 5.99842 0.696252 3.91975Z" fill="#FFC107" />
+                            <path opacity="0.999" fillRule="evenodd" clipRule="evenodd" d="M11.4353 12.2897C10.7332 11.6705 9.99811 11.0897 9.23331 10.5497C9.99998 10.0084 10.4653 9.26574 10.6293 8.32174H6.87231V5.71274C9.03898 5.69474 11.2046 5.71308 13.3693 5.76774C13.78 7.99774 13.3056 10.0084 11.9463 11.7997C11.7847 11.9716 11.6135 12.1351 11.4353 12.2897Z" fill="#448AFF" />
+                            <path opacity="0.993" fillRule="evenodd" clipRule="evenodd" d="M3.00524 8.32178C3.82524 10.3598 5.32858 11.3111 7.51524 11.1758C8.12908 11.1047 8.71759 10.8903 9.23324 10.5498C9.99858 11.0911 10.7326 11.6711 11.4352 12.2898C10.3219 13.2902 8.90236 13.8838 7.40824 13.9738C7.06879 14.0009 6.7277 14.0009 6.38824 13.9738C3.84291 13.6738 1.96358 12.3878 0.750244 10.1158L3.00524 8.32178Z" fill="#43A047" />
+                        </svg>
+                    </a>
+                    <a>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <g clipPath="url(#clip0_251_876)">
+                                <path d="M16 8C16 3.58175 12.4183 0 8 0C3.58175 0 0 3.58175 0 8C0 11.993 2.9255 15.3027 6.75 15.9028V10.3125H4.71875V8H6.75V6.2375C6.75 4.2325 7.94438 3.125 9.77175 3.125C10.647 3.125 11.5625 3.28125 11.5625 3.28125V5.25H10.5538C9.55994 5.25 9.25 5.86669 9.25 6.49937V8H11.4688L11.1141 10.3125H9.25V15.9028C13.0745 15.3027 16 11.9931 16 8Z" fill="#1877F2" />
+                                <path d="M11.1141 10.3125L11.4688 8H9.25V6.49937C9.25 5.86662 9.55994 5.25 10.5538 5.25H11.5625V3.28125C11.5625 3.28125 10.647 3.125 9.77169 3.125C7.94438 3.125 6.75 4.2325 6.75 6.2375V8H4.71875V10.3125H6.75V15.9028C7.16351 15.9676 7.58144 16.0001 8 16C8.41856 16.0001 8.83649 15.9676 9.25 15.9028V10.3125H11.1141Z" fill="white" />
+                            </g>
+                        </svg>
+                    </a>
+                    <a>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="16" viewBox="0 0 13 16" fill="none">
+                            <path fillRule="evenodd" clipRule="evenodd" d="M9.61695 4.26553C9.11934 4.14675 8.60234 4.13369 8.09937 4.2272C7.59639 4.3207 7.11863 4.5187 6.69695 4.80839C6.6245 4.8469 6.54356 4.86666 6.46152 4.86586C6.37947 4.86506 6.29893 4.84373 6.22724 4.80382C5.77313 4.51808 5.26447 4.33008 4.73368 4.25179C4.20289 4.1735 3.66161 4.20664 3.14434 4.34911C2.62707 4.49157 2.14514 4.74023 1.72928 5.07923C1.31342 5.41824 0.972742 5.84016 0.728954 6.31811C0.0789945 7.51747 -0.145396 8.90169 0.0923825 10.245C0.29044 12.0536 1.0775 13.747 2.33238 15.0644C2.81308 15.5199 3.43966 15.7903 4.10084 15.8275C4.76202 15.8648 5.41501 15.6665 5.94381 15.2678C6.08617 15.1629 6.2582 15.1058 6.43507 15.105C6.61193 15.1042 6.78449 15.1596 6.92781 15.2632C7.44176 15.6742 8.08542 15.8885 8.74316 15.8676C9.40091 15.8466 10.0296 15.5918 10.5164 15.149C11.4654 14.191 12.1416 12.9972 12.4752 11.6907C12.4951 11.6127 12.4984 11.5314 12.4847 11.4521C12.471 11.3728 12.4407 11.2973 12.3959 11.2306C12.351 11.1638 12.2925 11.1072 12.2242 11.0646C12.156 11.022 12.0795 10.9943 11.9998 10.9832C11.4979 10.9145 11.0386 10.6639 10.7092 10.279C10.3797 9.89417 10.2029 9.40178 10.2124 8.89525V8.88611C10.2131 8.44425 10.3545 8.0141 10.616 7.65799C10.8776 7.30189 11.2458 7.03833 11.6672 6.90553C11.7477 6.8802 11.8216 6.83737 11.8835 6.78011C11.9455 6.72285 11.994 6.65258 12.0255 6.57436C12.0571 6.49613 12.071 6.41188 12.0661 6.32766C12.0613 6.24344 12.0379 6.16134 11.9975 6.08725C11.7518 5.63288 11.4126 5.23571 11.0023 4.92192C10.592 4.60812 10.1198 4.38366 9.61695 4.26553Z" fill="#8FBFFA" />
+                        </svg>
+                    </a>
+                </div>
+                <p className="switch_auth_text">
+                    Have an account? <span onClick={onSwitchToLogin}>Sign In</span>
+                </p>
+            </div>
+        </div>
+    );
+}
+
+export default Registration;

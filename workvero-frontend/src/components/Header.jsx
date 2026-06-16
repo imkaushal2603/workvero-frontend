@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Logo from '../assets/logo.png';
 import { Link } from 'react-router-dom';
+import Login from './Login';
+import Registration from './Registration';
+import ForgotPassword from './ForgotPassword';
 
 function Header() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false); // Renamed to avoid collision with item open state
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(null);
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 991); // Updated threshold to 991px
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 991);
+    const [activeAuthModal, setActiveAuthModal] = useState(null);
 
     useEffect(() => {
         const handleResize = () => {
-            setIsMobile(window.innerWidth <= 991); // Updated threshold to 991px
+            setIsMobile(window.innerWidth <= 991);
         };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
@@ -86,11 +90,11 @@ function Header() {
                                     <div className="header_nav" key={index}>
                                         <span onClick={() => handleToggle(index)}>
                                             {navItem.title}
-                                            <svg 
-                                                xmlns="http://www.w3.org/2000/svg" 
-                                                width="10" 
-                                                height="5" 
-                                                viewBox="0 0 10 5" 
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="10"
+                                                height="5"
+                                                viewBox="0 0 10 5"
                                                 fill="none"
                                                 style={{
                                                     transform: isSubmenuOpen && isMobile ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -101,7 +105,7 @@ function Header() {
                                                 <path d="M0 0L5 5L10 0H0Z" fill="black" />
                                             </svg>
                                         </span>
-                                        
+
                                         {isSubmenuOpen && (
                                             <div className={`header_submenu ${isSubmenuOpen && isMobile ? 'active' : ''}`}>
                                                 {navItem.submenu.map((subItem, subIndex) => (
@@ -119,12 +123,28 @@ function Header() {
                             </Link>
                         </nav>
                         <div className="header_btns">
-                            <Link to="/employer-login" className="transparent_btn">Employer Login</Link>
-                            <Link to="/candidate-login" className="bg_btn">Candidate Login</Link>
+                            <button onClick={() => setActiveAuthModal('login')} className="transparent_btn">Employer Login</button>
+                            <button onClick={() => setActiveAuthModal('login')} className="bg_btn">Candidate Login</button>
                         </div>
                     </div>
                 </div>
             </div>
+            <Login
+                isOpen={activeAuthModal === 'login'}
+                onClose={() => setActiveAuthModal(null)}
+                onSwitchToRegister={() => setActiveAuthModal('register')}
+                onSwitchToReset={() => setActiveAuthModal('reset')}
+            />
+            <Registration
+                isOpen={activeAuthModal === 'register'}
+                onClose={() => setActiveAuthModal(null)}
+                onSwitchToLogin={() => setActiveAuthModal('login')}
+            />
+            <ForgotPassword
+                isOpen={activeAuthModal === 'reset'}
+                onClose={() => setActiveAuthModal(null)}
+                onSwitchToLogin={() => setActiveAuthModal('login')}
+            />
         </header>
     );
 }

@@ -204,7 +204,7 @@ header .header_menus .header_btns {
   gap: 15px;
 }
 
-header .header_menus .header_btns a {
+header .header_menus .header_btns button {
   border-radius: 8px;
   font-weight: 500;
   font-size: 14px;
@@ -212,18 +212,21 @@ header .header_menus .header_btns a {
   letter-spacing: 1px;
   display: inline-block;
   text-decoration: none;
+  cursor: pointer;
 }
 
-header .header_menus .header_btns a.transparent_btn {
+header .header_menus .header_btns .transparent_btn {
   border: 1px solid #6D17E1;
   padding: 12px 17px;
   color: #6D17E1;
+  background: transparent;
 }
 
-header .header_menus .header_btns a.bg_btn {
+header .header_menus .header_btns .bg_btn {
   background: #6D17E1;
   padding: 13px 22px;
   color: #fff;
+  border: none;
 }
 
 header .header_section .header_menus nav {
@@ -1191,6 +1194,292 @@ footer .footer_content .footer_copyright_socials ul li a {
   justify-content: center;
 }
 
+header .auth_modal_overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  background: #200E63D6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header .auth_modal_overlay .auth_modal_content {
+  width: 723px;
+  background: #FFFFFF;
+  border-radius: 25px;
+  padding: 70px;
+  position: relative;
+}
+
+header .auth_modal_content .close_btn {
+  position: absolute;
+  right: 33px;
+  top: 30px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+header .auth_modal_overlay .auth_modal_content h2 {
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  text-align: center;
+  color: #200E63;
+  margin: 0 0 11px;
+}
+
+header .auth_modal_overlay .auth_modal_content p {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  text-align: center;
+  color: #6C6969;
+  margin: 0 0 25px;
+}
+
+header .auth_modal_overlay .auth_modal_content form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 22px;
+}
+
+header .auth_modal_content form .input_group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+header .auth_modal_content form .input_group input {
+  background: #EFF2FF;
+  border: none;
+  border-radius: 10px;
+  padding: 18px 24px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #C5C5C5;
+  outline: none;
+  width: 100%;
+}
+
+header .auth_modal_content form .input_group input::placeholder {
+  color: #C5C5C5;
+}
+
+header .auth_modal_content form .form_actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+header .auth_modal_content form .form_actions label {
+  display: flex;
+  gap: 10px;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #6C6969;
+  align-items: center;
+}
+
+header form .form_actions label input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: #6D17E1;
+  cursor: pointer;
+}
+
+header .auth_modal_content form .login_submit_btn {
+  background: #6D17E1;
+  padding: 21px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+header .auth_modal_content .auth_divider {
+  text-align: center;
+  margin: 24px 0 21px;
+  position: relative;
+}
+
+header .auth_modal_content .auth_divider::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  left: 0;
+  height: 1px;
+  background: #D9D9D9;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+header .auth_modal_content .auth_divider span {
+  padding: 0 16px;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #636363;
+  background: #fff;
+  display: inline-block;
+  z-index: 1;
+  position: relative;
+}
+
+header .auth_modal_content .social_login_btns {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+header .auth_modal_content .social_login_btns a {
+  border: 1px solid #D9D9D9;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+header .auth_modal_content p.switch_auth_text {
+  margin: 26px 0 0;
+  color: #636363;
+}
+
+header .auth_modal_content form .input_password .password_mask_toggle {
+  position: absolute;
+  right: 18px;
+  background: transparent;
+  padding: 0;
+  border: navajowhite;
+  top: 50%;
+  transform: translateY(-50%);
+  line-height: 0;
+  cursor: pointer;
+}
+
+header .auth_modal_content form .input_password {
+  position: relative;
+}
+
+header .auth_modal_content p.switch_auth_text span {
+  color: #6D17E1;
+  display: inline-block;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+header .auth_modal_content form .input_group label {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #6C6969;
+}
+
+header .auth_modal_content form .auth_tab_container {
+  background: #EFF2FF;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 7px;
+  flex-wrap: wrap;
+}
+
+header .auth_modal_content form .auth_tab_container button {
+  width: 50%;
+  border: none;
+  background: transparent;
+  padding: 10px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #000000;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+header .auth_modal_content form .auth_tab_container button.active {
+  background: #6D17E1;
+  color: #FFFFFF;
+}
+
+header .auth_modal_content form .form_actions .forgot_link {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #6C6969;
+  cursor: pointer;
+}
+
+header .auth_modal_overlay.forgot_password h2 {
+  margin: 0 0 50px;
+}
+
+header .auth_modal_overlay.forgot_password p.switch_auth_text {
+  margin: 36px 0 0;
+}
+
+.innerhero {
+  background: linear-gradient(90deg, #6D17E1 0%, #200E63 100%);
+  padding: 60px 0;
+}
+
+.innerhero .innerhero_section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.innerhero .innerhero_section h1 {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.innerhero .innerhero_section .innerhero_breadcrumbs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.innerhero .innerhero_section .innerhero_breadcrumbs a,
+.innerhero .innerhero_section .innerhero_breadcrumbs span {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  display: inline-block;
+  text-decoration: none;
+}
+
 @media screen and (max-width: 991px) {
   header {
     padding: 10px 0;
@@ -1607,8 +1896,6 @@ footer .footer_content .footer_copyright_socials ul li a {
     gap: 4px;
   }
 }
-
-
 
 @media screen and (min-width: 1025px) and (max-width: 1400px) {
   .content-wrapper {
