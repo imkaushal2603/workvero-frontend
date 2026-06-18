@@ -5,6 +5,8 @@ import Footer from "./components/footer"
 import Home from './pages/Home';
 import About from './pages/About';
 import JobCategory from './pages/JobCategory';
+import JobListing from './pages/JobListing';
+import JobDetail from './pages/JobDetail';
 import './App.css'
 
 function App() {
@@ -16,6 +18,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/job-category" element={<JobCategory />} />
+          <Route path="/jobs" element={<JobListing />} />
+          <Route path="/jobs/:id" element={<JobDetail />} />
         </Routes>
       </main>
       <Footer />

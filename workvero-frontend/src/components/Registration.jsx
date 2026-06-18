@@ -8,7 +8,7 @@ function Registration({ isOpen, onClose, onSwitchToLogin }) {
     if (!isOpen) return null;
 
     return (
-        <div className="auth_modal_overlay">
+        <div className="auth_modal_overlay register_account">
             <div className="auth_modal_content register_modal" onClick={(e) => e.stopPropagation()}>
                 <button className="close_btn" onClick={onClose}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">

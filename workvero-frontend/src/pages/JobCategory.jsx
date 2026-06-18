@@ -1,5 +1,6 @@
 import React from 'react';
 import InnerHero from '../components/InnerHero';
+import JobCategories from '../components/JobCategories';
 import Careers from '../components/Careers';
 
 function JobCategory() {
@@ -10,6 +11,7 @@ function JobCategory() {
     return (
         <>
             <InnerHero title="Job Categories" breadcrumbs={breadcrumbSteps} />
+            <JobCategories />
             <Careers />
         </>
     );
