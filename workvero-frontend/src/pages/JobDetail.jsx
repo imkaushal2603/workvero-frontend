@@ -7,6 +7,7 @@ import Process from '../components/Process';
 function JobDetail() {
     const location = useLocation();
     const jobData = location.state?.job;
+    const allJobsData = location.state?.allJobs || [];
     const breadcrumbSteps = [
         { label: 'Job', path: '/jobs' },
         { label: jobData?.Title || "Job Details" }
@@ -14,7 +15,7 @@ function JobDetail() {
     return (
         <>
             <InnerHero title={jobData?.Title || "Job Details"} breadcrumbs={breadcrumbSteps} />
-            <JobDetails job={jobData} />
+            <JobDetails job={jobData} allJobs={allJobsData} />
             <Process />
         </>
     );

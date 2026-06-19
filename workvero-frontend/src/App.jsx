@@ -7,6 +7,7 @@ import About from './pages/About';
 import JobCategory from './pages/JobCategory';
 import JobListing from './pages/JobListing';
 import JobDetail from './pages/JobDetail';
+import JobApply from './pages/JobApply';
 import './App.css'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/job-category" element={<JobCategory />} />
           <Route path="/jobs" element={<JobListing />} />
           <Route path="/jobs/:id" element={<JobDetail />} />
+          <Route path="/job-apply" element={<JobApply />} />
         </Routes>
       </main>
       <Footer />

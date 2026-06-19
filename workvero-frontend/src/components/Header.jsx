@@ -4,12 +4,14 @@ import { Link } from 'react-router-dom';
 import Login from './Login';
 import Registration from './Registration';
 import ForgotPassword from './ForgotPassword';
+import api from '../services/api';
 
 function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(null);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 991);
     const [activeAuthModal, setActiveAuthModal] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
     useEffect(() => {
         const handleResize = () => {
@@ -18,6 +20,20 @@ function Header() {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            setIsLoggedIn(!!localStorage.getItem('token'));
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+        window.location.reload();
+    };
 
     const handleToggle = (index) => {
         if (isMobile) {
@@ -123,8 +139,20 @@ function Header() {
                             </Link>
                         </nav>
                         <div className="header_btns">
-                            <button onClick={() => setActiveAuthModal('login')} className="transparent_btn">Employer Login</button>
-                            <button onClick={() => setActiveAuthModal('login')} className="bg_btn">Candidate Login</button>
+                            {isLoggedIn ? (
+                                <button onClick={handleLogout} className="transparent_btn">
+                                    Logout
+                                </button>
+                            ) : (
+                                <>
+                                    <button onClick={() => setActiveAuthModal('login')} className="transparent_btn">
+                                        Employer Login
+                                    </button>
+                                    <button onClick={() => setActiveAuthModal('login')} className="bg_btn">
+                                        Candidate Login
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

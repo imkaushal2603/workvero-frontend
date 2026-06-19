@@ -398,7 +398,7 @@ function JobListings() {
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/(^-|-$)+/g, '');
 
-        navigate(`/jobs/${generatedSlug}`, { state: { job: item } });
+        navigate(`/jobs/${generatedSlug}`, { state: { job: item, allJobs: jobListings } });
     };
 
     return (
