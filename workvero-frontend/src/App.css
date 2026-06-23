@@ -171,7 +171,8 @@
   }
 }
 
-header {
+header,
+.dashboard_header {
   padding: 6px 0;
 }
 
@@ -2333,6 +2334,588 @@ header .auth_modal_overlay.register_account h2 {
   display: flex;
   flex-direction: column;
   row-gap: 7px;
+}
+
+header .account_dropdown .transparent_btn {
+  padding: 0 !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  color: #6C6969 !important;
+  font-weight: 400 !important;
+}
+
+header .account_dropdown {
+  position: relative;
+}
+
+header .account_dropdown .dropdown_menu {
+  position: absolute;
+  right: 0;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 7px 0px #F0E4FFFA;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  row-gap: 16px;
+}
+
+header .account_dropdown .dropdown_menu a,
+header .account_dropdown .dropdown_menu button {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #696969;
+  text-decoration: none;
+  display: inline-block;
+}
+
+header .account_dropdown .dropdown_menu button {
+  background: transparent;
+  border: none;
+}
+
+.dashboard_header .dashboard_header_section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard_header .dashboard_header_section .dashboard_header_content {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+.dashboard_header .dashboard_header_content .account_dropdown {
+  position: relative;
+}
+
+.dashboard_header .dashboard_header_content .account_dropdown button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #6C6969;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+}
+
+.dashboard_header .account_dropdown .dropdown_menu {
+  position: absolute;
+  right: 0;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 7px 0px #F0E4FFFA;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  row-gap: 16px;
+  border-radius: 8px;
+}
+
+.dashboard_header .account_dropdown .dropdown_menu a,
+.dashboard_header .account_dropdown .dropdown_menu button {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #696969;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.dashboard_header {
+  box-shadow: 0px 2px 2px 0px #D9D9D93D;
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard_header .dashboard_header_content .dashboard_header_wishlist,
+.dashboard_header .dashboard_header_content .dashboard_header_notifications {
+  line-height: 0;
+}
+
+.dashboard-main {
+  display: flex;
+  flex-wrap: wrap;
+  background: #F5F7FC;
+}
+
+.dashboard-main .content-area {
+  width: calc(100% - 260px);
+  padding: 65px 55px 0;
+}
+
+.dashboard-main .sidebar {
+  width: 260px;
+  background: #FFFFFF;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.dashboard-main .sidebar .sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+
+.dashboard-main .sidebar-menu .menu-item {
+  background: transparent;
+  padding: 15px 18px;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  display: flex;
+  color: #6C6969;
+  text-decoration: none;
+  gap: 10px;
+  border-radius: 16px;
+  align-items: center;
+}
+
+.dashboard-main .content-area .post_job h2 {
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #000000;
+  margin: 0 0 25px;
+}
+
+.dashboard-main .post_job form .form_card,
+.dashboard-main .post_job aside .card {
+  background: #FFFFFF;
+  box-shadow: 0px 1px 7px 0px #F0E4FFFA;
+  border-radius: 30px;
+}
+
+.dashboard-main .content-area .post_job {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px;
+}
+
+.dashboard-main .post_job .post_job_details {
+  width: calc(75% - 18px);
+}
+
+.dashboard-main .content-area .post_job aside {
+  width: calc(25% - 18px);
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+
+.dashboard-main .post_job form .form_card h3,
+.dashboard-main .post_job aside .card h3 {
+  padding: 30px 35px;
+  border-bottom: 1px solid #E2EAFF;
+  margin: 0;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #000000;
+}
+
+.dashboard-main .form_card .form_fields {
+  padding: 30px 35px 35px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+
+.dashboard-main .form_fields .form_fielset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.dashboard-main .form_fielset .form_field {
+  width: calc(50% - 10px);
+}
+
+.dashboard-main .form_fielset .form_field label,
+.dashboard-main .form_fields .form_full label {
+  width: 100%;
+  display: inline-block;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #6C6969;
+  margin: 0 0 10px;
+}
+
+.dashboard-main .form_fielset .form_field label span {
+  color: #F44336;
+}
+
+.dashboard-main .form_fielset .form_field input,
+.dashboard-main .form_fielset .form_field select,
+.dashboard-main .form_fields .form_full textarea {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid #F0E4FF;
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #C5C5C5;
+  outline: none;
+}
+
+.dashboard-main .form_fielset .form_field input::placeholder,
+.dashboard-main .form_fields .form_full textarea::placeholder {
+  color: #C5C5C5;
+}
+
+.dashboard-main .post_job .post_job_details form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+
+.dashboard-main .form_fielset .form_field .form_select_field {
+  position: relative;
+}
+
+.dashboard-main .form_fielset .form_field select {
+  appearance: none;
+}
+
+.dashboard-main .form_fielset .form_field .form_select_field svg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  right: 21px;
+  width: 10px;
+}
+
+.dashboard-main .form_fields .form_full {
+  position: relative;
+}
+
+.dashboard-main .form_fields .form_full input {
+  width: 100%;
+  background: #FFFFFF;
+  outline: none;
+  border: 1px dashed #6D17E1;
+  border-radius: 10px;
+  padding: 15.5px;
+  color: #C5C5C5;
+}
+
+.dashboard-main .form_fields .form_full button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #0146EE;
+  width: fit-content;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.dashboard-main .form_fields .form_full textarea {
+  min-height: 151px;
+}
+
+.dashboard-main .form_fields .form_skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+  align-items: center;
+}
+
+.dashboard-main .form_fields .form_skills span {
+  background: #E2EAFF;
+  display: flex;
+  padding: 6px 10px;
+  border-radius: 6px;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #0146EE;
+  text-transform: capitalize;
+  align-items: center;
+}
+
+.dashboard-main .form_fields .form_skills span button {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.dashboard-main .sidebar-menu .menu-item svg {
+  width: 20px;
+}
+
+.dashboard-main .sidebar-menu .menu-item.active {
+  background: linear-gradient(90deg, #6D17E1 0%, #6B18DB 100%);
+  color: #FFFFFF;
+}
+
+.dashboard-main .sidebar-menu .menu-item.active svg path {
+  fill: #fff;
+}
+
+.dashboard-main .sidebar .logout-btn {
+  background: #F5F7FC;
+  width: 100%;
+  border-radius: 16px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  gap: 10px;
+  cursor: pointer;
+  color: #6D17E1;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 1px;
+}
+
+.dashboard-main .content-area .content-copyright {
+  margin: 50px 0 0;
+  padding: 30px 0;
+  border-top: 1px solid #F0E4FF;
+  text-align: center;
+}
+
+.dashboard-main .content-area .content-copyright p {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  color: #6C6969;
+  display: inline-block;
+}
+
+.dashboard-main .form_fields .file_upload_wrapper input {
+  display: none;
+}
+
+.dashboard-main .form_fields .file_upload_wrapper label {
+  border: 1px dashed #6D17E1;
+  width: 100%;
+  border-radius: 10px;
+  background: #FFFFFF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 182px;
+  cursor: pointer;
+}
+
+.dashboard-main .form_fields .file_upload_wrapper label p {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #0146EE;
+  margin: 14px 0 6px;
+}
+
+.dashboard-main .form_fields .file_upload_wrapper label span {
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  text-align: center;
+  color: #8492A6;
+}
+
+.dashboard-main .post_job_details form .form_buttons {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 13px;
+  margin: 16px 0 0;
+}
+
+.dashboard-main .post_job_details form .form_buttons .submit-btn {
+  background: #6D17E1;
+  border: none;
+  padding: 18px 23px;
+  color: #FFFFFF;
+}
+
+.dashboard-main .post_job_details form .form_buttons button {
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.dashboard-main .post_job_details form .form_buttons .cancel-btn {
+  border: 1px solid #6D17E1;
+  padding: 17px 34px;
+  color: #6D17E1;
+}
+
+.dashboard-main .card .card_preview_skills {
+  padding: 20px 35px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+  align-items: center;
+}
+
+.dashboard-main .card .card_preview_skills p {
+  background: #E2EAFF;
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #0146EE;
+  text-transform: capitalize;
+}
+
+.dashboard-main .card .card_preview_description {
+  border-top: 1px solid #E2EAFF;
+  padding: 20px 35px 30px;
+}
+
+.dashboard-main .card .card_preview_description h5 {
+  margin: 0 0 11px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #6C6969;
+}
+
+.dashboard-main .card .card_preview_description p {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 1px;
+  display: inline-block;
+  color: #8492A6;
+}
+
+.dashboard-main .card .job_preview_company {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 30px 35px 20px;
+  align-items: center;
+}
+
+.dashboard-main .job_preview_company .job_preview_logo {
+  width: 45px;
+  line-height: 0;
+}
+
+.dashboard-main .job_preview_company .job_preview_logo img {
+  width: 100%;
+  height: 45px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.dashboard-main .job_preview_company .job_preview_title {
+  width: calc(100% - 45px);
+  padding: 0 0 0 18px;
+}
+
+.dashboard-main .job_preview_company .job_preview_title h6 {
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: normal;
+  letter-spacing: 1px;
+  color: #000000;
+}
+
+.dashboard-main .job_preview_company .job_preview_title p {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #8492A6;
+  display: inline-block;
+}
+
+.dashboard-main .card .job_preview_details {
+  border-top: 1px solid #E2EAFF;
+  padding: 20px 35px 30px;
+}
+
+.dashboard-main .card .job_preview_details h6 {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  color: #000000;
+  margin: 0 0 8px;
+}
+
+.dashboard-main .card .job_preview_details ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  row-gap: 14px;
+  flex-direction: column;
+  list-style: none;
+}
+
+.dashboard-main .card .job_preview_details ul li {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: normal;
+  letter-spacing: 1px;
+  color: #8492A6;
+  position: relative;
+  padding: 0 0 0 18px;
+}
+
+.dashboard-main .card .job_preview_details ul li::before {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 50%;
+  left: 0;
+  background: #0146EE;
+  border-radius: 50%;
+  transform: translateY(-50%);
 }
 
 @media screen and (max-width: 991px) {

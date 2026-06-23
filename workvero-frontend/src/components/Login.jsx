@@ -27,10 +27,13 @@ function Login({ isOpen, onClose, onSwitchToRegister, onSwitchToReset }) {
             const data = response.data;
 
             localStorage.setItem('token', data.accessToken);
+            localStorage.setItem('role', data.role ? data.role.toLowerCase() : 'candidate');
+            window.dispatchEvent(new Event('authChange'));
             onClose();
 
         } catch (err) {
             const errorMsg = err.response?.data?.message || err.message || 'Something went wrong';
+            setError(errorMsg);
         } finally {
             setLoading(false);
         }
