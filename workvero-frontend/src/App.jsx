@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom';
-import Header from "./components/header"
-import Footer from "./components/footer"
 import Home from './pages/Home';
 import JobCategory from './pages/JobCategory';
 import JobListing from './pages/JobListing';
