@@ -100,9 +100,9 @@ function Header() {
         {
             title: "Pages",
             submenu: [
-                { label: "About Us", path: "/about" },
-                { label: "Pricing Plans", path: "/pricing" },
-                { label: "FAQs", path: "/faq" },
+                { label: "Job Category", path: "/job-category" },
+                { label: "Jobs", path: "/jobs" },
+                { label: "Job Apply", path: "/job-apply" },
                 { label: "Terms of Service", path: "/terms" }
             ]
         }
