@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api';
 
-function PostJob() {
+function EditJob() {
     const navigate = useNavigate();
     const [companyProfile, setCompanyProfile] = useState(null);
+    const { id } = useParams();
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         title: '',
         location: '',
@@ -15,12 +17,39 @@ function PostJob() {
         openings: '',
         deadline: '',
         description: '',
-        skills: []
+        skills: [],
+        status: 'ACTIVE'
     });
 
     const [skillInput, setSkillInput] = useState('');
-    const [logoFile, setLogoFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        const fetchJob = async () => {
+            try {
+                const response = await api.get(`/job/${id}`);
+                const job = response.data.data;
+                setFormData({
+                    title: job.title || '',
+                    location: job.location || '',
+                    jobType: job.jobType || '',
+                    workMode: job.workMode || '',
+                    experience: job.experience || '',
+                    salary: job.salary || '',
+                    openings: job.openings || '',
+                    deadline: job.deadline ? new Date(job.deadline).toISOString().split('T')[0] : '',
+                    description: job.description || '',
+                    skills: job.skills ? JSON.parse(job.skills) : [],
+                    status: job.status || 'ACTIVE'
+                });
+            } catch (err) {
+                alert('Failed to load job');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchJob();
+    }, [id]);
 
     useEffect(() => {
         const fetchCompany = async () => {
@@ -38,10 +67,6 @@ function PostJob() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleFileChange = (e) => {
-        setLogoFile(e.target.files[0]);
-    };
-
     const handleAddSkill = () => {
         if (skillInput && !formData.skills.includes(skillInput)) {
             setFormData({ ...formData, skills: [...formData.skills, skillInput] });
@@ -57,7 +82,7 @@ function PostJob() {
     };
 
     const handleCancel = () => {
-        navigate('/employer/dashboard');
+        navigate('/employer/manage-jobs');
     };
 
     const handleSubmit = async (e) => {
@@ -70,24 +95,24 @@ function PostJob() {
         };
 
         try {
-            const response = await api.post('/job/create', payload);
-
-            if (response.status === 201) {
-                alert("Job posted successfully!");
-                navigate('/employer/dashboard');
+            const response = await api.put(`/job/update/${id}`, payload);
+            if (response.status === 200) {
+                alert("Job updated successfully!");
+                navigate('/employer/manage-jobs');
             }
         } catch (error) {
-            console.error("Submission failed:", error);
-            console.log("Error Response Data:", error.response?.data);
+            console.error("Update failed:", error);
             setIsSubmitting(false);
             alert(error.response?.data?.message || "Something went wrong.");
         }
     };
 
+    if (loading) return <div>Loading...</div>;
+
     return (
         <div className='post_job'>
             <div className='post_job_details'>
-                <h2>Post Job</h2>
+                <h2>Edit Job</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form_card">
                         <h3>Basic Information</h3>
@@ -95,18 +120,18 @@ function PostJob() {
                             <div className='form_fielset'>
                                 <div className='form_field'>
                                     <label htmlFor="title">Job Title<span>*</span></label>
-                                    <input type='text' id="title" name="title" required placeholder="e.g. Senior Frontend Developer" onChange={handleChange} />
+                                    <input type='text' id="title" name="title" required placeholder="e.g. Senior Frontend Developer" value={formData.title} onChange={handleChange} />
                                 </div>
                                 <div className='form_field'>
                                     <label htmlFor="location">Job Location<span>*</span></label>
-                                    <input type='text' id="location" name="location" required placeholder="e.g. Mohali, Punjab" onChange={handleChange} />
+                                    <input type='text' id="location" name="location" required placeholder="e.g. Mohali, Punjab" value={formData.location} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className='form_fielset'>
                                 <div className='form_field'>
                                     <label htmlFor="jobType">Job Type<span>*</span></label>
                                     <div className='form_select_field'>
-                                        <select id="jobType" name="jobType" required onChange={handleChange}>
+                                        <select id="jobType" name="jobType" required value={formData.jobType} onChange={handleChange}>
                                             <option value="">Select Job Type</option>
                                             <option value="Full Time">Full Time</option>
                                             <option value="Part Time">Part Time</option>
@@ -118,7 +143,7 @@ function PostJob() {
                                 <div className='form_field'>
                                     <label htmlFor="workMode">Work Mode<span>*</span></label>
                                     <div className='form_select_field'>
-                                        <select id="workMode" name="workMode" required onChange={handleChange}>
+                                        <select id="workMode" name="workMode" required value={formData.workMode} onChange={handleChange}>
                                             <option value="">Select Work Mode</option>
                                             <option value="Remote">Remote</option>
                                             <option value="On-site">On-site</option>
@@ -132,25 +157,18 @@ function PostJob() {
                                 <div className='form_field'>
                                     <label htmlFor="experience">Experience Level<span>*</span></label>
                                     <div className='form_select_field'>
-                                        <select id="experience" name="experience" required onChange={handleChange}>
-                                            <option>Select Experience</option>
-                                            <option>Entry Level</option>
-                                            <option>Mid Level</option>
-                                            <option>Senior</option>
+                                        <select id="experience" name="experience" required value={formData.experience} onChange={handleChange}>
+                                            <option value="">Select Experience</option>
+                                            <option value="Entry Level">Entry Level</option>
+                                            <option value="Mid Level">Mid Level</option>
+                                            <option value="Senior">Senior</option>
                                         </select>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
                                     </div>
                                 </div>
                                 <div className='form_field'>
                                     <label htmlFor="salary">Salary Range<span>*</span></label>
-                                    <input
-                                        type="text"
-                                        id="salary"
-                                        name="salary"
-                                        required
-                                        placeholder="e.g. $4k - $6k"
-                                        onChange={handleChange}
-                                    />
+                                    <input type="text" id="salary" name="salary" required placeholder="e.g. $4k - $6k" value={formData.salary} onChange={handleChange} />
                                 </div>
                             </div>
                         </div>
@@ -161,11 +179,28 @@ function PostJob() {
                             <div className='form_fielset'>
                                 <div className='form_field'>
                                     <label htmlFor='openings'>Number of Openings</label>
-                                    <input id="openings" name="openings" type="number" placeholder="e.g. 2" onChange={handleChange} />
+                                    <input id="openings" name="openings" type="number" placeholder="e.g. 2" value={formData.openings} onChange={handleChange} />
                                 </div>
                                 <div className='form_field'>
                                     <label htmlFor='deadline'>Application Deadline</label>
-                                    <input id="deadline" name="deadline" type="date" onChange={handleChange} />
+                                    <input id="deadline" name="deadline" type="date" value={formData.deadline} onChange={handleChange} />
+                                </div>
+                            </div>
+                            <div className='form_fielset'>
+                                <div className='form_field'>
+                                    <label htmlFor="status">Status</label>
+                                    <div className='form_select_field'>
+                                        <select
+                                            value={formData.status}
+                                            id="status"
+                                            name="status"
+                                            onChange={handleChange}
+                                        >
+                                            <option value="ACTIVE">Active</option>
+                                            <option value="CLOSED">Closed</option>
+                                        </select>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -190,13 +225,13 @@ function PostJob() {
                             </div>
                             <div className='form_full'>
                                 <label htmlFor='description'>Job Description</label>
-                                <textarea name="description" id="description" placeholder="Job Description" onChange={handleChange} />
+                                <textarea name="description" id="description" placeholder="Job Description" value={formData.description} onChange={handleChange} />
                             </div>
                         </div>
                     </div>
                     <div className='form_buttons'>
                         <button type="submit" className='submit-btn' disabled={isSubmitting}>
-                            {isSubmitting ? "Posting..." : "Save & Publish"}
+                            {isSubmitting ? "Updating..." : "Update & Publish"}
                         </button>
                         <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
                     </div>
@@ -252,4 +287,4 @@ function PostJob() {
     );
 }
 
-export default PostJob;
+export default EditJob;
