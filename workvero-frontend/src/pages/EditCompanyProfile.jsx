@@ -138,11 +138,11 @@ function EditCompanyProfile() {
                             <div className="form_fielset">
                                 <div className="form_field">
                                     <label htmlFor="companyName">Company Name<span>*</span></label>
-                                    <input id="companyName" name="companyName" required value={formData.companyName} onChange={handleChange} placeholder="Enter Company Name" />
+                                    <input id="companyName" name="companyName" value={formData.companyName} onChange={handleChange} placeholder="Enter Company Name" required />
                                 </div>
                                 <div className="form_field">
                                     <label htmlFor="email">Email<span>*</span></label>
-                                    <input id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter Your Email" />
+                                    <input id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter Your Email" required />
                                 </div>
                             </div>
                             <div className="form_fielset">
@@ -203,11 +203,11 @@ function EditCompanyProfile() {
                             <div className="form_fielset">
                                 <div className="form_field">
                                     <label htmlFor="phone">City<span>*</span></label>
-                                    <input id="city" name="city" value={formData.city} onChange={handleChange} placeholder="Enter City" />
+                                    <input id="city" name="city" value={formData.city} onChange={handleChange} placeholder="Enter City" required />
                                 </div>
                                 <div className="form_field">
                                     <label htmlFor="address">Address<span>*</span></label>
-                                    <input id="address" name="address" value={formData.address} onChange={handleChange} placeholder="Enter Address" />
+                                    <input id="address" name="address" value={formData.address} onChange={handleChange} placeholder="Enter Address" required />
                                 </div>
                             </div>
                             <div className="form_full">

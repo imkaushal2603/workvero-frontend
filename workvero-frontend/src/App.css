@@ -2492,7 +2492,9 @@ header .account_dropdown .dropdown_menu button {
   align-items: center;
 }
 
-.dashboard-main .content-area .post_job h2 {
+.dashboard-main .content-area .post_job h2,
+.dashboard-main .content-area .settings h2,
+.dashboard-main .content-area .change_password h2 {
   font-size: 38px;
   font-weight: 500;
   line-height: 100%;
@@ -2501,8 +2503,8 @@ header .account_dropdown .dropdown_menu button {
   margin: 0 0 25px;
 }
 
-.dashboard-main .post_job form .form_card,
-.dashboard-main .post_job aside .card {
+.dashboard-main form .form_card,
+.dashboard-main aside .card {
   background: #FFFFFF;
   box-shadow: 0px 1px 7px 0px #F0E4FFFA;
   border-radius: 30px;
@@ -2525,8 +2527,8 @@ header .account_dropdown .dropdown_menu button {
   row-gap: 24px;
 }
 
-.dashboard-main .post_job form .form_card h3,
-.dashboard-main .post_job aside .card h3 {
+.dashboard-main form .form_card h3,
+.dashboard-main aside .card h3 {
   padding: 30px 35px;
   border-bottom: 1px solid #E2EAFF;
   margin: 0;
@@ -2566,13 +2568,14 @@ header .account_dropdown .dropdown_menu button {
   margin: 0 0 10px;
 }
 
-.dashboard-main .form_fielset .form_field label span {
+.dashboard-main .form_field label span {
   color: #F44336;
 }
 
 .dashboard-main .form_fielset .form_field input,
 .dashboard-main .form_fielset .form_field select,
-.dashboard-main .form_fields .form_full textarea {
+.dashboard-main .form_fields .form_full textarea,
+.dashboard-main .form_fields .form_full input {
   width: 100%;
   background: #FFFFFF;
   border: 1px solid #F0E4FF;
@@ -2587,11 +2590,12 @@ header .account_dropdown .dropdown_menu button {
 }
 
 .dashboard-main .form_fielset .form_field input::placeholder,
-.dashboard-main .form_fields .form_full textarea::placeholder {
+.dashboard-main .form_fields .form_full textarea::placeholder,
+.dashboard-main .form_fields .form_full input::placeholder {
   color: #C5C5C5;
 }
 
-.dashboard-main .post_job .post_job_details form {
+.dashboard-main form {
   display: flex;
   flex-direction: column;
   row-gap: 24px;
@@ -2618,7 +2622,7 @@ header .account_dropdown .dropdown_menu button {
   position: relative;
 }
 
-.dashboard-main .form_fields .form_full input {
+.dashboard-main .form_fields .form_full input#skills {
   width: 100%;
   background: #FFFFFF;
   outline: none;
@@ -2761,7 +2765,7 @@ header .account_dropdown .dropdown_menu button {
   color: #8492A6;
 }
 
-.dashboard-main .post_job_details form .form_buttons {
+.dashboard-main form .form_buttons {
   display: flex;
   justify-content: end;
   align-items: center;
@@ -2769,14 +2773,14 @@ header .account_dropdown .dropdown_menu button {
   margin: 16px 0 0;
 }
 
-.dashboard-main .post_job_details form .form_buttons .submit-btn {
+.dashboard-main form .form_buttons .submit-btn {
   background: #6D17E1;
   border: none;
   padding: 18px 23px;
   color: #FFFFFF;
 }
 
-.dashboard-main .post_job_details form .form_buttons button {
+.dashboard-main form .form_buttons button {
   border-radius: 8px;
   font-weight: 500;
   font-size: 14px;
@@ -2786,7 +2790,7 @@ header .account_dropdown .dropdown_menu button {
   cursor: pointer;
 }
 
-.dashboard-main .post_job_details form .form_buttons .cancel-btn {
+.dashboard-main form .form_buttons .cancel-btn {
   border: 1px solid #6D17E1;
   padding: 17px 34px;
   color: #6D17E1;
@@ -2983,7 +2987,7 @@ header .account_dropdown .dropdown_menu button {
   width: 155px;
   font-weight: 400;
   font-size: 13px;
-  line-height: 100%;
+  line-height: 110%;
   letter-spacing: 1px;
   color: #636363;
   appearance: none;
@@ -3433,6 +3437,23 @@ header .account_dropdown .dropdown_menu button {
   padding: 20px;
   max-width: 80%;
   max-height: 80%;
+}
+
+.dashboard-main .form_fields .form_change_password {
+  text-align: end;
+}
+
+.dashboard-main .form_fields .form_change_password button {
+  background: transparent;
+  padding: 0;
+  border: none;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  text-decoration: underline;
+  color: #0146EE;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 991px) {

@@ -38,7 +38,7 @@ function Header() {
                 } else if (normalizedRole === 'admin') {
                     navigate('/admin/dashboard');
                 } else {
-                    navigate('/candidates/dashboard');
+                    navigate('/candidate/dashboard');
                 }
             }
         };

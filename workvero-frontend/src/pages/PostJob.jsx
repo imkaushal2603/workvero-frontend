@@ -185,7 +185,7 @@ function PostJob() {
                                 ))}</div>
                             )}
                             <div className='form_full'>
-                                <input value={skillInput} onChange={(e) => setSkillInput(e.target.value)} />
+                                <input name="skills" id="skills" value={skillInput} onChange={(e) => setSkillInput(e.target.value)} />
                                 <button type="button" onClick={handleAddSkill}>+ Add Skills</button>
                             </div>
                             <div className='form_full'>

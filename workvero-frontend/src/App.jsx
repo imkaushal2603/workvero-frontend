@@ -8,11 +8,14 @@ import JobApply from './pages/JobApply';
 import './App.css'
 import PublicLayout from './layouts/PublicLayout'
 import EmployerLayout from './layouts/EmployerLayout'
+import CandidateLayout from './layouts/CandidateLayout'
 import PostJob from './pages/PostJob'
 import ManageJobs from './pages/ManageJobs'
 import EditJob from './pages/EditJob'
 import CompanyProfile from './pages/CompanyProfile'
 import EditCompanyProfile from './pages/EditCompanyProfile'
+import Settings from './pages/Settings'
+import ChangePassword from './pages/ChangePassword'
 
 function App() {
   return (
@@ -39,8 +42,24 @@ function App() {
                 <Route path="post-job" element={<PostJob />} />
                 <Route path="manage-jobs" element={<ManageJobs />} />
                 <Route path="manage-jobs/:id" element={<EditJob />} />
+                <Route path="settings" element={<Settings />} />
+                <Route path="settings/change-password" element={<ChangePassword />} />
               </Routes>
             </EmployerLayout>
+          } />
+
+          <Route path="/candidate/*" element={
+            <CandidateLayout>
+              <Routes>
+                {/* <Route path="company-profile" element={<CompanyProfile />} />
+                <Route path="company-profile/edit" element={<EditCompanyProfile />} />
+                <Route path="post-job" element={<PostJob />} />
+                <Route path="manage-jobs" element={<ManageJobs />} />
+                <Route path="manage-jobs/:id" element={<EditJob />} />
+                <Route path="settings" element={<Settings />} />
+                <Route path="settings/change-password" element={<ChangePassword />} /> */}
+              </Routes>
+            </CandidateLayout>
           } />
         </Routes>
       </main>
