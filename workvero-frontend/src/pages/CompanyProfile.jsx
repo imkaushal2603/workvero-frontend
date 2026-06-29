@@ -61,7 +61,7 @@ function CompanyProfile() {
                             </div>
                             <div className="info-text">
                                 <h5>Email</h5>
-                                <p><a href={`mailto:${profile.email}`}>{profile.email}</a></p>
+                                <p>{profile.email}</p>
                             </div>
                         </div>
                     )}
@@ -72,7 +72,7 @@ function CompanyProfile() {
                             </div>
                             <div className="info-text">
                                 <h5>Phone Number</h5>
-                                <p><a href={`tel:${profile.phone}`}>{profile.phone}</a></p>
+                                <p>{profile.phone}</p>
                             </div>
                         </div>
                     )}

@@ -16,11 +16,13 @@ import CompanyProfile from './pages/CompanyProfile'
 import EditCompanyProfile from './pages/EditCompanyProfile'
 import Settings from './pages/Settings'
 import ChangePassword from './pages/ChangePassword'
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <div className="app-container">
       <main>
+        <Toaster position="top-center" reverseOrder={false} />
         <Routes>
           <Route path="/*" element={
             <PublicLayout>

@@ -2585,14 +2585,14 @@ header .account_dropdown .dropdown_menu button {
   font-size: 14px;
   line-height: 100%;
   letter-spacing: 1px;
-  color: #C5C5C5;
+  color: #636363;
   outline: none;
 }
 
 .dashboard-main .form_fielset .form_field input::placeholder,
 .dashboard-main .form_fields .form_full textarea::placeholder,
 .dashboard-main .form_fields .form_full input::placeholder {
-  color: #C5C5C5;
+  color: #636363;
 }
 
 .dashboard-main form {
@@ -2622,32 +2622,34 @@ header .account_dropdown .dropdown_menu button {
   position: relative;
 }
 
+.dashboard-main .form_fields .form_full_skills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
 .dashboard-main .form_fields .form_full input#skills {
-  width: 100%;
+  width: calc(100% - 170px);
   background: #FFFFFF;
   outline: none;
   border: 1px dashed #6D17E1;
   border-radius: 10px;
   padding: 15.5px;
-  color: #C5C5C5;
+  color: #636363;
+  text-transform: capitalize;
 }
 
 .dashboard-main .form_fields .form_full button {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 100%;
   letter-spacing: 1px;
-  color: #0146EE;
-  width: fit-content;
-  border: none;
-  background: none;
-  padding: 0;
+  color: #fff;
   cursor: pointer;
+  background: #6d17e1;
+  border: none;
+  border-radius: 14px;
+  padding: 18px 23px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 100%;
 }
 
 .dashboard-main .form_fields .form_full textarea {
@@ -2837,7 +2839,7 @@ header .account_dropdown .dropdown_menu button {
   line-height: 24px;
   letter-spacing: 1px;
   display: inline-block;
-  color: #8492A6;
+  color: #636363;
 }
 
 .dashboard-main .card .job_preview_company {
@@ -2883,7 +2885,7 @@ header .account_dropdown .dropdown_menu button {
   font-size: 12px;
   line-height: 18px;
   letter-spacing: 1px;
-  color: #8492A6;
+  color: #636363;
   display: inline-block;
 }
 
@@ -2915,7 +2917,7 @@ header .account_dropdown .dropdown_menu button {
   font-size: 12px;
   line-height: 18px;
   letter-spacing: 1px;
-  color: #8492A6;
+  color: #636363;
   position: relative;
   padding: 0 0 0 18px;
 }
@@ -2946,6 +2948,7 @@ header .account_dropdown .dropdown_menu button {
   display: flex;
   flex-wrap: wrap;
   gap: 13px;
+  align-items: center;
 }
 
 .dashboard-main .manage-jobs-header .controls input {
@@ -2984,7 +2987,7 @@ header .account_dropdown .dropdown_menu button {
   border-radius: 12px;
   border: none;
   padding: 15.5px 14px;
-  width: 155px;
+  width: 145px;
   font-weight: 400;
   font-size: 13px;
   line-height: 110%;
@@ -3058,7 +3061,7 @@ header .account_dropdown .dropdown_menu button {
   font-size: 14px;
   line-height: 100%;
   letter-spacing: 1px;
-  color: #696969;
+  color: #636363;
   display: inline-block;
 }
 
@@ -3090,7 +3093,7 @@ header .account_dropdown .dropdown_menu button {
   color: #000000;
 }
 
-.dashboard-main .jobs_table_body .jobs_table_row.active p {
+.dashboard-main .jobs_table_body .jobs_table_row.open p {
   background: #DCFCE7;
   border-radius: 50px;
   font-weight: 500;
@@ -3116,6 +3119,15 @@ header .account_dropdown .dropdown_menu button {
   font-weight: 500;
   font-size: 12px;
   color: #DC2626;
+  padding: 10px 15px;
+}
+
+.dashboard-main .jobs_table_body .jobs_table_row.paused p {
+  background: #FFF3CD;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 12px;
+  color: #856404;
   padding: 10px 15px;
 }
 
@@ -3167,7 +3179,7 @@ header .account_dropdown .dropdown_menu button {
 }
 
 .dashboard-main .profile-card .banner-bg {
-  background: linear-gradient(90deg, #6D17E1 0%, #3C0D7B 100%);
+  background: linear-gradient(90deg, #6d17e1d1 0%, #3c0d7bd4 100%);
   height: 211px;
   border-radius: 30px 30px 0 0;
 }
@@ -3239,7 +3251,7 @@ header .account_dropdown .dropdown_menu button {
   font-size: 18px;
   line-height: 100%;
   letter-spacing: 1px;
-  color: #8492A6;
+  color: #636363;
 }
 
 .dashboard-main .profile-card .info-grid {
@@ -3283,7 +3295,7 @@ header .account_dropdown .dropdown_menu button {
   font-size: 16px;
   line-height: 100%;
   letter-spacing: 1px;
-  color: #8492A6;
+  color: #636363;
   display: inline-block;
 }
 
@@ -3322,7 +3334,7 @@ header .account_dropdown .dropdown_menu button {
   line-height: 26px;
   letter-spacing: 1px;
   display: inline-block;
-  color: #8492A6;
+  color: #636363;
 }
 
 .dashboard-main .section .social-grid {
@@ -3410,7 +3422,7 @@ header .account_dropdown .dropdown_menu button {
   font-size: 16px;
   line-height: 100%;
   letter-spacing: 1px;
-  color: #8492A6;
+  color: #636363;
   display: inline-block;
 }
 
@@ -3454,6 +3466,25 @@ header .account_dropdown .dropdown_menu button {
   text-decoration: underline;
   color: #0146EE;
   cursor: pointer;
+}
+
+.dashboard-main .form_fields .form_full button[disabled],
+.dashboard-main form .form_buttons .submit-btn[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.dashboard-main .controls .add-job-button button {
+  letter-spacing: 1px;
+  color: #fff;
+  cursor: pointer;
+  background: #6d17e1;
+  border: none;
+  border-radius: 14px;
+  padding: 18px 23px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 100%;
 }
 
 @media screen and (max-width: 991px) {

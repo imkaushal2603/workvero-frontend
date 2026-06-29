@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 function PostJob() {
     const navigate = useNavigate();
@@ -21,6 +22,23 @@ function PostJob() {
     const [skillInput, setSkillInput] = useState('');
     const [logoFile, setLogoFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [jobCount, setJobCount] = useState(null);
+    const [loadingCount, setLoadingCount] = useState(true);
+
+    useEffect(() => {
+        const fetchJobCount = async () => {
+            try {
+                const res = await api.get('/job/my-jobs', { params: { limit: 100 } });
+                const count = res.data.data.total;
+                setJobCount(count);
+            } catch (err) {
+                console.error('Failed to fetch job count');
+            } finally {
+                setLoadingCount(false);
+            }
+        };
+        fetchJobCount();
+    }, []);
 
     useEffect(() => {
         const fetchCompany = async () => {
@@ -33,6 +51,18 @@ function PostJob() {
         };
         fetchCompany();
     }, []);
+
+    useEffect(() => {
+        if (jobCount === null || jobCount < 2) return;
+
+        toast.error("You've reached the 2 job limit. Upgrade your plan in the billing to post more jobs.", { duration: 4000 });
+
+        const timer = setTimeout(() => {
+            navigate('/employer/billing');
+        }, 3000);
+
+        return () => clearInterval(timer);
+    }, [jobCount]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -62,6 +92,12 @@ function PostJob() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (jobCount >= 2) {
+            toast.error("You've reached the 2 job limit. Upgrade your plan to post more jobs.");
+            return;
+        }
+
         setIsSubmitting(true);
 
         const payload = {
@@ -73,16 +109,17 @@ function PostJob() {
             const response = await api.post('/job/create', payload);
 
             if (response.status === 201) {
-                alert("Job posted successfully!");
+                toast.success("Job posted successfully!");
                 navigate('/employer/dashboard');
             }
         } catch (error) {
             console.error("Submission failed:", error);
-            console.log("Error Response Data:", error.response?.data);
             setIsSubmitting(false);
-            alert(error.response?.data?.message || "Something went wrong.");
+            toast.error(error.response?.data?.message || "Something went wrong.");
         }
     };
+
+    if (loadingCount) return <div>Loading...</div>;
 
     return (
         <div className='post_job'>
@@ -184,9 +221,9 @@ function PostJob() {
                                     </span>
                                 ))}</div>
                             )}
-                            <div className='form_full'>
-                                <input name="skills" id="skills" value={skillInput} onChange={(e) => setSkillInput(e.target.value)} />
-                                <button type="button" onClick={handleAddSkill}>+ Add Skills</button>
+                            <div className='form_full form_full_skills'>
+                                <input name="skills" id="skills" placeholder="Enter Skills" value={skillInput} onChange={(e) => setSkillInput(e.target.value)} />
+                                <button type="button" onClick={handleAddSkill} disabled={!skillInput.trim()}>+ Add Skills</button>
                             </div>
                             <div className='form_full'>
                                 <label htmlFor='description'>Job Description</label>
@@ -195,7 +232,7 @@ function PostJob() {
                         </div>
                     </div>
                     <div className='form_buttons'>
-                        <button type="submit" className='submit-btn' disabled={isSubmitting}>
+                        <button type="submit" className='submit-btn' disabled={isSubmitting || jobCount >= 2}>
                             {isSubmitting ? "Posting..." : "Save & Publish"}
                         </button>
                         <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>

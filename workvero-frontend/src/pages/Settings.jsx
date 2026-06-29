@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 function Settings() {
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ function Settings() {
                     });
                 }
             } catch (err) {
+                toast.error('Failed to load profile');
                 navigate('/employer/company-profile/edit');
             } finally {
                 setLoading(false);
@@ -41,9 +43,9 @@ function Settings() {
         setIsSubmitting(true);
         try {
             await api.put('/auth/me', formData);
-            alert('Profile updated successfully!');
+            toast.success('Profile updated successfully!');
         } catch (err) {
-            alert(err.response?.data?.message || 'Something went wrong');
+            toast.error(err.response?.data?.message || 'Something went wrong');
         } finally {
             setIsSubmitting(false);
         }

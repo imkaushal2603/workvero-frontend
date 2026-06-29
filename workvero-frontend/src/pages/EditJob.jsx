@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 function EditJob() {
     const navigate = useNavigate();
@@ -43,13 +44,14 @@ function EditJob() {
                     status: job.status || 'ACTIVE'
                 });
             } catch (err) {
-                alert('Failed to load job');
+                toast.error("Failed to load job details. Please try again.");
+                navigate('/employer/manage-jobs');
             } finally {
                 setLoading(false);
             }
         };
         fetchJob();
-    }, [id]);
+    }, [id, navigate]);
 
     useEffect(() => {
         const fetchCompany = async () => {
@@ -58,10 +60,12 @@ function EditJob() {
                 setCompanyProfile(res.data.company);
             } catch (err) {
                 console.error('Failed to fetch company profile');
+                toast.error("Session expired or unauthorized. Please log in.");
+                navigate('/login');
             }
         };
         fetchCompany();
-    }, []);
+    }, [navigate]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -97,13 +101,15 @@ function EditJob() {
         try {
             const response = await api.put(`/job/update/${id}`, payload);
             if (response.status === 200) {
-                alert("Job updated successfully!");
-                navigate('/employer/manage-jobs');
+                toast.success("Job Updated successfully!");
+                setTimeout(() => {
+                    navigate('/employer/manage-jobs');
+                }, 1500);
             }
         } catch (error) {
             console.error("Update failed:", error);
             setIsSubmitting(false);
-            alert(error.response?.data?.message || "Something went wrong.");
+            toast.error(error.response?.data?.message || "Something went wrong.");
         }
     };
 
@@ -196,7 +202,8 @@ function EditJob() {
                                             name="status"
                                             onChange={handleChange}
                                         >
-                                            <option value="ACTIVE">Active</option>
+                                            <option value="OPEN">Open</option>
+                                            <option value="PAUSED">Paused</option>
                                             <option value="CLOSED">Closed</option>
                                         </select>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
@@ -219,9 +226,9 @@ function EditJob() {
                                     </span>
                                 ))}</div>
                             )}
-                            <div className='form_full'>
-                                <input value={skillInput} onChange={(e) => setSkillInput(e.target.value)} />
-                                <button type="button" onClick={handleAddSkill}>+ Add Skills</button>
+                            <div className='form_full form_full_skills'>
+                                <input value={skillInput} id="skills" onChange={(e) => setSkillInput(e.target.value)} />
+                                <button type="button" onClick={handleAddSkill} disabled={!skillInput.trim()}>+ Add Skills</button>
                             </div>
                             <div className='form_full'>
                                 <label htmlFor='description'>Job Description</label>

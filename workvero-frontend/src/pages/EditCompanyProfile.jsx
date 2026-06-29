@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 function EditCompanyProfile() {
     const navigate = useNavigate();
@@ -67,10 +68,10 @@ function EditCompanyProfile() {
             } else {
                 await api.put('/company', formData);
             }
-            alert('Company profile saved!');
+            toast.success('Company profile saved successfully!');
             navigate('/employer/company-profile');
         } catch (err) {
-            alert(err.response?.data?.message || 'Something went wrong');
+            toast.error(err.response?.data?.message || 'Failed to save profile. Please try again.');
         } finally {
             setIsSubmitting(false);
         }

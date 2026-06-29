@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 function ChangePassword() {
     const navigate = useNavigate();
@@ -10,7 +11,6 @@ function ChangePassword() {
         new_password: '',
         confirm_password: ''
     });
-    const [error, setError] = useState('');
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,10 +18,9 @@ function ChangePassword() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
 
         if (formData.new_password !== formData.confirm_password) {
-            setError('New passwords do not match');
+            toast.error('New passwords do not match');
             return;
         }
 
@@ -32,10 +31,10 @@ function ChangePassword() {
                 oldPassword: formData.current_password,
                 newPassword: formData.new_password
             });
-            alert('Password changed successfully!');
+            toast.success('Password changed successfully!');
             navigate('/employer/settings');
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong');
+            toast.error(err.response?.data?.message || 'Something went wrong');
         } finally {
             setIsSubmitting(false);
         }
