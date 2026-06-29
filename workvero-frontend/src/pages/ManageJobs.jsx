@@ -11,6 +11,8 @@ function ManageJobs() {
     const [error, setError] = useState(null);
     const [params, setParams] = useState({ page: 1, limit: 4, q: '', jobType: 'All Jobs' });
     const [totalPages, setTotalPages] = useState(0);
+    const [selectedLocation, setSelectedLocation] = useState('All Locations');
+    const [availableLocations, setAvailableLocations] = useState([]);
 
     const getPaginationPages = () => {
         let pages = [];
@@ -37,9 +39,20 @@ function ManageJobs() {
                         status: params.status
                     }
                 });
-                setJobs(response.data.data.jobs);
+
+                const fetchedJobs = response.data.data.jobs || [];
+                setJobs(fetchedJobs);
                 setTotalPages(response.data.data.totalPages);
                 setError(null);
+
+                const uniqueLocations = [
+                    ...new Set(
+                        fetchedJobs
+                            .map(job => job.location?.trim())
+                            .filter(loc => loc)
+                    )
+                ];
+                setAvailableLocations(uniqueLocations);
             } catch (err) {
                 console.error("Error fetching jobs:", err);
                 setError(err.response?.data?.message || 'Failed to fetch jobs');
@@ -67,6 +80,10 @@ function ManageJobs() {
             toast.dismiss();
         };
     }, []);
+
+    const displayedJobs = selectedLocation === 'All Locations'
+        ? jobs
+        : jobs.filter(job => job.location?.trim() === selectedLocation);
 
     const handleDelete = async (jobId) => {
         toast((t) => (
@@ -145,6 +162,17 @@ function ManageJobs() {
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
                     </div>
                     <div className="select-wrapper">
+                        <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>
+                            <option value="All Locations">All Locations</option>
+                            {availableLocations.map((location, index) => (
+                                <option key={index} value={location}>
+                                    {location}
+                                </option>
+                            ))}
+                        </select>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                    </div>
+                    <div className="select-wrapper">
                         <select value={params.status} onChange={(e) => setParams({ ...params, status: e.target.value, page: 1 })}>
                             <option value="All Status">All Status</option>
                             <option value="OPEN">Open</option>
@@ -166,7 +194,7 @@ function ManageJobs() {
                         <div className='jobs_table_heading'>Date</div>
                         <div className='jobs_table_heading'>Action</div>
                     </div>
-                    {jobs.length > 0 ? jobs.map(job => (
+                    {displayedJobs.length > 0 ? displayedJobs.map(job => (
                         <div className="jobs_table_body" key={job.id}>
                             <div className="jobs_table_row">
                                 <div className='jobs_table_img'>
@@ -199,7 +227,7 @@ function ManageJobs() {
                             <div className="jobs_table_row">
                                 <svg onClick={() => handleEdit(job.id)} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
                                     <rect width="32" height="32" rx="4" fill="#E2EAFF" />
-                                    <path d="M19.304 9.84436L22.156 12.6964M12 12.0004H9C8.73478 12.0004 8.48043 12.1057 8.29289 12.2933C8.10536 12.4808 8 12.7351 8 13.0004V23.0004C8 23.2656 8.10536 23.5199 8.29289 23.7075C8.48043 23.895 8.73478 24.0004 9 24.0004H20C20.2652 24.0004 20.5196 23.895 20.7071 23.7075C20.8946 23.5199 21 23.2656 21 23.0004V18.5004M23.409 8.59036C23.5964 8.77767 23.745 9.00005 23.8464 9.24481C23.9478 9.48958 24 9.75192 24 10.0169C24 10.2818 23.9478 10.5441 23.8464 10.7889C23.745 11.0337 23.5964 11.2561 23.409 11.4434L16.565 18.2874L13 19.0004L13.713 15.4354L20.557 8.59136C20.7442 8.4039 20.9664 8.25517 21.2111 8.1537C21.4558 8.05223 21.7181 8 21.983 8C22.2479 8 22.5102 8.05223 22.7549 8.1537C22.9996 8.25517 23.2218 8.4039 23.409 8.59136V8.59036Z" stroke="#0146EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M19.304 9.84436L22.156 12.6964M12 12.0004H9C8.73478 12.0004 8.48043 12.1057 8.29289 12.2933C8.10536 12.4808 8 12.7351 8 13.0004V23.0004C8 23.2656 8.10536 23.5199 8.29289 23.7075C8.48043 23.895 8.73478 24.0004 9 24.0004H20C20.2652 24.0004 20.5196 23.895 20.7071 23.7075C20.8946 23.5199 21 23.2656 21 23.0004V18.5004M23.409 8.59036C23.5964 8.77767 23.745 9.00005 23.8464 9.24481C23.9478 9.48958 24 9.75192 24 10.0169C24 10.2818 23.9478 10.5441 23.8464 10.7889C23.745 11.0337 23.5964 11.2561 23.409 11.4434L16.565 18.2874L13 19.0004L13.713 15.4354L20.557 8.59136C20.7442 8.4039 20.9664 8.25517 21.2111 8.1537C21.4558 8.05223 21.7181 8 21.983 8C22.2479 8 22.5102 8.05223 22.7549 8.1537C22.9996 8.25517 23.2218 8.4039 23.409 8.59136V8.59036Z" stroke="#0146EE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                                 <svg onClick={() => handleDelete(job.id)} xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
                                     <rect width="32" height="32" rx="4" fill="#E2EAFF" />
