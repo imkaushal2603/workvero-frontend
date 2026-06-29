@@ -191,7 +191,7 @@ function ManageJobs() {
                         <div className='jobs_table_heading'>Type</div>
                         <div className='jobs_table_heading'>Salary</div>
                         <div className='jobs_table_heading'>Status</div>
-                        <div className='jobs_table_heading'>Date</div>
+                        <div className='jobs_table_heading'>Date Posted</div>
                         <div className='jobs_table_heading'>Action</div>
                     </div>
                     {displayedJobs.length > 0 ? displayedJobs.map(job => (
