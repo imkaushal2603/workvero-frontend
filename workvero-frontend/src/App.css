@@ -2986,7 +2986,7 @@ header .account_dropdown .dropdown_menu button {
   outline: none;
   border-radius: 12px;
   border: none;
-  padding: 15.5px 14px;
+  padding: 15.5px 30px 15.5px 14px;
   width: 145px;
   font-weight: 400;
   font-size: 13px;
@@ -2994,6 +2994,11 @@ header .account_dropdown .dropdown_menu button {
   letter-spacing: 1px;
   color: #636363;
   appearance: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 .dashboard-main .controls .select-wrapper {
@@ -3002,7 +3007,7 @@ header .account_dropdown .dropdown_menu button {
 
 .dashboard-main .controls .select-wrapper svg {
   position: absolute;
-  right: 20px;
+  right: 15px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
