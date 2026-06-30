@@ -7,6 +7,13 @@ function DashboardHeader() {
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    const getSettingsPath = () => {
+        const role = localStorage.getItem('role')?.toLowerCase();
+        if (role === 'recruiter') return '/employer/settings';
+        if (role === 'admin') return '/admin/settings';
+        return '/candidate/settings';
+    };
+
     const handleLogout = async () => {
         setIsDropdownOpen(false);
         try {
@@ -63,8 +70,8 @@ function DashboardHeader() {
 
                             {isDropdownOpen && (
                                 <div className="dropdown_menu">
-                                    <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)}>
-                                        Dashboard
+                                    <Link to={getSettingsPath()} onClick={() => setIsDropdownOpen(false)}>
+                                        Profile Settings
                                     </Link>
                                     <button onClick={handleLogout}>
                                         Logout

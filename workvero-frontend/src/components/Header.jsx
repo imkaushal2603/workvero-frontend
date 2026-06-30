@@ -52,6 +52,13 @@ function Header() {
         };
     }, [navigate]);
 
+    const getSettingsPath = () => {
+        const role = localStorage.getItem('role')?.toLowerCase();
+        if (role === 'recruiter') return '/employer/settings';
+        if (role === 'admin') return '/admin/settings';
+        return '/candidate/settings';
+    };
+
     const handleLogout = async () => {
         setIsDropdownOpen(false);
         try {
@@ -187,8 +194,8 @@ function Header() {
 
                                     {isDropdownOpen && (
                                         <div className="dropdown_menu">
-                                            <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)}>
-                                                Dashboard
+                                            <Link to={getSettingsPath()} onClick={() => setIsDropdownOpen(false)}>
+                                                Profile Settings
                                             </Link>
                                             <button onClick={handleLogout}>
                                                 Logout
@@ -198,12 +205,7 @@ function Header() {
                                 </div>
                             ) : (
                                 <>
-                                    <button onClick={() => setActiveAuthModal('login')} className="transparent_btn">
-                                        Employer Login
-                                    </button>
-                                    <button onClick={() => setActiveAuthModal('login')} className="bg_btn">
-                                        Candidate Login
-                                    </button>
+                                    <button onClick={() => setActiveAuthModal('login')} className="bg_btn">Login</button>
                                 </>
                             )}
                         </div>

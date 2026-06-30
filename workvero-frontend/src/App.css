@@ -1265,13 +1265,13 @@ header .auth_modal_content form .input_group input {
   font-size: 14px;
   line-height: 100%;
   letter-spacing: 1px;
-  color: #C5C5C5;
+  color: #636363;
   outline: none;
   width: 100%;
 }
 
 header .auth_modal_content form .input_group input::placeholder {
-  color: #C5C5C5;
+  color: #636363;
 }
 
 header .auth_modal_content form .form_actions {
