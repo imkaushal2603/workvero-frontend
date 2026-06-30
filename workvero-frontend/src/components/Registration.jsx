@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 function Registration({ isOpen, onClose, onSwitchToLogin }) {
     const [userType, setUserType] = useState('CANDIDATE');
@@ -40,12 +41,12 @@ function Registration({ isOpen, onClose, onSwitchToLogin }) {
                 role: userType
             });
 
-            localStorage.setItem("token", response.data.accessToken);
-            alert("Account created successfully!");
-            onClose();
+            toast.success("Account created successfully! Please login.");
+            onSwitchToLogin();
 
         } catch (err) {
-            setErrorMessage(err.message);
+            const errorMsg = err.response?.data?.message || err.message || 'Something went wrong';
+            setErrorMessage(errorMsg);
         } finally {
             setIsLoading(false);
         }
