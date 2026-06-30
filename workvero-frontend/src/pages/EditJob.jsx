@@ -19,7 +19,8 @@ function EditJob() {
         deadline: '',
         description: '',
         skills: [],
-        status: 'ACTIVE'
+        status: 'OPEN',
+        sponsorshipType: 'Free'
     });
 
     const [skillInput, setSkillInput] = useState('');
@@ -41,7 +42,8 @@ function EditJob() {
                     deadline: job.deadline ? new Date(job.deadline).toISOString().split('T')[0] : '',
                     description: job.description || '',
                     skills: job.skills ? JSON.parse(job.skills) : [],
-                    status: job.status || 'ACTIVE'
+                    status: job.status || 'OPEN',
+                    sponsorshipType: job.sponsorshipType || 'Free'
                 });
             } catch (err) {
                 toast.error("Failed to load job details. Please try again.");
@@ -68,6 +70,11 @@ function EditJob() {
     }, [navigate]);
 
     const handleChange = (e) => {
+        if (e.target.name === 'sponsorshipType' && e.target.value === 'Sponsored') {
+            toast.error("You cannot select the Sponsored option without an active plan.");
+            return;
+        }
+
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
@@ -205,6 +212,22 @@ function EditJob() {
                                             <option value="OPEN">Open</option>
                                             <option value="PAUSED">Paused</option>
                                             <option value="CLOSED">Closed</option>
+                                        </select>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                    </div>
+                                </div>
+                                <div className='form_field'>
+                                    <label htmlFor='openings'>Sponsorship Type<span>*</span></label>
+                                    <div className='form_select_field'>
+                                        <select
+                                            id="sponsorshipType"
+                                            name="sponsorshipType"
+                                            value={formData.sponsorshipType}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            <option value="Free">Free</option>
+                                            <option value="Sponsored">Sponsored</option>
                                         </select>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
                                     </div>

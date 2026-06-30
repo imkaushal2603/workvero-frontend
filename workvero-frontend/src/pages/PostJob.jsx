@@ -16,6 +16,7 @@ function PostJob() {
         openings: '',
         deadline: '',
         description: '',
+        sponsorshipType: 'Free',
         skills: []
     });
 
@@ -62,10 +63,11 @@ function PostJob() {
         }, 3000);
 
         return () => clearInterval(timer);
-    }, [jobCount]);
+    }, [jobCount, navigate]);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
     };
 
     const handleFileChange = (e) => {
@@ -92,6 +94,12 @@ function PostJob() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (formData.sponsorshipType === 'Sponsored') {
+            toast.error("Redirecting to Premium Billing setup to activate your Sponsored Plan...");
+            setTimeout(() => navigate('/employer/billing'), 2000);
+            return;
+        }
 
         if (jobCount >= 2) {
             toast.error("You've reached the 2 job limit. Upgrade your plan to post more jobs.");
@@ -203,6 +211,24 @@ function PostJob() {
                                 <div className='form_field'>
                                     <label htmlFor='deadline'>Application Deadline</label>
                                     <input id="deadline" name="deadline" type="date" onChange={handleChange} />
+                                </div>
+                            </div>
+                            <div className='form_fielset'>
+                                <div className='form_field'>
+                                    <label htmlFor='openings'>Sponsorship Type<span>*</span></label>
+                                    <div className='form_select_field'>
+                                        <select
+                                            id="sponsorshipType"
+                                            name="sponsorshipType"
+                                            value={formData.sponsorshipType}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            <option value="Free">Free</option>
+                                            <option value="Sponsored">Sponsored</option>
+                                        </select>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                    </div>
                                 </div>
                             </div>
                         </div>

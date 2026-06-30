@@ -9,7 +9,7 @@ function ManageJobs() {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [params, setParams] = useState({ page: 1, limit: 4, q: '', jobType: 'All Jobs' });
+    const [params, setParams] = useState({ page: 1, limit: 4, q: '', jobType: 'All Jobs', status: 'All Status', sponsorshipType: 'All' });
     const [totalPages, setTotalPages] = useState(0);
     const [selectedLocation, setSelectedLocation] = useState('All Locations');
     const [availableLocations, setAvailableLocations] = useState([]);
@@ -36,7 +36,8 @@ function ManageJobs() {
                         limit: params.limit,
                         q: params.q,
                         jobType: params.jobType,
-                        status: params.status
+                        status: params.status,
+                        sponsorshipType: params.sponsorshipType
                     }
                 });
 
@@ -181,6 +182,14 @@ function ManageJobs() {
                         </select>
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
                     </div>
+                    <div className="select-wrapper">
+                        <select value={params.sponsorshipType} onChange={(e) => setParams({ ...params, sponsorshipType: e.target.value, page: 1 })}>
+                            <option value="All">All Types</option>
+                            <option value="Free">Free</option>
+                            <option value="Sponsored">Sponsored</option>
+                        </select>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                    </div>
                 </div>
             </div>
             {loading ? <div>Loading...</div> : error ? <div className="error">{error}</div> : (
@@ -191,6 +200,7 @@ function ManageJobs() {
                         <div className='jobs_table_heading'>Type</div>
                         <div className='jobs_table_heading'>Salary</div>
                         <div className='jobs_table_heading'>Status</div>
+                        <div className='jobs_table_heading'>Sponsorship</div>
                         <div className='jobs_table_heading'>Date Posted</div>
                         <div className='jobs_table_heading'>Action</div>
                     </div>
@@ -206,7 +216,9 @@ function ManageJobs() {
                                 </div>
                                 <div className='jobs_table_title'>
                                     <h6>{job.title}</h6>
-                                    <p>{companyProfile?.companyName || ''}</p>
+                                    {companyProfile?.companyName.length > 0 && (
+                                        <p>{companyProfile?.companyName || ''}</p>
+                                    )}
                                 </div>
                             </div>
                             <div className="jobs_table_row">
@@ -220,6 +232,9 @@ function ManageJobs() {
                             </div>
                             <div className={`jobs_table_row ${job.status ? job.status.toLowerCase() : ''}`}>
                                 <p>{job.status}</p>
+                            </div>
+                            <div className="jobs_table_row">
+                                <p>{job.sponsorshipType}</p>
                             </div>
                             <div className="jobs_table_row">
                                 <p>{job.deadline ? new Date(job.deadline).toLocaleDateString() : 'N/A'}</p>
