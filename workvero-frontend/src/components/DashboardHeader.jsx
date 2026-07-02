@@ -94,7 +94,6 @@ function DashboardHeader() {
     };
 
     if (loading) return <div>Loading...</div>;
-    // if (!profile) return null;
 
     return (
         <div className={`dashboard_header ${isSticky ? 'sticky' : ''}`}>

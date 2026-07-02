@@ -96,6 +96,24 @@ function EditJob() {
         navigate('/employer/manage-jobs');
     };
 
+    const getFileUrl = (path) => {
+        if (!path) return null;
+
+        if (
+            path.startsWith("http://") ||
+            path.startsWith("https://") ||
+            path.startsWith("data:")
+        ) {
+            return path;
+        }
+
+        const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
+
+        return encodeURI(
+            `${baseUrl}/${path.replace(/^\//, "")}`
+        );
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -273,7 +291,7 @@ function EditJob() {
                     <div className='job_preview_company'>
                         <div className='job_preview_logo'>
                             {companyProfile?.logo ? (
-                                <img src={companyProfile.logo} alt={`${companyProfile?.companyName || ""} logo`} />
+                                <img src={getFileUrl(companyProfile.logo)} alt={companyProfile.companyName} />
                             ) : (
                                 <img style={{ border: '1px dashed #6D17E1' }} />
                             )}

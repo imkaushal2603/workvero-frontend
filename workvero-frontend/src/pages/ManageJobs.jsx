@@ -82,20 +82,22 @@ function ManageJobs() {
         };
     }, []);
 
-    const getFileUrl = (filePath) => {
-        if (!filePath) return "";
+    const getFileUrl = (path) => {
+        if (!path) return null;
 
         if (
-            filePath.startsWith("http://") ||
-            filePath.startsWith("https://") ||
-            filePath.startsWith("data:")
+            path.startsWith("http://") ||
+            path.startsWith("https://") ||
+            path.startsWith("data:")
         ) {
-            return filePath;
+            return path;
         }
 
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
 
-        return `${baseUrl}${filePath}`;
+        return encodeURI(
+            `${baseUrl}/${path.replace(/^\//, "")}`
+        );
     };
 
     const displayedJobs = selectedLocation === 'All Locations'
@@ -225,13 +227,7 @@ function ManageJobs() {
                             <div className="jobs_table_row">
                                 <div className='jobs_table_img'>
                                     {companyProfile?.logo ? (
-                                        <img
-                                            src={getFileUrl(companyProfile.logo)}
-                                            alt={companyProfile.companyName || "Company Logo"}
-                                            onError={(e) => {
-                                                e.target.style.display = "none";
-                                            }}
-                                        />
+                                        <img src={getFileUrl(companyProfile.logo)} alt={companyProfile.companyName} />
                                     ) : (
                                         <img />
                                     )}
