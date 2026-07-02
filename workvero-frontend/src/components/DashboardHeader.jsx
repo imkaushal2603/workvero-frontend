@@ -32,18 +32,17 @@ function DashboardHeader() {
                 const userRole = localStorage.getItem('role');
 
                 let endpoint = '';
-                if (userRole === 'employer') {
+                if (userRole === 'recruiter') {
                     endpoint = '/company/me';
                 } else if (userRole === 'candidate') {
                     endpoint = '/candidate/me';
                 } else {
-                    console.warn("No valid user role found in storage.");
-                    return;
+                    endpoint = '/admin/me';
                 }
 
                 const res = await api.get(endpoint);
 
-                if (userRole === 'employer' && res.data.company) {
+                if (userRole === 'recruiter' && res.data.company) {
                     setProfile(res.data.company);
                 } else if (userRole === 'candidate' && res.data.candidate) {
                     setProfile(res.data.candidate);

@@ -3585,11 +3585,15 @@ header .account_dropdown .dropdown_menu button {
 }
 
 .dashboard-main .form_field .kyc-doc-item img {
-  width: 100%;
-  max-width: 200px;
   object-fit: contain;
-  max-height: 200px;
-  border-radius: 10px;
+  border: 1px dashed #6d17e1;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  width: 180px;
+  height: 100px;
+  padding: 15px;
+  display: flex;
 }
 
 .dashboard-main .form_field .kyc-doc-item a {

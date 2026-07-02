@@ -32,7 +32,6 @@ function Header() {
 
             if (token && role) {
                 const normalizedRole = role.toLowerCase();
-                console.log("User role:", normalizedRole);
                 if (normalizedRole === 'recruiter') {
                     navigate('/employer/dashboard');
                 } else if (normalizedRole === 'admin') {

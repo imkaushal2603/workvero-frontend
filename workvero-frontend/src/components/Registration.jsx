@@ -135,16 +135,20 @@ function Registration({ isOpen, onClose, onSwitchToLogin }) {
                     </div>
                     <button type="submit" disabled={isLoading} className="login_submit_btn register_submit_btn">{isLoading ? "Registering..." : "Register"}</button>
                 </form>
-                <div className="auth_divider"><span>Or</span></div>
-                <div className="social_login_btns">
-                    <GoogleAuthButton
-                        role={userType}
-                        onSuccess={() => {
-                            onClose();
-                            window.location.reload();
-                        }}
-                    />
-                </div>
+                {userType === "CANDIDATE" && (
+                    <>
+                        <div className="auth_divider"><span>Or</span></div>
+                        <div className="social_login_btns">
+                            <GoogleAuthButton
+                                role={userType}
+                                onSuccess={() => {
+                                    onClose();
+                                    window.location.reload();
+                                }}
+                            />
+                        </div>
+                    </>
+                )}
                 <p className="switch_auth_text">
                     Have an account? <span onClick={onSwitchToLogin}>Sign In</span>
                 </p>
