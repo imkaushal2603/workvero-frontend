@@ -7,6 +7,24 @@ function CompanyProfile() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    const getFileUrl = (path) => {
+        if (!path) return null;
+
+        if (
+            path.startsWith("http://") ||
+            path.startsWith("https://") ||
+            path.startsWith("data:")
+        ) {
+            return path;
+        }
+
+        const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
+
+        return encodeURI(
+            `${baseUrl}/${path.replace(/^\//, "")}`
+        );
+    };
+
     useEffect(() => {
         const fetchProfile = async () => {
             try {
@@ -23,7 +41,9 @@ function CompanyProfile() {
             }
         };
         fetchProfile();
-    }, []);
+    }, [navigate]);
+
+    const isPdf = (file) => file?.toLowerCase().endsWith(".pdf");
 
     if (loading) return <div>Loading...</div>;
     if (!profile) return null;
@@ -39,7 +59,7 @@ function CompanyProfile() {
                     <div className="profile-picture-container">
                         <div className="profile-picture">
                             {profile.logo ? (
-                                <img src={profile.logo} alt="company logo" />
+                                <img src={getFileUrl(profile.logo)} alt={profile.companyName} />
                             ) : (
                                 <div className="placeholder-logo">
                                     {profile.companyName?.charAt(0).toUpperCase()}
@@ -50,7 +70,7 @@ function CompanyProfile() {
                     </div>
                     <div className="company-info">
                         <h3>{profile.companyName}</h3>
-                        <p>{profile.industry || 'Company'}</p>
+                        <p>{profile.industry}</p>
                     </div>
                 </div>
                 <div className="info-grid">
@@ -126,6 +146,91 @@ function CompanyProfile() {
                 <div className="section">
                     <h4>About Company</h4>
                     <p>{profile.description}</p>
+                </div>
+            )}
+            {(profile.panDocument || profile.incorporationCertificate || profile.govIdProof || profile.gstDocument) && (
+                <div className="section">
+                    <h4>KYC Documents</h4>
+                    <div className="form_fields form_fields_kyc">
+                        <div className='form_fielset'>
+                            {profile.panDocument && (
+                                <div className='form_field'>
+                                    <h5>TAN / PAN</h5>
+                                    <div className="kyc-doc-item">
+                                        {isPdf(profile.panDocument) ? (
+                                            <a
+                                                href={getFileUrl(profile.panDocument)}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                View PDF
+                                            </a>
+                                        ) : (
+                                            <img src={getFileUrl(profile.panDocument)} alt="PAN Document" />
+                                        )}
+                                    </div>
+
+                                </div>
+                            )}
+                            {profile.incorporationCertificate && (
+                                <div className='form_field'>
+                                    <h5>Incorporation Certificate</h5>
+
+                                    <div className="kyc-doc-item">
+                                        {isPdf(profile.incorporationCertificate) ? (
+                                            <a
+                                                href={getFileUrl(profile.incorporationCertificate)}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                View PDF
+                                            </a>
+                                        ) : (
+                                            <img src={getFileUrl(profile.incorporationCertificate)} alt="Incorporation Certificate" />
+                                        )}
+                                    </div>
+
+                                </div>
+                            )}
+                            {profile.govIdProof && (
+                                <div className='form_field'>
+                                    <h5>Government ID Proof</h5>
+
+                                    <div className="kyc-doc-item">
+                                        {isPdf(profile.govIdProof) ? (
+                                            <a
+                                                href={getFileUrl(profile.govIdProof)}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                View PDF
+                                            </a>
+                                        ) : (
+                                            <img src={getFileUrl(profile.govIdProof)} alt="Government ID" />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                            {profile.gstDocument && (
+                                <div className='form_field'>
+                                    <h5>GST Document</h5>
+                                    <div className="kyc-doc-item">
+                                        {isPdf(profile.gstDocument) ? (
+                                            <a
+                                                href={getFileUrl(profile.gstDocument)}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                View PDF
+                                            </a>
+                                        ) : (
+                                            <img src={getFileUrl(profile.gstDocument)} alt="GST Document" />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             )}
             {(profile.facebook || profile.linkedin || profile.instagram || profile.twitter) && (

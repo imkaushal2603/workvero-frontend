@@ -82,6 +82,22 @@ function ManageJobs() {
         };
     }, []);
 
+    const getFileUrl = (filePath) => {
+        if (!filePath) return "";
+
+        if (
+            filePath.startsWith("http://") ||
+            filePath.startsWith("https://") ||
+            filePath.startsWith("data:")
+        ) {
+            return filePath;
+        }
+
+        const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
+
+        return `${baseUrl}${filePath}`;
+    };
+
     const displayedJobs = selectedLocation === 'All Locations'
         ? jobs
         : jobs.filter(job => job.location?.trim() === selectedLocation);
@@ -131,7 +147,7 @@ function ManageJobs() {
                 <div className="controls">
                     <div className="add-job-button">
                         <button onClick={() => navigate('/employer/post-job')}>
-                            Add Job
+                            + Add Job
                         </button>
                     </div>
                     <div className="search-bar">
@@ -209,7 +225,13 @@ function ManageJobs() {
                             <div className="jobs_table_row">
                                 <div className='jobs_table_img'>
                                     {companyProfile?.logo ? (
-                                        <img src={companyProfile.logo} alt="company logo" />
+                                        <img
+                                            src={getFileUrl(companyProfile.logo)}
+                                            alt={companyProfile.companyName || "Company Logo"}
+                                            onError={(e) => {
+                                                e.target.style.display = "none";
+                                            }}
+                                        />
                                     ) : (
                                         <img />
                                     )}

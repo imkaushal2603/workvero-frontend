@@ -48,7 +48,7 @@ const EmployerLayout = ({ children }) => (
       <main className="content-area">
         {children}
         <div className="content-copyright">
-          <p>Copyright © Designed & Developed 2026</p>
+          <p>Copyright © Designed & Developed by Crowdvolley - 2026</p>
         </div>
       </main>
     </div>

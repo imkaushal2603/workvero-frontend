@@ -32,7 +32,7 @@ function Header() {
 
             if (token && role) {
                 const normalizedRole = role.toLowerCase();
-
+                console.log("User role:", normalizedRole);
                 if (normalizedRole === 'recruiter') {
                     navigate('/employer/dashboard');
                 } else if (normalizedRole === 'admin') {
@@ -51,13 +51,6 @@ function Header() {
             window.removeEventListener('authChange', handleAuthChange);
         };
     }, [navigate]);
-
-    const getSettingsPath = () => {
-        const role = localStorage.getItem('role')?.toLowerCase();
-        if (role === 'recruiter') return '/employer/settings';
-        if (role === 'admin') return '/admin/settings';
-        return '/candidate/settings';
-    };
 
     const handleLogout = async () => {
         setIsDropdownOpen(false);
@@ -194,9 +187,6 @@ function Header() {
 
                                     {isDropdownOpen && (
                                         <div className="dropdown_menu">
-                                            <Link to={getSettingsPath()} onClick={() => setIsDropdownOpen(false)}>
-                                                Profile Settings
-                                            </Link>
                                             <button onClick={handleLogout}>
                                                 Logout
                                             </button>

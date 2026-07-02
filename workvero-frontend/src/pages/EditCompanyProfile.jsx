@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast';
@@ -7,6 +7,20 @@ function EditCompanyProfile() {
     const navigate = useNavigate();
     const [isNew, setIsNew] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [fileObjects, setFileObjects] = useState({
+        logo: null,
+        panDocument: null,
+        incorporationCertificate: null,
+        govIdProof: null,
+        gstDocument: null
+    });
+
+    const logoInputRef = useRef(null);
+    const panInputRef = useRef(null);
+    const incorporationInputRef = useRef(null);
+    const govIdInputRef = useRef(null);
+    const gstInputRef = useRef(null);
+
     const [formData, setFormData] = useState({
         companyName: '',
         website: '',
@@ -21,7 +35,11 @@ function EditCompanyProfile() {
         facebook: '',
         twitter: '',
         linkedin: '',
-        instagram: ''
+        instagram: '',
+        panDocument: '',
+        incorporationCertificate: '',
+        govIdProof: '',
+        gstDocument: ''
     });
 
     useEffect(() => {
@@ -29,21 +47,26 @@ function EditCompanyProfile() {
             try {
                 const res = await api.get('/company/me');
                 if (res.data.company) {
+                    const co = res.data.company;
                     setFormData({
-                        companyName: res.data.company.companyName || '',
-                        website: res.data.company.website || '',
-                        description: res.data.company.description || '',
-                        logo: res.data.company.logo || '',
-                        email: res.data.company.email || '',
-                        phone: res.data.company.phone || '',
-                        industry: res.data.company.industry || '',
-                        companySize: res.data.company.companySize || '',
-                        city: res.data.company.city || '',
-                        address: res.data.company.address || '',
-                        facebook: res.data.company.facebook || '',
-                        twitter: res.data.company.twitter || '',
-                        linkedin: res.data.company.linkedin || '',
-                        instagram: res.data.company.instagram || ''
+                        companyName: co.companyName || '',
+                        website: co.website || '',
+                        description: co.description || '',
+                        logo: co.logo || '',
+                        email: co.email || '',
+                        phone: co.phone || '',
+                        industry: co.industry || '',
+                        companySize: co.companySize || '',
+                        city: co.city || '',
+                        address: co.address || '',
+                        facebook: co.facebook || '',
+                        twitter: co.twitter || '',
+                        linkedin: co.linkedin || '',
+                        instagram: co.instagram || '',
+                        panDocument: co.panDocument || '',
+                        incorporationCertificate: co.incorporationCertificate || '',
+                        govIdProof: co.govIdProof || '',
+                        gstDocument: co.gstDocument || ''
                     });
                 } else {
                     setIsNew(true);
@@ -59,14 +82,92 @@ function EditCompanyProfile() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleDocUpload = (field, ref) => (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 1024 * 1024) {
+            toast.error('File size exceeds the 1MB limit.');
+            if (ref?.current) ref.current.value = '';
+            return;
+        }
+
+        const isPdf = file.type === 'application/pdf';
+        const isImage = file.type.startsWith('image/');
+
+        if (!isPdf && !isImage) {
+            toast.error('Only PDF or image files are allowed.');
+            e.target.value = '';
+            return;
+        }
+
+        setFileObjects(prev => ({ ...prev, [field]: file }));
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setFormData(prev => ({ ...prev, [field]: reader.result }));
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleRemoveFile = (field, ref) => {
+        setFormData(prev => ({ ...prev, [field]: '' }));
+        setFileObjects(prev => ({ ...prev, [field]: null }));
+        if (ref?.current) {
+            ref.current.value = '';
+        }
+    };
+
+    const API_BASE = import.meta.env.VITE_API_URL.replace('/api', '');
+
+    const getFileUrl = (file) => {
+        if (!file) return '';
+        if (file.startsWith('data:')) return file;
+        if (file.startsWith('http')) return file;
+
+        return `${API_BASE}${file}`;
+    };
+
+    const isPdf = (file) => {
+        if (!file) return false;
+        if (file.startsWith('data:application/pdf')) return true;
+
+        return file.toLowerCase().endsWith('.pdf');
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
+            const data = new FormData();
+            const fileFields = ['logo', 'panDocument', 'incorporationCertificate', 'govIdProof', 'gstDocument'];
+
+            Object.keys(formData).forEach((key) => {
+                if (!fileFields.includes(key)) {
+                    data.append(key, formData[key]);
+                } else {
+                    if (!fileObjects[key] && formData[key]) {
+                        data.append(key, formData[key]);
+                    } else if (!fileObjects[key] && !formData[key]) {
+                        data.append(key, '');
+                    }
+                }
+            });
+
+            Object.keys(fileObjects).forEach((key) => {
+                if (fileObjects[key]) {
+                    data.append(key, fileObjects[key]);
+                }
+            });
+
+            const config = {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            };
+
             if (isNew) {
-                await api.post('/company', formData);
+                await api.post('/company', data, config);
             } else {
-                await api.put('/company', formData);
+                await api.put('/company', data, config);
             }
             toast.success('Company profile saved successfully!');
             navigate('/employer/company-profile');
@@ -90,7 +191,7 @@ function EditCompanyProfile() {
                                 onClick={() => document.getElementById('logoUpload').click()}
                             >
                                 {formData.logo ? (
-                                    <img src={formData.logo} alt="logo preview" />
+                                    <img src={getFileUrl(formData.logo)} alt="Company Logo" />
                                 ) : (
                                     <>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -100,20 +201,12 @@ function EditCompanyProfile() {
                                     </>
                                 )}
                                 <input
+                                    ref={logoInputRef}
                                     id="logoUpload"
                                     type="file"
                                     accept=".jpg,.png"
                                     style={{ display: 'none' }}
-                                    onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                            const reader = new FileReader();
-                                            reader.onloadend = () => {
-                                                setFormData({ ...formData, logo: reader.result });
-                                            };
-                                            reader.readAsDataURL(file);
-                                        }
-                                    }}
+                                    onChange={handleDocUpload('logo', logoInputRef)}
                                 />
                             </div>
                             <div className="logo_upload_info">
@@ -121,10 +214,7 @@ function EditCompanyProfile() {
                                     <button
                                         type="button"
                                         className="logo_delete_btn"
-                                        onClick={() => {
-                                            setFormData({ ...formData, logo: '' });
-                                            document.getElementById('logoUpload').value = '';
-                                        }}
+                                        onClick={() => handleRemoveFile('logo', logoInputRef)}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                                             <rect width="48" height="48" rx="12" fill="#E2EAFF" />
@@ -158,7 +248,7 @@ function EditCompanyProfile() {
                             </div>
                             <div className="form_fielset">
                                 <div className="form_field">
-                                    <label htmlFor="phone">Industry<span>*</span></label>
+                                    <label htmlFor="industry">Industry<span>*</span></label>
                                     <div className='form_select_field'>
                                         <select id="industry" name="industry" value={formData.industry} onChange={handleChange}>
                                             <option value="">Select Industry</option>
@@ -187,7 +277,7 @@ function EditCompanyProfile() {
                                     </div>
                                 </div>
                                 <div className="form_field">
-                                    <label htmlFor="website">Company Size<span>*</span></label>
+                                    <label htmlFor="companySize">Company Size<span>*</span></label>
                                     <div className='form_select_field'>
                                         <select id="companySize" name="companySize" value={formData.companySize} onChange={handleChange}>
                                             <option value="">Select Company Size</option>
@@ -203,7 +293,7 @@ function EditCompanyProfile() {
                             </div>
                             <div className="form_fielset">
                                 <div className="form_field">
-                                    <label htmlFor="phone">City<span>*</span></label>
+                                    <label htmlFor="city">City<span>*</span></label>
                                     <input id="city" name="city" value={formData.city} onChange={handleChange} placeholder="Enter City" required />
                                 </div>
                                 <div className="form_field">
@@ -215,6 +305,154 @@ function EditCompanyProfile() {
                                 <div className="form_field">
                                     <label htmlFor="description">About Company</label>
                                     <textarea id="description" name="description" value={formData.description} onChange={handleChange} placeholder="Enter Company Description" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='form_card'>
+                        <h3>KYC Documents</h3>
+                        <div className='form_fields form_fields_kyc'>
+                            <div className='form_fielset'>
+                                <div className='form_field'>
+                                    <label htmlFor="panDocument">TAN OR PAN<span>*</span></label>
+                                    <div className='doc_upload_box'>
+                                        {formData.panDocument ? (
+                                            <div className='doc_preview'>
+                                                {isPdf(formData.panDocument) ? (
+                                                    <a
+                                                        href={getFileUrl(formData.panDocument)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="pdf_link"
+                                                    >
+                                                        <span>View PDF</span>
+                                                    </a>
+                                                ) : (
+                                                    <img src={getFileUrl(formData.panDocument)} alt="PAN preview" />
+                                                )}
+                                                <button type="button" onClick={() => handleRemoveFile('panDocument', panInputRef)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#E2EAFF"></rect><path d="M31.9999 33.3333C31.9999 34.3942 31.5785 35.4116 30.8283 36.1618C30.0782 36.9119 29.0608 37.3333 27.9999 37.3333H18.6666C17.6057 37.3333 16.5883 36.9119 15.8382 36.1618C15.088 35.4116 14.6666 34.3942 14.6666 33.3333V17.3333H13.3333V13.3333H19.3333L20.6666 12H25.9999L27.3333 13.3333H33.3333V17.3333H31.9999V33.3333ZM15.9999 17.3333V33.3333C15.9999 34.0406 16.2809 34.7189 16.781 35.219C17.2811 35.719 17.9593 36 18.6666 36H27.9999C28.7072 36 29.3854 35.719 29.8855 35.219C30.3856 34.7189 30.6666 34.0406 30.6666 33.3333V17.3333H15.9999ZM31.9999 16V14.6667H26.6666L25.3333 13.3333H21.3333L19.9999 14.6667H14.6666V16H31.9999ZM18.6666 20H19.9999V33.3333H18.6666V20ZM26.6666 20H27.9999V33.3333H26.6666V20Z" fill="#6D17E1"></path></svg>
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label htmlFor="panDocumentUpload" className='doc_upload_label'>
+                                                + Upload PAN/TAN (PDF or Image)
+                                            </label>
+                                        )}
+                                        <input
+                                            ref={panInputRef}
+                                            id="panDocumentUpload"
+                                            type="file"
+                                            accept=".pdf,image/*"
+                                            style={{ display: 'none' }}
+                                            onChange={handleDocUpload('panDocument', panInputRef)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='form_field'>
+                                    <label htmlFor="incorporationCertificate">Incorporation Certificate<span>*</span></label>
+                                    <div className='doc_upload_box'>
+                                        {formData.incorporationCertificate ? (
+                                            <div className='doc_preview'>
+                                                {isPdf(formData.incorporationCertificate) ? (
+                                                    <a
+                                                        href={getFileUrl(formData.incorporationCertificate)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        <span>View PDF</span>
+                                                    </a>
+                                                ) : (
+                                                    <img src={getFileUrl(formData.incorporationCertificate)} alt="Certificate preview" />
+                                                )}
+                                                <button type="button" onClick={() => handleRemoveFile('incorporationCertificate', incorporationInputRef)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#E2EAFF"></rect><path d="M31.9999 33.3333C31.9999 34.3942 31.5785 35.4116 30.8283 36.1618C30.0782 36.9119 29.0608 37.3333 27.9999 37.3333H18.6666C17.6057 37.3333 16.5883 36.9119 15.8382 36.1618C15.088 35.4116 14.6666 34.3942 14.6666 33.3333V17.3333H13.3333V13.3333H19.3333L20.6666 12H25.9999L27.3333 13.3333H33.3333V17.3333H31.9999V33.3333ZM15.9999 17.3333V33.3333C15.9999 34.0406 16.2809 34.7189 16.781 35.219C17.2811 35.719 17.9593 36 18.6666 36H27.9999C28.7072 36 29.3854 35.719 29.8855 35.219C30.3856 34.7189 30.6666 34.0406 30.6666 33.3333V17.3333H15.9999ZM31.9999 16V14.6667H26.6666L25.3333 13.3333H21.3333L19.9999 14.6667H14.6666V16H31.9999ZM18.6666 20H19.9999V33.3333H18.6666V20ZM26.6666 20H27.9999V33.3333H26.6666V20Z" fill="#6D17E1"></path></svg>
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label htmlFor="incorporationUpload" className='doc_upload_label'>
+                                                + Upload Certificate (PDF or Image)
+                                            </label>
+                                        )}
+                                        <input
+                                            ref={incorporationInputRef}
+                                            id="incorporationUpload"
+                                            type="file"
+                                            accept=".pdf,image/*"
+                                            style={{ display: 'none' }}
+                                            onChange={handleDocUpload('incorporationCertificate', incorporationInputRef)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='form_field'>
+                                    <label htmlFor="govIdProof">Government ID Proof<span>*</span></label>
+                                    <div className='doc_upload_box'>
+                                        {formData.govIdProof ? (
+                                            <div className='doc_preview'>
+                                                {isPdf(formData.govIdProof) ? (
+                                                    <a
+                                                        href={getFileUrl(formData.govIdProof)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        View PDF
+                                                    </a>
+                                                ) : (
+                                                    <img src={getFileUrl(formData.govIdProof)} alt="ID preview" />
+                                                )}
+                                                <button type="button" onClick={() => handleRemoveFile('govIdProof', govIdInputRef)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#E2EAFF"></rect><path d="M31.9999 33.3333C31.9999 34.3942 31.5785 35.4116 30.8283 36.1618C30.0782 36.9119 29.0608 37.3333 27.9999 37.3333H18.6666C17.6057 37.3333 16.5883 36.9119 15.8382 36.1618C15.088 35.4116 14.6666 34.3942 14.6666 33.3333V17.3333H13.3333V13.3333H19.3333L20.6666 12H25.9999L27.3333 13.3333H33.3333V17.3333H31.9999V33.3333ZM15.9999 17.3333V33.3333C15.9999 34.0406 16.2809 34.7189 16.781 35.219C17.2811 35.719 17.9593 36 18.6666 36H27.9999C28.7072 36 29.3854 35.719 29.8855 35.219C30.3856 34.7189 30.6666 34.0406 30.6666 33.3333V17.3333H15.9999ZM31.9999 16V14.6667H26.6666L25.3333 13.3333H21.3333L19.9999 14.6667H14.6666V16H31.9999ZM18.6666 20H19.9999V33.3333H18.6666V20ZM26.6666 20H27.9999V33.3333H26.6666V20Z" fill="#6D17E1"></path></svg>
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label htmlFor="govIdUpload" className='doc_upload_label'>
+                                                + Upload ID Proof (PDF or Image)
+                                            </label>
+                                        )}
+                                        <input
+                                            ref={govIdInputRef}
+                                            id="govIdUpload"
+                                            type="file"
+                                            accept=".pdf,image/*"
+                                            style={{ display: 'none' }}
+                                            onChange={handleDocUpload('govIdProof', govIdInputRef)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='form_field'>
+                                    <label htmlFor="gstDocument">GST</label>
+                                    <div className='doc_upload_box'>
+                                        {formData.gstDocument ? (
+                                            <div className='doc_preview'>
+                                                {isPdf(formData.gstDocument) ? (
+                                                    <a
+                                                        href={getFileUrl(formData.gstDocument)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        View PDF
+                                                    </a>
+                                                ) : (
+                                                    <img src={getFileUrl(formData.gstDocument)} alt="GST preview" />
+                                                )}
+                                                <button type="button" onClick={() => handleRemoveFile('gstDocument', gstInputRef)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="#E2EAFF"></rect><path d="M31.9999 33.3333C31.9999 34.3942 31.5785 35.4116 30.8283 36.1618C30.0782 36.9119 29.0608 37.3333 27.9999 37.3333H18.6666C17.6057 37.3333 16.5883 36.9119 15.8382 36.1618C15.088 35.4116 14.6666 34.3942 14.6666 33.3333V17.3333H13.3333V13.3333H19.3333L20.6666 12H25.9999L27.3333 13.3333H33.3333V17.3333H31.9999V33.3333ZM15.9999 17.3333V33.3333C15.9999 34.0406 16.2809 34.7189 16.781 35.219C17.2811 35.719 17.9593 36 18.6666 36H27.9999C28.7072 36 29.3854 35.719 29.8855 35.219C30.3856 34.7189 30.6666 34.0406 30.6666 33.3333V17.3333H15.9999ZM31.9999 16V14.6667H26.6666L25.3333 13.3333H21.3333L19.9999 14.6667H14.6666V16H31.9999ZM18.6666 20H19.9999V33.3333H18.6666V20ZM26.6666 20H27.9999V33.3333H26.6666V20Z" fill="#6D17E1"></path></svg>
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label htmlFor="gstUpload" className='doc_upload_label'>
+                                                + Upload GST (PDF or Image)
+                                            </label>
+                                        )}
+                                        <input
+                                            ref={gstInputRef}
+                                            id="gstUpload"
+                                            type="file"
+                                            accept=".pdf,image/*"
+                                            style={{ display: 'none' }}
+                                            onChange={handleDocUpload('gstDocument', gstInputRef)}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
