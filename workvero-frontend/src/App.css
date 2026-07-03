@@ -3339,7 +3339,7 @@ header .account_dropdown .dropdown_menu button {
 }
 
 .dashboard-main .content-area .section:last-of-type {
-  margin: 0;
+  margin: 35px 0 0;
 }
 
 .dashboard-main .content-area .section h4 {
