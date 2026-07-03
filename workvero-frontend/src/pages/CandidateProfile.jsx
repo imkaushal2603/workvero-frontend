@@ -29,7 +29,8 @@ function CandidateProfile() {
         const fetchProfile = async () => {
             try {
                 const res = await api.get('/candidate/me');
-                if (!res.data.profile) {
+                const hasCompletedProfile = res.data.profile?.firstName && res.data.profile?.lastName && res.data.profile?.phone
+                if (!hasCompletedProfile) {
                     navigate('/candidate/candidate-profile/edit');
                 } else {
                     setProfile(res.data.profile);
