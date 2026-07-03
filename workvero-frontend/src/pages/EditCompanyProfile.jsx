@@ -395,7 +395,7 @@ function EditCompanyProfile() {
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
-                                                        View PDF
+                                                        <span>View PDF</span>
                                                     </a>
                                                 ) : (
                                                     <img src={getFileUrl(formData.govIdProof)} alt="ID preview" />
@@ -430,7 +430,7 @@ function EditCompanyProfile() {
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
-                                                        View PDF
+                                                        <span>View PDF</span>
                                                     </a>
                                                 ) : (
                                                     <img src={getFileUrl(formData.gstDocument)} alt="GST preview" />

@@ -30,7 +30,6 @@ function DashboardHeader() {
         const fetchProfile = async () => {
             try {
                 const userRole = localStorage.getItem('role');
-
                 let endpoint = '';
                 if (userRole === 'recruiter') {
                     endpoint = '/company/me';
@@ -41,11 +40,10 @@ function DashboardHeader() {
                 }
 
                 const res = await api.get(endpoint);
-
                 if (userRole === 'recruiter' && res.data.company) {
                     setProfile(res.data.company);
-                } else if (userRole === 'candidate' && res.data.candidate) {
-                    setProfile(res.data.candidate);
+                } else if (userRole === 'candidate' && res.data.profile) {
+                    setProfile(res.data.profile);
                 }
             } catch (err) {
                 console.error("Error fetching profile:", err);
@@ -94,6 +92,11 @@ function DashboardHeader() {
     };
 
     if (loading) return <div>Loading...</div>;
+    const profileImgPath = profile?.logo || profile?.photoUrl;
+    const profileImgSrc = getFileUrl(profileImgPath);
+    const profileAltText = profile?.companyName
+        ? profile.companyName
+        : `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim() || 'User Profile';
 
     return (
         <div className={`dashboard_header ${isSticky ? 'sticky' : ''}`}>
@@ -116,8 +119,8 @@ function DashboardHeader() {
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             >
                                 <div className="dashboard_header_profile">
-                                    {profile ? (
-                                        <img src={getFileUrl(profile.logo)} alt={profile.companyName} />
+                                    {profileImgSrc ? (
+                                        <img src={profileImgSrc} alt={profileAltText} />
                                     ) : (
                                         <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none">
                                             <path d="M24.9999 13.3333C23.4678 13.3333 21.9507 13.635 20.5353 14.2213C19.1198 14.8076 17.8337 15.667 16.7503 16.7503C14.5624 18.9383 13.3333 21.9057 13.3333 24.9999C13.3333 28.0941 14.5624 31.0616 16.7503 33.2495C17.8337 34.3328 19.1198 35.1922 20.5353 35.7785C21.9507 36.3648 23.4678 36.6666 24.9999 36.6666C28.0941 36.6666 31.0616 35.4374 33.2495 33.2495C35.4374 31.0616 36.6666 28.0941 36.6666 24.9999C36.6666 23.4678 36.3648 21.9507 35.7785 20.5353C35.1922 19.1198 34.3328 17.8337 33.2495 16.7503C32.1661 15.667 30.88 14.8076 29.4646 14.2213C28.0491 13.635 26.532 13.3333 24.9999 13.3333ZM24.9999 20.7883C26.8823 22.0114 29.0784 22.6638 31.3233 22.6666C32.2333 22.6666 33.1083 22.5616 33.9483 22.3633C34.1933 23.1916 34.3333 24.0783 34.3333 24.9999C34.3333 30.1449 30.1449 34.3333 24.9999 34.3333C21.4999 34.3333 18.4549 32.3966 16.8333 29.5383L18.8749 27.3333V26.1666C18.8749 25.7798 19.0286 25.4089 19.3021 25.1354C19.5755 24.8619 19.9465 24.7083 20.3333 24.7083C20.72 24.7083 21.091 24.8619 21.3644 25.1354C21.6379 25.4089 21.7916 25.7798 21.7916 26.1666V27.3333H24.9999M29.6666 24.7083C29.2798 24.7083 28.9089 24.8619 28.6354 25.1354C28.3619 25.4089 28.2083 25.7798 28.2083 26.1666C28.2083 26.5534 28.3619 26.9243 28.6354 27.1978C28.9089 27.4713 29.2798 27.6249 29.6666 27.6249C30.0534 27.6249 30.4243 27.4713 30.6978 27.1978C30.9713 26.9243 31.1249 26.5534 31.1249 26.1666C31.1249 25.7798 30.9713 25.4089 30.6978 25.1354C30.4243 24.8619 30.0534 24.7083 29.6666 24.7083Z" fill="#0146EE" />
@@ -132,6 +135,9 @@ function DashboardHeader() {
                             {isDropdownOpen && (
                                 <div className="dropdown_menu">
                                     <button onClick={handleLogout}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 17 15" fill="none">
+                                            <path d="M7.5 15C3.35775 15 0 11.6423 0 7.5C0 3.35775 3.35775 9.38841e-07 7.5 9.38841e-07C8.66444 -0.000581937 9.81299 0.27025 10.8545 0.791004C11.896 1.31176 12.8018 2.0681 13.5 3H11.4675C10.6014 2.23632 9.53338 1.73877 8.39154 1.56705C7.24969 1.39533 6.08255 1.55674 5.03017 2.03191C3.97778 2.50708 3.08486 3.27582 2.45855 4.24589C1.83224 5.21596 1.49915 6.34615 1.49925 7.50083C1.49934 8.65552 1.83262 9.78565 2.4591 10.7556C3.08557 11.7256 3.97861 12.4942 5.03108 12.9692C6.08354 13.4442 7.25071 13.6054 8.39253 13.4335C9.53434 13.2616 10.6023 12.7638 11.4683 12H13.5008C12.8025 12.932 11.8966 13.6884 10.8549 14.2092C9.81327 14.7299 8.66457 15.0007 7.5 15ZM12.75 10.5V8.25H6.75V6.75H12.75V4.5L16.5 7.5L12.75 10.5Z" fill="#6D17E1" />
+                                        </svg>
                                         Logout
                                     </button>
                                 </div>

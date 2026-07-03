@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 function CompanyProfile() {
+    const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
 
     const getFileUrl = (path) => {
         if (!path) return null;

@@ -16,6 +16,8 @@ import CompanyProfile from './pages/CompanyProfile'
 import EditCompanyProfile from './pages/EditCompanyProfile'
 import Settings from './pages/Settings'
 import ChangePassword from './pages/ChangePassword'
+import CandidateProfile from './pages/CandidateProfile'
+import EditCandidateProfile from './pages/EditCandidateProfile'
 import { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -53,13 +55,8 @@ function App() {
           <Route path="/candidate/*" element={
             <CandidateLayout>
               <Routes>
-                {/* <Route path="company-profile" element={<CompanyProfile />} />
-                <Route path="company-profile/edit" element={<EditCompanyProfile />} />
-                <Route path="post-job" element={<PostJob />} />
-                <Route path="manage-jobs" element={<ManageJobs />} />
-                <Route path="manage-jobs/:id" element={<EditJob />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="settings/change-password" element={<ChangePassword />} /> */}
+                <Route path="candidate-profile" element={<CandidateProfile />} />
+                <Route path="candidate-profile/edit" element={<EditCandidateProfile />} />
               </Routes>
             </CandidateLayout>
           } />

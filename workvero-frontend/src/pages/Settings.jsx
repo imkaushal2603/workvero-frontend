@@ -35,7 +35,14 @@ function Settings() {
     }, []);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        if (name === 'phone') {
+            const sanitizedValue = value.replace(/[^0-9+\s-]/g, '');
+            setFormData({ ...formData, [name]: sanitizedValue });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -67,7 +74,7 @@ function Settings() {
                             </div>
                             <div className="form_field">
                                 <label htmlFor="phone">Phone Number</label>
-                                <input id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter Phone Number" />
+                                <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter Phone Number" />
                             </div>
                         </div>
                         <div className="form_full">
