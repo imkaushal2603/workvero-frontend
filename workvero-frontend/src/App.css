@@ -2505,7 +2505,8 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .content-area .settings h2,
 .dashboard-main .content-area .change_password h2,
 .dashboard-main .content-area .edit_candidate_profile h2,
-.dashboard-main .candidate-profile h2 {
+.dashboard-main .candidate-profile h2,
+.dashboard-main .content-area .my_resumes h2{
   font-size: 38px;
   font-weight: 500;
   line-height: 100%;
@@ -3616,11 +3617,7 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .form_fields_kyc .form_field {
   display: flex;
   flex-direction: column;
-  width: calc(25% - 15px);
-}
-
-.dashboard-main .form_card .form_fields_kyc {
-  flex-direction: unset;
+  width: calc((100% - 40px) / 3);
 }
 
 .dashboard-main .edit_candidate_section {
@@ -3720,6 +3717,61 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .status-tabs button.status-tab.active {
   background: #0146EE;
   color: #FFFFFF;
+}
+
+.dashboard-main .jobs_table_row .status-badge.pending {
+  background: #E2EAFF;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  color: #6D17E1;
+  padding: 3px 24px;
+  border-radius: 50px;
+  display: inline-block;
+}
+
+.dashboard-main .image_modal_overlay {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inset: 0;
+  z-index: 10;
+  backdrop-filter: blur(5px);
+  background: #0000009e;
+}
+
+.dashboard-main .image_modal_overlay .image_modal_content {
+  width: 700px;
+  height: 550px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.dashboard-main .image_modal_overlay .image_modal_content img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dashboard-main .image_modal_content .close_modal_btn {
+  right: 35px;
+  top: 35px;
+  position: absolute;
+  border: none;
+  background: transparent;
+  font-size: 35px;
+  line-height: normal;
+  color: #fff;
+  cursor: pointer;
+}
+
+.dashboard-main .edit_candidate_social .form_full {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 @media screen and (max-width: 991px) {

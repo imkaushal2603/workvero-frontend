@@ -6,6 +6,8 @@ function CompanyProfile() {
     const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
+    // State to handle the modal image view
+    const [activeImageUrl, setActiveImageUrl] = useState(null);
 
     const getFileUrl = (path) => {
         if (!path) return null;
@@ -59,7 +61,12 @@ function CompanyProfile() {
                     <div className="profile-picture-container">
                         <div className="profile-picture">
                             {profile.logo ? (
-                                <img src={getFileUrl(profile.logo)} alt={profile.companyName} />
+                                <img 
+                                    src={getFileUrl(profile.logo)} 
+                                    alt={profile.companyName} 
+                                    onClick={() => setActiveImageUrl(getFileUrl(profile.logo))}
+                                    style={{ cursor: 'pointer' }}
+                                />
                             ) : (
                                 <div className="placeholder-logo">
                                     {profile.companyName?.charAt(0).toUpperCase()}
@@ -166,7 +173,12 @@ function CompanyProfile() {
                                                 View PDF
                                             </a>
                                         ) : (
-                                            <img src={getFileUrl(profile.panDocument)} alt="PAN Document" />
+                                            <img 
+                                                src={getFileUrl(profile.panDocument)} 
+                                                alt="PAN Document" 
+                                                onClick={() => setActiveImageUrl(getFileUrl(profile.panDocument))}
+                                                style={{ cursor: 'pointer' }}
+                                            />
                                         )}
                                     </div>
 
@@ -186,7 +198,12 @@ function CompanyProfile() {
                                                 View PDF
                                             </a>
                                         ) : (
-                                            <img src={getFileUrl(profile.incorporationCertificate)} alt="Incorporation Certificate" />
+                                            <img 
+                                                src={getFileUrl(profile.incorporationCertificate)} 
+                                                alt="Incorporation Certificate" 
+                                                onClick={() => setActiveImageUrl(getFileUrl(profile.incorporationCertificate))}
+                                                style={{ cursor: 'pointer' }}
+                                            />
                                         )}
                                     </div>
 
@@ -206,7 +223,12 @@ function CompanyProfile() {
                                                 View PDF
                                             </a>
                                         ) : (
-                                            <img src={getFileUrl(profile.govIdProof)} alt="Government ID" />
+                                            <img 
+                                                src={getFileUrl(profile.govIdProof)} 
+                                                alt="Government ID" 
+                                                onClick={() => setActiveImageUrl(getFileUrl(profile.govIdProof))}
+                                                style={{ cursor: 'pointer' }}
+                                            />
                                         )}
                                     </div>
                                 </div>
@@ -215,17 +237,7 @@ function CompanyProfile() {
                                 <div className='form_field'>
                                     <h5>GST Document</h5>
                                     <div className="kyc-doc-item">
-                                        {isPdf(profile.gstDocument) ? (
-                                            <a
-                                                href={getFileUrl(profile.gstDocument)}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                            >
-                                                View PDF
-                                            </a>
-                                        ) : (
-                                            <img src={getFileUrl(profile.gstDocument)} alt="GST Document" />
-                                        )}
+                                        <p>{profile.gstDocument}</p>
                                     </div>
                                 </div>
                             )}
@@ -240,7 +252,7 @@ function CompanyProfile() {
                         {profile.facebook && (
                             <div className="social-item">
                                 <div className="logo-container">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M43.8 31C43.8 23.93 38.07 18.2 31 18.2C23.93 18.2 18.2 23.93 18.2 31C18.2 37 22.335 42.04 27.91 43.425V34.91H25.27V31H27.91V29.315C27.91 24.96 29.88 22.94 34.16 22.94C34.97 22.94 36.37 23.1 36.945 23.26V26.8C36.645 26.77 36.12 26.75 35.465 26.75C33.365 26.75 32.555 27.545 32.555 29.61V31H36.735L36.015 34.91H32.55V43.705C38.89 42.94 43.8 37.545 43.8 31Z" fill="#6D17E1" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M43.8 31C43.8 23.93 38.07 18.2 31 18.2C23.93 18.2 18.2 23.93 18.2 31C18.2 37 22.335 42.04 27.91 43.425V34.91H25.27V31H27.91V29.315C27.91 24.96 29.88 22.94 34.16 22.94C34.97 22.94 36.37 23.1 36.945 23.26V26.8 36.645 26.77 36.12 26.75 35.465 26.75C33.365 26.75 32.555 27.545 32.555 29.61V31H36.735L36.015 34.91H32.55V43.705C38.89 42.94 43.8 37.545 43.8 31Z" fill="#6D17E1" /></svg>
                                 </div>
                                 <div className="info-text">
                                     <h5>Facebook</h5>
@@ -281,6 +293,14 @@ function CompanyProfile() {
                                 </div>
                             </div>
                         )}
+                    </div>
+                </div>
+            )}
+            {activeImageUrl && (
+                <div className="image_modal_overlay" onClick={() => setActiveImageUrl(null)}>
+                    <div className="image_modal_content" onClick={(e) => e.stopPropagation()}>
+                        <button className="close_modal_btn" onClick={() => setActiveImageUrl(null)}>×</button>
+                        <img src={activeImageUrl} alt="Preview" />
                     </div>
                 </div>
             )}

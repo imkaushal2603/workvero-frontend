@@ -26,7 +26,8 @@ function EditCandidateProfile() {
         city: '',
         state: '',
         zipCode: '',
-        linkedin: ''
+        linkedin: '',
+        github: ''
     });
 
     useEffect(() => {
@@ -53,7 +54,8 @@ function EditCandidateProfile() {
                         city: c.city || '',
                         state: c.state || '',
                         zipCode: c.zipCode || '',
-                        linkedin: c.linkedin || ''
+                        linkedin: c.linkedin || '',
+                        github: c.github || ''
                     }));
                 }
             } catch (err) {
@@ -167,7 +169,7 @@ function EditCandidateProfile() {
                 state: formData.state,
                 zipCode: formData.zipCode
             });
-            
+
             toast.success('Address saved successfully!');
         } catch (err) {
             toast.error(err.response?.data?.message || 'Failed to save. Please try again.');
@@ -180,8 +182,8 @@ function EditCandidateProfile() {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await api.patch('/candidate/me/social', { linkedin: formData.linkedin });
-            toast.success('LinkedIn saved successfully!');
+            await api.patch('/candidate/me/social', { linkedin: formData.linkedin, github: formData.github });
+            toast.success('Social links saved successfully!');
         } catch (err) {
             toast.error(err.response?.data?.message || 'Failed to save. Please try again.');
         } finally {
@@ -382,6 +384,10 @@ function EditCandidateProfile() {
                                     <div className="form_field">
                                         <label htmlFor="linkedin">LinkedIn</label>
                                         <input id="linkedin" name="linkedin" value={formData.linkedin} onChange={handleChange} placeholder="https://www.linkedin.com/" />
+                                    </div>
+                                    <div className="form_field">
+                                        <label htmlFor="github">GitHub</label>
+                                        <input id="github" name="github" value={formData.github} onChange={handleChange} placeholder="https://www.github.com/" />
                                     </div>
                                 </div>
                                 <button type="submit" className="submit-btn" disabled={isSubmitting}>

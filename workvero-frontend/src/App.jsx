@@ -18,6 +18,7 @@ import Settings from './pages/Settings';
 import ChangePassword from './pages/ChangePassword';
 import CandidateProfile from './pages/CandidateProfile';
 import EditCandidateProfile from './pages/EditCandidateProfile';
+import MyResumes from './pages/MyResumes';
 import CandidateJobs from './pages/CandidateJobs';
 import CandidateJobDetail from './pages/CandidateJobDetail';
 import AppliedJobs from './pages/AppliedJobs';
@@ -61,6 +62,7 @@ function App() {
               <Routes>
                 <Route path="candidate-profile" element={<CandidateProfile />} />
                 <Route path="candidate-profile/edit" element={<EditCandidateProfile />} />
+                <Route path="my-resumes" element={<MyResumes />} />
                 <Route path="jobs" element={<CandidateJobs />} />
                 <Route path="/jobs/:id" element={<CandidateJobDetail />} />
                 <Route path="/applied-jobs" element={<AppliedJobs />} />

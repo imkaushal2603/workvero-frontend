@@ -167,7 +167,7 @@ function CandidateProfile() {
                     <p>{profile.description}</p>
                 </div>
             )}
-            {(profile.facebook || profile.linkedin || profile.instagram || profile.twitter) && (
+            {(profile.linkedin || profile.instagram) && (
                 <div className="section">
                     <h4>Social Network</h4>
                     <div className="social-grid">
@@ -179,6 +179,17 @@ function CandidateProfile() {
                                 <div className="info-text">
                                     <h5>LinkedIn</h5>
                                     <p><a href={profile.linkedin} target="_blank" rel="noopener noreferrer">linkedin.com</a></p>
+                                </div>
+                            </div>
+                        )}
+                        {profile.github && (
+                            <div className="social-item">
+                                <div className="logo-container">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><g clipPath="url(#clip0_747_947)"><path d="M31 15.6399C22.5168 15.6399 15.64 22.5167 15.64 30.9999C15.64 39.4831 22.5168 46.3599 31 46.3599C39.4832 46.3599 46.36 39.4831 46.36 30.9999C46.36 22.5167 39.4832 15.6399 31 15.6399ZM27.24 37.3663H24.1296V27.3567H27.24V37.3663ZM25.6656 26.1279C24.6832 26.1279 24.048 25.4319 24.048 24.5711C24.048 23.6927 24.7024 23.0175 25.7056 23.0175C26.7088 23.0175 27.3232 23.6927 27.3424 24.5711C27.3424 25.4319 26.7088 26.1279 25.6656 26.1279ZM38.6 37.3663H35.4896V31.8191C35.4896 30.5279 35.0384 29.6511 33.9136 29.6511C33.0544 29.6511 32.544 30.2447 32.3184 30.8159C32.2352 31.0191 32.2144 31.3071 32.2144 31.5935V37.3647H29.1024V30.5487C29.1024 29.2991 29.0624 28.2543 29.0208 27.3551H31.7232L31.8656 28.7455H31.928C32.3376 28.0927 33.3408 27.1295 35.0192 27.1295C37.0656 27.1295 38.6 28.5007 38.6 31.4479V37.3663Z" fill="#6D17E1" /></g><defs><clipPath id="clip0_747_947"><rect width="32" height="32" fill="white" transform="translate(15 15)" /></clipPath></defs></svg>
+                                </div>
+                                <div className="info-text">
+                                    <h5>GitHub</h5>
+                                    <p><a href={profile.github} target="_blank" rel="noopener noreferrer">github.com</a></p>
                                 </div>
                             </div>
                         )}
