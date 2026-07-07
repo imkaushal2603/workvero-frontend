@@ -1878,11 +1878,6 @@ header .auth_modal_overlay.register_account h2 {
   fill: #fff;
 }
 
-.job_listings .job_listings_content .pagination_wrapper button[disabled] {
-  pointer-events: none;
-  opacity: 0.3;
-}
-
 .job_listings .job_listings_search .search_input_group svg.select_svg {
   right: 25px;
   left: auto;
@@ -3181,11 +3176,6 @@ header .account_dropdown .dropdown_menu button {
   color: #fff;
 }
 
-.dashboard-main .pagination button[disabled] {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
 .dashboard-main .jobs_table .no-jobs {
   padding: 50px 35px 50px;
   text-align: center;
@@ -3222,6 +3212,7 @@ header .account_dropdown .dropdown_menu button {
   justify-content: end;
   position: relative;
   padding: 25px 0 0;
+  gap: 10px;
 }
 
 .dashboard-main .profile-picture-container .profile-picture {
@@ -3496,7 +3487,10 @@ header .account_dropdown .dropdown_menu button {
 }
 
 .dashboard-main .form_fields .form_full button[disabled],
-.dashboard-main form .form_buttons .submit-btn[disabled] {
+.dashboard-main form .form_buttons .submit-btn[disabled],
+.job_listings .job_listings_content .pagination_wrapper button[disabled],
+.dashboard-main .pagination button[disabled],
+.dashboard-main .profile-picture-container button[disabled] {
   opacity: 0.5;
   pointer-events: none;
 }
@@ -3657,6 +3651,75 @@ header .account_dropdown .dropdown_menu button {
   border: none;
   outline: none;
   padding: 0;
+}
+
+.dashboard-main .jobs_candidate_view .jobs_table_heading:first-child,
+.dashboard-main .jobs_candidate_view .jobs_table_row:first-child {
+  width: 22%;
+}
+
+.dashboard-main .jobs_candidate_view .jobs_table_heading,
+.dashboard-main .jobs_candidate_view .jobs_table_row {
+  width: 13%;
+}
+
+.dashboard-main .info-item .info-text p.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dashboard-main .info-text p span.skill-tag {
+  text-transform: capitalize;
+}
+
+.dashboard-main .jobs_table_row .unsaved path {
+  fill: #fff;
+}
+
+.dashboard-main .profile-picture-container .back-btn {
+  background: transparent;
+  border: 1px solid #6D17E1;
+  color: #6D17E1;
+  padding: 16px 37px;
+}
+
+.dashboard-main .jobs_candidate_view .status-badge.saved {
+  background: #F0E4FF;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  text-align: center;
+  color: #6D17E1;
+  border-radius: 50px;
+  padding: 9px 19px;
+}
+
+.dashboard-main .status-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  gap: 15px;
+}
+
+.dashboard-main .status-tabs button.status-tab {
+  background: #FFFFFF;
+  box-shadow: 0px 0px 8px 0px #8492A657;
+  border-radius: 50px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  color: #696969;
+  padding: 6px 25px;
+  cursor: pointer;
+}
+
+.dashboard-main .status-tabs button.status-tab.active {
+  background: #0146EE;
+  color: #FFFFFF;
 }
 
 @media screen and (max-width: 991px) {

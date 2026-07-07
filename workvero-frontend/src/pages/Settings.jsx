@@ -13,6 +13,9 @@ function Settings() {
         email: ''
     });
 
+    const userRole = localStorage.getItem('role');
+    const rolePrefix = userRole === 'candidate' ? 'candidate' : 'employer';
+
     useEffect(() => {
         const fetchProfile = async () => {
             try {
@@ -26,7 +29,11 @@ function Settings() {
                 }
             } catch (err) {
                 toast.error('Failed to load profile');
-                navigate('/employer/company-profile/edit');
+                navigate(
+                    rolePrefix === 'candidate'
+                        ? '/candidate/candidate-profile/edit'
+                        : '/employer/company-profile/edit'
+                );
             } finally {
                 setLoading(false);
             }
@@ -84,7 +91,7 @@ function Settings() {
                             </div>
                         </div>
                         <div className="form_change_password">
-                            <button type="button" onClick={() => navigate('/employer/settings/change-password')}>Change Password</button>
+                            <button type="button" onClick={() => navigate(`/${rolePrefix}/settings/change-password`)}>Change Password</button>
                         </div>
                     </div>
                 </div>
@@ -92,7 +99,7 @@ function Settings() {
                     <button type="submit" className="submit-btn" disabled={isSubmitting}>
                         {isSubmitting ? 'Saving...' : 'Save Changes'}
                     </button>
-                    <button type="button" className="cancel-btn" onClick={() => navigate('/employer/dashboard')}>
+                    <button type="button" className="cancel-btn" onClick={() => navigate(`/${rolePrefix}/dashboard`)}>
                         Cancel
                     </button>
                 </div>
