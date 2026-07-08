@@ -12,6 +12,7 @@ import CandidateLayout from './layouts/CandidateLayout';
 import PostJob from './pages/PostJob';
 import ManageJobs from './pages/ManageJobs';
 import EditJob from './pages/EditJob';
+import Applicants from './pages/Applicants';
 import CompanyProfile from './pages/CompanyProfile';
 import EditCompanyProfile from './pages/EditCompanyProfile';
 import Settings from './pages/Settings';
@@ -51,6 +52,7 @@ function App() {
                 <Route path="post-job" element={<PostJob />} />
                 <Route path="manage-jobs" element={<ManageJobs />} />
                 <Route path="manage-jobs/:id" element={<EditJob />} />
+                <Route path="applicants" element={<Applicants />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="settings/change-password" element={<ChangePassword />} />
               </Routes>
@@ -63,8 +65,8 @@ function App() {
                 <Route path="candidate-profile" element={<CandidateProfile />} />
                 <Route path="candidate-profile/edit" element={<EditCandidateProfile />} />
                 <Route path="my-resumes" element={<MyResumes />} />
-                <Route path="jobs" element={<CandidateJobs />} />
-                <Route path="/jobs/:id" element={<CandidateJobDetail />} />
+                <Route path="browse-jobs" element={<CandidateJobs />} />
+                <Route path="/browse-jobs/:id" element={<CandidateJobDetail />} />
                 <Route path="/applied-jobs" element={<AppliedJobs />} />
                 <Route path="/saved-jobs" element={<SavedJobs />} />
                 <Route path="settings" element={<Settings />} />

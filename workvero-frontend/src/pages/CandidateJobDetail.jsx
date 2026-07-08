@@ -93,7 +93,7 @@ function CandidateJobDetail() {
                                 </div>
                             )}
                         </div>
-                        <button onClick={() => navigate('/candidate/jobs')} className="back-btn">Back</button>
+                        <button onClick={() => navigate('/candidate/browse-jobs')} className="back-btn">Back</button>
                         <button
                             onClick={handleApply}
                             disabled={isApplied || isApplying}
