@@ -3931,6 +3931,14 @@ header .account_dropdown .dropdown_menu button {
   color: #6D17E1;
 }
 
+.dashboard-main .jobs_table.resumes_tables .jobs_table_row input[type="checkbox"] {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: #6D17E1;
+  cursor: pointer;
+}
+
 @media screen and (max-width: 991px) {
   header {
     padding: 10px 0;
