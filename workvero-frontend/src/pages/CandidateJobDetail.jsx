@@ -11,6 +11,7 @@ function CandidateJobDetail() {
     const [error, setError] = useState(null);
     const [isApplied, setIsApplied] = useState(false);
     const [isApplying, setIsApplying] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
 
     useEffect(() => {
         const fetchJob = async () => {
@@ -30,16 +31,23 @@ function CandidateJobDetail() {
     }, [id]);
 
     useEffect(() => {
-        const fetchAppliedStatus = async () => {
+        const fetchStatus = async () => {
             try {
-                const res = await api.get('/candidate/me/applications');
-                const appliedList = res.data.applications?.applications || [];
+                const [appliedRes, savedRes] = await Promise.all([
+                    api.get('/candidate/me/applications'),
+                    api.get('/candidate/me/saved-jobs')
+                ]);
+
+                const appliedList = appliedRes.data.applications?.applications || [];
+                const savedList = savedRes.data.savedJobs?.savedJobs || [];
+
                 setIsApplied(appliedList.some(item => item.jobId === Number(id)));
+                setIsSaved(savedList.some(item => Number(item.jobId) === Number(id)));
             } catch (err) {
-                console.error('Failed to fetch application status', err);
+                console.error('Failed to fetch application/saved status', err);
             }
         };
-        fetchAppliedStatus();
+        fetchStatus();
     }, [id]);
 
     const getFileUrl = (path) => {
@@ -64,6 +72,22 @@ function CandidateJobDetail() {
         }
     };
 
+    const handleSaveToggle = async () => {
+        try {
+            if (isSaved) {
+                await api.delete(`/candidate/me/saved-jobs/${id}`);
+                setIsSaved(false);
+                toast.success('Removed from saved jobs');
+            } else {
+                await api.post(`/candidate/me/saved-jobs/${id}`);
+                setIsSaved(true);
+                toast.success('Job saved!');
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to update saved jobs');
+        }
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div className="error">{error}</div>;
     if (!job) return null;
@@ -75,137 +99,204 @@ function CandidateJobDetail() {
         skillsList = [];
     }
 
+    const getRelativeTime = (dateStr) => {
+        if (!dateStr) return 'N/A';
+
+        const posted = new Date(dateStr);
+        const now = new Date();
+        const diffMs = now - posted;
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffMinutes < 1) return 'Just now';
+        if (diffMinutes < 60) return `${diffMinutes} min ago`;
+        if (diffHours < 24) return `${diffHours} hr${diffHours > 1 ? 's' : ''} ago`;
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 30) return `${diffDays} days ago`;
+
+        const diffMonths = Math.floor(diffDays / 30);
+        if (diffMonths < 12) return `${diffMonths} month${diffMonths > 1 ? 's' : ''} ago`;
+
+        const diffYears = Math.floor(diffDays / 365);
+        return `${diffYears} year${diffYears > 1 ? 's' : ''} ago`;
+    };
+
     return (
         <div className="job-detail-page">
             <div className="header-row">
-                <h2>Company Profile</h2>
+                <button onClick={() => navigate('/candidate/browse-jobs')} className="back-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 24 24" fill="none">
+                        <path fillRule="evenodd" clipRule="evenodd" d="M11.7071 4.29289C12.0976 4.68342 12.0976 5.31658 11.7071 5.70711L6.41421 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H6.41421L11.7071 18.2929C12.0976 18.6834 12.0976 19.3166 11.7071 19.7071C11.3166 20.0976 10.6834 20.0976 10.2929 19.7071L3.29289 12.7071C3.10536 12.5196 3 12.2652 3 12C3 11.7348 3.10536 11.4804 3.29289 11.2929L10.2929 4.29289C10.6834 3.90237 11.3166 3.90237 11.7071 4.29289Z" fill="#000000" />
+                    </svg>
+                </button>
             </div>
-            <div className="profile-card">
-                <div className="banner-bg"></div>
-                <div className="profile-header">
-                    <div className="profile-picture-container">
-                        <div className="profile-picture">
-                            {job.company?.logo ? (
-                                <img src={getFileUrl(job.company.logo)} alt={job.company?.companyName} />
-                            ) : (
-                                <div className="placeholder-logo">
-                                    {job.company?.companyName?.charAt(0).toUpperCase() || 'C'}
-                                </div>
+            <div className="profile-card job_detailed_info">
+                <div className='job_info'>
+                    <div className="company-info">
+                        {job.title?.length > 0 && (
+                            <h3>{job.title}</h3>
+                        )}
+                        <div className='job_location_time'>
+                            <span>Posted {getRelativeTime(job.createdAt)}</span>
+                            {job.location?.length > 0 && (
+                                <>
+                                    <span>-</span>
+                                    <div className='job_location'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16" fill="none">
+                                            <path fillRule="evenodd" clipRule="evenodd" d="M6.18525 14.2267C7.04783 13.444 7.84615 12.5933 8.5725 11.6827C10.1025 9.7605 11.0332 7.86525 11.0963 6.18C11.1212 5.4951 11.0078 4.81219 10.7629 4.17209C10.518 3.53198 10.1466 2.9478 9.67087 2.45444C9.19515 1.96109 8.62486 1.56868 7.99409 1.30065C7.36331 1.03263 6.68498 0.894491 5.99963 0.894491C5.31427 0.894491 4.63594 1.03263 4.00516 1.30065C3.37439 1.56868 2.8041 1.96109 2.32838 2.45444C1.85265 2.9478 1.48125 3.53198 1.23634 4.17209C0.991443 4.81219 0.878071 5.4951 0.903 6.18C0.96675 7.86525 1.89825 9.7605 3.4275 11.6827C4.15385 12.5933 4.95217 13.444 5.81475 14.2267C5.89775 14.3018 5.9595 14.3562 6 14.3903L6.18525 14.2267ZM5.4465 15.1005C5.4465 15.1005 0 10.5135 0 6C0 4.4087 0.632141 2.88258 1.75736 1.75736C2.88258 0.632141 4.4087 0 6 0C7.5913 0 9.11742 0.632141 10.2426 1.75736C11.3679 2.88258 12 4.4087 12 6C12 10.5135 6.5535 15.1005 6.5535 15.1005C6.2505 15.3795 5.75175 15.3765 5.4465 15.1005ZM6 8.1C6.55695 8.1 7.0911 7.87875 7.48492 7.48492C7.87875 7.0911 8.1 6.55695 8.1 6C8.1 5.44305 7.87875 4.9089 7.48492 4.51508C7.0911 4.12125 6.55695 3.9 6 3.9C5.44305 3.9 4.9089 4.12125 4.51508 4.51508C4.12125 4.9089 3.9 5.44305 3.9 6C3.9 6.55695 4.12125 7.0911 4.51508 7.48492C4.9089 7.87875 5.44305 8.1 6 8.1ZM6 9C5.20435 9 4.44129 8.68393 3.87868 8.12132C3.31607 7.55871 3 6.79565 3 6C3 5.20435 3.31607 4.44129 3.87868 3.87868C4.44129 3.31607 5.20435 3 6 3C6.79565 3 7.55871 3.31607 8.12132 3.87868C8.68393 4.44129 9 5.20435 9 6C9 6.79565 8.68393 7.55871 8.12132 8.12132C7.55871 8.68393 6.79565 9 6 9Z" fill="#8492A6" />
+                                        </svg>
+                                        <span>{job.location}</span>
+                                    </div>
+                                </>
                             )}
                         </div>
-                        <button onClick={() => navigate('/candidate/browse-jobs')} className="back-btn">Back</button>
-                        <button
-                            onClick={handleApply}
-                            disabled={isApplied || isApplying}
-                            className="edit-btn apply-btn"
-                        >
-                            {isApplied ? 'Applied' : isApplying ? 'Applying...' : 'Apply Now'}
-                        </button>
                     </div>
-                    <div className="company-info">
-                        <h3>{job.title}</h3>
-                        <p>{job.company?.companyName}</p>
+                    {job.description?.length > 0 && (
+                        <div className='job_description'>
+                            <span>Summary</span>
+                            <p>{job.description}</p>
+                        </div>
+                    )}
+                    <div className='job_related_details'>
+                        {job.jobType.length > 0 && (
+                            <div className='job_related_card'>
+                                <div className='job_related_icon'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" version="1.2" viewBox="0 0 24 24" width="24" height="24">
+                                        <defs>
+                                            <image width="24" height="24" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IB2cksfwAAAXpQTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkA4EAgAAAH50Uk5TAEWOkEsCIa7UNzKCxDUpxVSAoBXHEIM+HgwfdlVvkeaTtVBX/yBDikL+Tiu92b4qDrbuDamojI2ZmDo70IskVoGrwtvDiZUlB62ha0EW657SKCJHaFmSCVxmn7t5xmQanAHfWGASJ7+3A3yzvHs5ncxAum3BCheHpshJdURbcDqTsgAAAVlJREFUeJxtkN8rQ3EYxp9nv0pK2UptWanRmBaJrJHkxgqXS+2KLEq45G9QLlcS9y4sKVeKlOTXoqQNzXahGaWRZpRZx/ecdTZnPBdvve+n99dDFEVZeZRFJZpYVLYC1MjFF1jIZy2oI5+sj7CRKS2wi4YMLJKOSS1wyKPAgoExDWglr5TETV7+Bu3khZJ0vJrPted2vsXlo9silX84LGcidj+kKgE8YnuBx38+B3oJ6RBa0Ke4cQQvC5JkyspG7AjgU8rbrkbcxUbiTu4PkGkxk0NVYbnTL0bplDeTDXp+G8mx5IEMxmXwKakb9AkGInH4N+BNw+bKrQOjecsqMPmugKkV2E34GjRwGdNkCJjNqGDuBJ4PQ8586uGmFd7rWhX4xKh6GHfd0WHhvWOrSwWYQSiINWB+qVq80lQGC1gM6kum998zsNcD5y3QjJuWsL9kSIITUfwn3Q/q1GlhQS3iwgAAAABJRU5ErkJggg==" />
+                                        </defs>
+                                        <style>
+                                        </style>
+                                        <use id="Background" href="#img1" x="0" y="0" />
+                                    </svg>
+                                </div>
+                                <div className='job_related_content'>
+                                    <h6>{job.jobType}</h6>
+                                    <p>Job Type</p>
+                                </div>
+                            </div>
+                        )}
+                        {job.workMode.length > 0 && (
+                            <div className='job_related_card'>
+                                <div className='job_related_icon'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" version="1.2" viewBox="0 0 24 24" width="24" height="24">
+                                        <defs>
+                                            <image width="22" height="22" id="img2" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAMAAADzapwJAAAAAXNSR0IB2cksfwAAAQ5QTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcVGFvQAAAFp0Uk5TABcWUVJUCgM6PRW0mRQGETNgiBAPoLZoZrUaocSodwmkQ69yDAE4SH2lfkecqpstXXWxrETIp6OmmpY8TrKYH2cIsDepbwUhcYeMhBsiHQJeOV9crqKRTSYE5cCmbAAAASVJREFUeJxdkM9LAkEcxd9bLXEpJYgKEVrJkCLzIGREJF26RtCh/7BjFB2iS3aIkG5qFBS1QvQLTXIjtNqdxt11V/d7mceH77z3ZghvSMvXPg7BDOAwf4FR/AAjlunjCDvuWtTqDpmoJIRieCaxL5kUZy9QESLUBJSxNjHJjoEpOteE8oIEuw3XJGl82md8/GmwYFKa1DErhBjCmp7qRYpHTXdw+vvZxpiX+A42TqjM8FaKhRu3mS0W3QJY6vdnJfgng0Pk3mYe2j6IzRH38jl5mmFZj1Us8wLr/Lje4DlRKEcLJXtxk/bUsifoY7VYxuprozWdqWvH8HBkS+qjbVZyB06kxMUz55N39NTfodskz/eVy7Wr9EQty9apV3Cv1NzdD/b+B2TlWmbomEljAAAAAElFTkSuQmCC" />
+                                        </defs>
+                                        <style>
+                                        </style>
+                                        <use id="Background" href="#img2" x="1" y="1" />
+                                    </svg>
+                                </div>
+                                <div className='job_related_content'>
+                                    <h6>{job.workMode}</h6>
+                                    <p>Work Mode</p>
+                                </div>
+                            </div>
+                        )}
+                        {job.experience.length > 0 && (
+                            <div className='job_related_card'>
+                                <div className='job_related_icon'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" version="1.2" viewBox="0 0 24 24" width="24" height="24">
+                                        <defs>
+                                            <image width="24" height="24" id="img3" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IB2cksfwAAAbxQTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhygLbQAAAJR0Uk5TAAG8uUYDsAcMLn81SFVMBGl7OVSViGdPtarItLIxnBJLN30Lo7garcLBFw2+Qb+TcZoFBioiSZ1RJaApAsNciSY7KCSuRWxmg3yzoauxFhGiPVpiUG2PL4DGmdheTXhgl5Sox7s8HBkUmO0dU0I4cxA+LBsYPzSWHpFutr0jFc4PDjJ2aHDTH0SsVi2kMwimh4W3ixRXfxUAAAHfSURBVHicY2RAAoxA8AfGRpZgBYqz/sAiwcD5nYvxK4oEIzfQlI+M/B8EGd+hSAgz/uRgfMXK+EscZM8/BmZGoAS7+G+2jwIPFIEij34BuXJ3/jOofWZkYFV6Kgg06Jo20OKbQAkGPcZnDOwijAycGucZjM6BzDO6zAiUMP7KwwhyOAOjrNQJBsvb7PKMR1lBEjaMjOcZWPSAdjj8OuZ4XQvoHsYDYIk3cowMPzgZPRkZ3x1nltHd5c547/Z/kFG/f2gyfOJn9NoGVCTKyLg2BGjuudtAqyIYGc+anGb02v6fwUaBkXGRuwTjI/nH141EGW8ctflwhTFmWRLjbF/Jm3eFLeZEPf+/lyGDkfHXiYdAfzBkP91g+tPurLQA52opsLNFvn/NnsrIYPwieBIDB4e8A+Mm/36gcNHjU7pb2MwYGYqOnmQoZuxhYMj4szqNsat4t8ImiRfloLCqZNznzMjYXLcqnJGxsaHB7gCDxIsENqAEY9MkucCuT3m3bZ5PqeCbfZ+h/eQG6S/QYO+Y/KuEcaHddHA8tjC9FSmBxaBpxOYDDAxBR8uLFX79eJukWYoUtZZh/z+9v7ur63vVhPkXUOLcda/c098MDNxOhz+gJYaGeyY7DBkknnYA2QA2VJ/cu2f2WwAAAABJRU5ErkJggg==" />
+                                        </defs>
+                                        <style>
+                                        </style>
+                                        <use id="Background" href="#img3" x="0" y="0" />
+                                    </svg>
+                                </div>
+                                <div className='job_related_content'>
+                                    <h6>{job.experience}</h6>
+                                    <p>Experience</p>
+                                </div>
+                            </div>
+                        )}
+                        {job.salary.length > 0 && (
+                            <div className='job_related_card'>
+                                <div className='job_related_icon'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" version="1.2" viewBox="0 0 24 24" width="24" height="24">
+                                        <defs>
+                                            <image width="24" height="24" id="img4" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IB2cksfwAAAaRQTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMalYaAAAAIx0Uk5TAB/BtLq3trOKLZEDBQ+xTS/AFH1XJ6S9q11VcMUBQYvsPFQ9vAkHd3bTu6qhsKULFVipCg0SPzVJXwYcCBHhUJAoZZUbmjgwl50XrogyY+Z0GrgemDFbXKiyljd+n2vG51aHEIFFp0glYUBPbpIO33N8YiGPWoATmdqiFoxCRGApBJs7Ir9neq8khVmpl2ejAAABjklEQVR4nGNkgAFGKPgB5cIlOBkZv/J84WX8hCLBz/j3syDjOwYGYcY3KBKin/kYGd8LgYx6jGqULNj871yMjLdRJNTuqoBl/jEzMl5EljD4KMDIeNaE8TSDGeNJFKMsPj/4ysCrcxyo+ZPSMYSE9UuJIwy2t9Ve3WBgsGc8gJAw4t/PwKAuzci4B8hxZdwFk3Bn3AEkLQV+7QXxvBi3wiR8GDeDnGzIyLgBxNVRXQ+VCDoN9lbwB0HG1UA6jHElA6Ob0OW/NyKXg8StJD+I/wZJRDMuYWCMfb6HLYLx7hEgX+Ol/wpw2LqJASV0OE97ix3/Y8c4F2ir1BywyZayq8ASIpyPGVJPWP67p8o4AyzBF33zFEgiazPI6uRXcoyMB37eYsjb6bHTgxFs1MEvsNgqeirDOEnm5ddSZInyjf8ZAhkZ955kqN4YcABJwsoZ6KnL6xlkk1Yrb4a4yrSBAQEy5mcK1gODpAkYPX9bGu7OhQgbhzC+7gXHRyfjoWv3VNN6X6uDuLf/yd+DqAAARXiASDups4cAAAAASUVORK5CYII=" />
+                                        </defs>
+                                        <style>
+                                        </style>
+                                        <use id="Background" href="#img4" x="0" y="0" />
+                                    </svg>
+                                </div>
+                                <div className='job_related_content'>
+                                    <h6>{job.salary}</h6>
+                                    <p>Salary</p>
+                                </div>
+                            </div>
+                        )}
+                        {job.openings.length > 0 && (
+                            <div className='job_related_card'>
+                                <div className='job_related_icon'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" version="1.2" viewBox="0 0 24 24" width="24" height="24">
+                                        <defs>
+                                            <image width="24" height="24" id="img5" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAAXNSR0IB2cksfwAAAL1QTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAguN3MAAAAD90Uk5TABVD1v9C/tUqBxBJy+qDC/kD4T+8S6o68iijOMP6v/ETc9TEMhel6wQwDgnYAX72Y20MkgiY/dNO6A14Bi8u2OE0NAAAARVJREFUeJydkt0vA1EQxee0RUujFivRTWTFSxOKEq0Hf74XxDdJX0QjaZtYrEppfR5zdzeblvViHubOnN/NzNzJhfxhGIqZBFJQwK9fYARGS/H9Jxj7DI706yDIojf+FgmjLzn2QzCBfg5AN9DzJHtZPiuw8KRCAY8BmGJH/SR9iO0bYRq402OWfDCp5UHmPRPNtZxg3Gbx1qR2W3sstEScj6aWEy3jZDQq3pjmLkK70ptLDK1hQKmxqHI9Grek8rVbF5SBS3HzF/FqVroNWSZROddkFacxWOOZ+jLS5u3rOI5BhSfqiepRIthARhKB/APUDhPBJrZxIFLFXgxq3BfZImRH1zrTsbxIt/3CvS55d/CXDNk3u3ZrKxm7bG4AAAAASUVORK5CYII=" />
+                                        </defs>
+                                        <style>
+                                        </style>
+                                        <use id="Background" href="#img5" x="0" y="0" />
+                                    </svg>
+                                </div>
+                                <div className='job_related_content'>
+                                    <h6>{job.openings}</h6>
+                                    <p>Openings</p>
+                                </div>
+                            </div>
+                        )}
+                        {job.deadline.length > 0 && (
+                            <div className='job_related_card'>
+                                <div className='job_related_icon'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" viewBox="0 0 24 24" role="img"><path vectorEffect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 21a9 9 0 100-18 9 9 0 000 18z"></path><path vectorEffect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16.24 16.24L12 12V6"></path></svg>
+                                </div>
+                                <div className='job_related_content'>
+                                    <h6>{job.deadline ? new Date(job.deadline).toLocaleDateString() : 'N/A'}</h6>
+                                    <p>Deadline</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
+                    {skillsList?.length > 0 && (
+                        <div className='job_skills'>
+                            <h4>Skills and Expertise</h4>
+                            <div className='job_skill_section'>
+                                {skillsList.map((skill, idx) => (
+                                    <span key={idx} className="skill-tag">{skill}</span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
-                <div className="info-grid">
-                    {job.location && (
-                        <div className="info-item">
-                            <div className="logo-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M38 18.6666H24C22.3203 18.6666 20.7094 19.3339 19.5217 20.5216C18.3339 21.7093 17.6667 23.3203 17.6667 25V37C17.6667 37.8317 17.8305 38.6552 18.1488 39.4236C18.467 40.192 18.9336 40.8902 19.5217 41.4783C20.7094 42.666 22.3203 43.3333 24 43.3333H38C39.6786 43.3298 41.2875 42.6614 42.4745 41.4744C43.6614 40.2874 44.3298 38.6786 44.3333 37V25C44.3298 23.3213 43.6614 21.7125 42.4745 20.5255C41.2875 19.3385 39.6786 18.6701 38 18.6666ZM33.1333 29.76C32.4773 30.1341 31.7352 30.3308 30.98 30.3308C30.2248 30.3308 29.4827 30.1341 28.8267 29.76L19.6933 24.52C19.8114 23.4604 20.316 22.4815 21.1106 21.7706C21.9051 21.0597 22.9338 20.6666 24 20.6666H38C39.0653 20.6695 40.0925 21.0636 40.8864 21.774C41.6804 22.4843 42.1858 23.4615 42.3067 24.52L33.1333 29.76Z" fill="#6D17E1" /></svg>
-                            </div>
-                            <div className="info-text">
-                                <h5>Location</h5>
-                                <p>{job.location}</p>
-                            </div>
+                <div className='job_btns_info'>
+                    <div className='job_btn_sticky'>
+                        <div className='job_btns'>
+                            <button onClick={handleApply} disabled={isApplied || isApplying} className="apply-btn">
+                                {isApplied ? 'Applied' : isApplying ? 'Applying...' : 'Apply now'}
+                            </button>
+                            <button className={`save-btn ${isSaved ? 'saved' : 'unsaved'}`} onClick={handleSaveToggle}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="19" viewBox="0 0 22 19" fill="none"><path fillRule="evenodd" clipRule="evenodd" d="M4.374 1.89038C2.715 2.64838 1.5 4.45238 1.5 6.60338C1.5 8.80038 2.4 10.4944 3.688 11.9464C4.751 13.1424 6.037 14.1344 7.291 15.1004C7.58967 15.3304 7.88467 15.5597 8.176 15.7884C8.702 16.2034 9.171 16.5664 9.624 16.8314C10.077 17.0964 10.44 17.2164 10.75 17.2164C11.06 17.2164 11.424 17.0964 11.876 16.8314C12.329 16.5664 12.798 16.2034 13.324 15.7884C13.6153 15.559 13.9103 15.33 14.209 15.1014C15.463 14.1334 16.749 13.1424 17.812 11.9464C19.101 10.4944 20 8.80038 20 6.60338C20 4.45338 18.785 2.64838 17.126 1.89038C15.514 1.15338 13.348 1.34838 11.29 3.48738C11.22 3.55996 11.1362 3.6177 11.0434 3.65714C10.9506 3.69657 10.8508 3.7169 10.75 3.7169C10.6492 3.7169 10.5494 3.69657 10.4566 3.65714C10.3638 3.6177 10.28 3.55996 10.21 3.48738C8.152 1.34838 5.986 1.15338 4.374 1.89038ZM10.75 1.92638C8.438 -0.143622 5.849 -0.433622 3.75 0.525378C1.536 1.54038 0 3.89238 0 6.60438C0 9.26938 1.11 11.3034 2.567 12.9434C3.733 14.2564 5.16 15.3554 6.421 16.3254C6.70767 16.5454 6.983 16.7594 7.247 16.9674C7.76 17.3714 8.31 17.8014 8.867 18.1274C9.424 18.4534 10.06 18.7174 10.75 18.7174C11.44 18.7174 12.076 18.4524 12.633 18.1274C13.191 17.8014 13.74 17.3714 14.253 16.9674C14.517 16.7594 14.7923 16.5454 15.079 16.3254C16.339 15.3554 17.767 14.2554 18.933 12.9434C20.39 11.3034 21.5 9.26938 21.5 6.60438C21.5 3.89238 19.965 1.54038 17.75 0.527378C15.651 -0.432622 13.062 -0.142622 10.75 1.92638Z" fill="#6C6969"></path></svg>
+                                {isSaved ? 'Saved' : 'Save now'}
+                            </button>
                         </div>
-                    )}
-                    {job.jobType && (
-                        <div className="info-item">
-                            <div className="logo-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M28.512 29.045L30.658 27.077C31.2453 26.5382 31.6582 25.8363 31.8439 25.0613C32.0296 24.2862 31.9795 23.4734 31.7 22.727L30.783 20.279C30.4412 19.3653 29.7636 18.6165 28.8885 18.1854C28.0134 17.7542 27.0068 17.6733 26.074 17.959C22.642 19.009 20.004 22.199 20.816 25.988C21.35 28.48 22.371 31.608 24.308 34.937C25.931 37.7408 27.9729 40.2801 30.363 42.467C33.233 45.079 37.333 44.426 39.971 41.967C40.6777 41.3074 41.1065 40.4033 41.17 39.4387C41.2336 38.4741 40.9271 37.5216 40.313 36.775L38.632 34.733C38.1254 34.1172 37.4463 33.6669 36.6819 33.4399C35.9174 33.2129 35.1026 33.2196 34.342 33.459L31.566 34.334C31.4587 34.224 31.3367 34.0933 31.2 33.942C30.6291 33.3108 30.1241 32.6228 29.693 31.889C29.2732 31.1486 28.9301 30.3672 28.669 29.557C28.6132 29.3874 28.5608 29.2167 28.512 29.045Z" fill="#6D17E1" /></svg>
+                        {(job.company?.companyName?.length || job.company?.industry?.length || job.company?.companySize?.length) > 0 && (
+                            <div className='job_company_info'>
+                                <h4>About the Client</h4>
+                                <div className='job_company_name'>
+                                    {job.company?.companyName && <h5>{job.company.companyName}</h5>}
+                                    {job.company?.industry && <p>{job.company.industry}</p>}
+                                    {job.company?.companySize && <p>({job.company.companySize} Employees)</p>}
+                                </div>
+                                <h6>Member since {job.company?.createdAt ? new Date(job.company.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}</h6>
                             </div>
-                            <div className="info-text">
-                                <h5>Job Type</h5>
-                                <p>{job.jobType}</p>
-                            </div>
-                        </div>
-                    )}
-                    {job.workMode && (
-                        <div className="info-item">
-                            <div className="logo-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M24.3627 27.032C24.6827 25.0427 25.236 23.2507 25.9693 21.7854C26.6307 20.4627 27.4707 19.348 28.4547 18.6254C26.0142 19.1293 23.7771 20.343 22.0241 22.114C20.271 23.8851 19.0803 26.1346 18.6013 28.58C19.3758 28.2173 20.1818 27.9263 21.0093 27.7107C22.1122 27.4159 23.2321 27.1888 24.3627 27.0307M18.396 31.848C18.36 31.2833 18.36 30.7168 18.396 30.152C18.4413 30.12 18.4893 30.088 18.54 30.056C19.1667 29.652 20.1133 29.264 21.34 28.9294C22.2783 28.6794 23.2295 28.4809 24.1893 28.3347C24.0038 30.1067 24.0038 31.8933 24.1893 33.6654C23.2299 33.5191 22.2792 33.3206 21.3413 33.0707C20.1147 32.7347 19.1653 32.348 18.54 31.944L18.396 31.848ZM18.6 33.4214C19.0793 35.8668 20.2703 38.1161 22.0236 39.8869C23.7768 41.6577 26.0142 42.8711 28.4547 43.3747C27.4707 42.652 26.6307 41.5374 25.9693 40.2147C25.236 38.748 24.6813 36.9574 24.3627 34.968C23.2321 34.8099 22.1122 34.5828 21.0093 34.288C20.1814 34.0733 19.375 33.7832 18.6 33.4214ZM33.5453 43.3747C35.9859 42.8711 38.2232 41.6577 39.9764 39.8869C41.7297 38.1161 42.9207 35.8668 43.4 33.4214C42.6255 33.7832 41.8195 34.0733 40.992 34.288C39.8887 34.5829 38.7684 34.81 37.6373 34.968C37.3173 36.9574 36.764 38.748 36.0307 40.2147C35.3693 41.5374 34.5293 42.652 33.5453 43.3747ZM43.604 30.152C43.64 30.7168 43.64 31.2833 43.604 31.848L43.4613 31.944C42.8347 32.348 41.8867 32.736 40.6587 33.0707C39.816 33.3 38.8587 33.5 37.8107 33.6654C37.9962 31.8933 37.9962 30.1067 37.8107 28.3347C38.8587 28.4987 39.816 28.7 40.6587 28.9294C41.8867 29.264 42.8347 29.652 43.4613 30.056C43.512 30.088 43.5596 30.12 43.604 30.152ZM43.4 28.58C42.921 26.1344 41.73 23.8848 39.9768 22.1137C38.2235 20.3427 35.986 19.1291 33.5453 18.6254C34.5293 19.348 35.3693 20.4627 36.0307 21.7854C36.764 23.252 37.3187 25.0427 37.6373 27.032C38.7679 27.1901 39.8878 27.4172 40.9907 27.712C41.9093 27.9614 42.724 28.2507 43.4 28.5787M25.672 26.864C25.98 25.1374 26.4747 23.6 27.0987 22.3507C28.0387 20.4707 29.1987 19.3707 30.368 19.0787V26.5827C28.799 26.5992 27.2318 26.694 25.672 26.864ZM31.632 26.5827V19.0787C32.8013 19.372 33.9613 20.4707 34.9013 22.3507C35.5253 23.6 36.02 25.1374 36.328 26.864C34.7682 26.6936 33.201 26.5997 31.632 26.5827ZM25.48 28.1574C27.1028 27.9679 28.7343 27.8637 30.368 27.8454V34.1547C28.7348 34.1363 27.1037 34.0321 25.4813 33.8427C25.37 32.8993 25.3148 31.95 25.316 31C25.316 30.0187 25.372 29.0667 25.48 28.1574ZM36.52 28.1574C34.8973 27.9679 33.2657 27.8637 31.632 27.8454V34.1547C33.2657 34.1363 34.8973 34.0322 36.52 33.8427C36.6267 32.9334 36.684 31.9814 36.684 31C36.684 30.0187 36.6267 29.0667 36.52 28.1574ZM25.672 35.136C27.136 35.3 28.7173 35.3974 30.368 35.416V42.9214C29.1987 42.628 28.0387 41.5294 27.0987 39.6494C26.4747 38.4 25.98 36.8627 25.672 35.136ZM31.632 35.4174V42.9214C32.8013 42.628 33.9613 41.5294 34.9013 39.6494C35.5253 38.4 36.02 36.8627 36.328 35.136C34.7682 35.3061 33.201 35.4008 31.632 35.4174Z" fill="#6D17E1" /></svg>
-                            </div>
-                            <div className="info-text">
-                                <h5>Work Mode</h5>
-                                <p>{job.workMode}</p>
-                            </div>
-                        </div>
-                    )}
-                    {job.experience && (
-                        <div className="info-item">
-                            <div className="logo-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M31 17C28.0837 17.0034 25.2878 18.1635 23.2256 20.2256C21.1635 22.2878 20.0034 25.0837 20 28C19.9973 30.3831 20.7757 32.7014 22.216 34.6C22.216 34.6 22.516 34.995 22.565 35.052L31 45L39.439 35.047C39.483 34.994 39.784 34.6 39.784 34.6L39.785 34.597C41.2243 32.6991 42.0023 30.382 42 28C41.9966 25.0837 40.8365 22.2878 38.7744 20.2256C36.7122 18.1635 33.9163 17.0034 31 17ZM32 33H30V31H32V33ZM32 29H30V27H32V29ZM36 33H34V25H28V33H26V25C26 24.4696 26.2107 23.9609 26.5858 23.5858C26.9609 23.2107 27.4696 23 28 23H34C34.5304 23 35.0391 23.2107 35.4142 23.5858C35.7893 23.9609 36 24.4696 36 25V33Z" fill="#6D17E1" /></svg>
-                            </div>
-                            <div className="info-text">
-                                <h5>Experience</h5>
-                                <p>{job.experience}</p>
-                            </div>
-                        </div>
-                    )}
-                    {job.salary && (
-                        <div className="info-item">
-                            <div className="logo-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M31 29.2044C33.3368 29.2044 35.2311 27.334 35.2311 25.0267C35.2311 22.7193 33.3368 20.8489 31 20.8489C28.6632 20.8489 26.7689 22.7193 26.7689 25.0267C26.7689 27.334 28.6632 29.2044 31 29.2044Z" fill="#6D17E1" /><path d="M24.5822 25.4444H25.0089V25.0622C25.0115 23.9507 25.3251 22.8622 25.9141 21.9196C26.5032 20.9771 27.3443 20.2182 28.3422 19.7289C28.0468 19.0485 27.5726 18.4608 26.97 18.0283C26.3674 17.5957 25.6589 17.3345 24.9197 17.2723C24.1806 17.2101 23.4384 17.3492 22.772 17.675C22.1056 18.0007 21.5398 18.5008 21.1348 19.1223C20.7298 19.7437 20.5007 20.4633 20.4718 21.2045C20.4429 21.9457 20.6153 22.6808 20.9707 23.3319C21.326 23.983 21.8511 24.5257 22.4901 24.9024C23.1292 25.279 23.8583 25.4755 24.6 25.4711L24.5822 25.4444ZM37.0089 25.0266V25.4089H37.4356C38.1674 25.4015 38.8838 25.197 39.5092 24.8168C40.1347 24.4367 40.6461 23.895 40.9896 23.2487C41.3331 22.6024 41.496 21.8754 41.4612 21.1444C41.4264 20.4133 41.1952 19.7051 40.7918 19.0944C40.3885 18.4836 39.8279 17.9929 39.1692 17.6739C38.5105 17.3549 37.7779 17.2194 37.0487 17.2816C36.3194 17.3438 35.6204 17.6014 35.0252 18.0274C34.4301 18.4534 33.9608 19.032 33.6667 19.7022C34.6649 20.1896 35.5069 20.9466 36.0975 21.8875C36.6882 22.8284 37.0038 23.9157 37.0089 25.0266ZM34.8133 29.6222C36.5805 29.9726 38.2893 30.5711 39.8889 31.4C40.1143 31.5236 40.3184 31.6827 40.4933 31.8711H45.2222V28.8311C45.2231 28.7145 45.1921 28.5999 45.1326 28.4996C45.073 28.3993 44.9872 28.3172 44.8845 28.2622C42.5806 27.0571 40.0178 26.4317 37.4178 26.44H36.8311C36.5231 27.6922 35.8146 28.8095 34.8133 29.6222ZM20.8045 33.5955C20.8028 33.1478 20.9237 32.7083 21.1541 32.3244C21.3844 31.9405 21.7154 31.627 22.1111 31.4177C23.7107 30.5889 25.4195 29.9904 27.1867 29.64C26.1903 28.8342 25.4822 27.7269 25.1689 26.4844H24.5822C21.9823 26.4761 19.4194 27.1016 17.1156 28.3066C17.0128 28.3617 16.927 28.4438 16.8675 28.544C16.8079 28.6443 16.7769 28.7589 16.7778 28.8755V34.5555H20.8045V33.5955ZM34.0756 38.7244H39.3733V39.9689H34.0756V38.7244Z" fill="#6D17E1" /><path d="M44.1645 33.8978H38.0578V33.0089C38.0578 32.7731 37.9641 32.547 37.7974 32.3803C37.6307 32.2137 37.4046 32.12 37.1689 32.12C36.9332 32.12 36.7071 32.2137 36.5404 32.3803C36.3737 32.547 36.28 32.7731 36.28 33.0089V33.8978H34.5556V31.3822C33.3862 31.1356 32.195 31.0076 31 31C28.1946 30.9894 25.4294 31.667 22.9467 32.9733C22.8361 33.0307 22.7436 33.1175 22.6792 33.2242C22.6149 33.3308 22.5813 33.4532 22.5822 33.5778V38.5644H28.9022V43.9778C28.9022 44.2135 28.9959 44.4396 29.1626 44.6063C29.3293 44.773 29.5554 44.8667 29.7911 44.8667H44.1645C44.4002 44.8667 44.6263 44.773 44.793 44.6063C44.9597 44.4396 45.0533 44.2135 45.0533 43.9778V34.7867C45.0533 34.5509 44.9597 34.3248 44.793 34.1581C44.6263 33.9914 44.4002 33.8978 44.1645 33.8978ZM43.2756 43.1067H30.68V35.6756H36.28V36.4844C36.28 36.7202 36.3737 36.9463 36.5404 37.113C36.7071 37.2797 36.9332 37.3733 37.1689 37.3733C37.4046 37.3733 37.6307 37.2797 37.7974 37.113C37.9641 36.9463 38.0578 36.7202 38.0578 36.4844V35.6756H43.2756V43.1067Z" fill="#6D17E1" /></svg>
-                            </div>
-                            <div className="info-text">
-                                <h5>Salary</h5>
-                                <p>{job.salary}</p>
-                            </div>
-                        </div>
-                    )}
-                    {job.openings && (
-                        <div className="info-item">
-                            <div className="logo-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M31 30.3333C30.1159 30.3333 29.2681 29.9821 28.6429 29.357C28.0178 28.7319 27.6666 27.884 27.6666 27C27.6666 26.1159 28.0178 25.2681 28.6429 24.6429C29.2681 24.0178 30.1159 23.6666 31 23.6666C31.884 23.6666 32.7319 24.0178 33.357 24.6429C33.9821 25.2681 34.3333 26.1159 34.3333 27C34.3333 27.4377 34.2471 27.8712 34.0796 28.2756C33.912 28.68 33.6665 29.0475 33.357 29.357C33.0475 29.6665 32.68 29.912 32.2756 30.0796C31.8712 30.2471 31.4377 30.3333 31 30.3333ZM31 17.6666C28.5246 17.6666 26.1506 18.65 24.4003 20.4003C22.65 22.1506 21.6666 24.5246 21.6666 27C21.6666 34 31 44.3333 31 44.3333C31 44.3333 40.3333 34 40.3333 27C40.3333 24.5246 39.35 22.1506 37.5996 20.4003C35.8493 18.65 33.4753 17.6666 31 17.6666Z" fill="#6D17E1" /></svg>
-                            </div>
-                            <div className="info-text">
-                                <h5>Openings</h5>
-                                <p>{job.openings}</p>
-                            </div>
-                        </div>
-                    )}
-                    {job.deadline && (
-                        <div className="info-item">
-                            <div className="logo-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M31 30.3333C30.1159 30.3333 29.2681 29.9821 28.6429 29.357C28.0178 28.7319 27.6666 27.884 27.6666 27C27.6666 26.1159 28.0178 25.2681 28.6429 24.6429C29.2681 24.0178 30.1159 23.6666 31 23.6666C31.884 23.6666 32.7319 24.0178 33.357 24.6429C33.9821 25.2681 34.3333 26.1159 34.3333 27C34.3333 27.4377 34.2471 27.8712 34.0796 28.2756C33.912 28.68 33.6665 29.0475 33.357 29.357C33.0475 29.6665 32.68 29.912 32.2756 30.0796C31.8712 30.2471 31.4377 30.3333 31 30.3333ZM31 17.6666C28.5246 17.6666 26.1506 18.65 24.4003 20.4003C22.65 22.1506 21.6666 24.5246 21.6666 27C21.6666 34 31 44.3333 31 44.3333C31 44.3333 40.3333 34 40.3333 27C40.3333 24.5246 39.35 22.1506 37.5996 20.4003C35.8493 18.65 33.4753 17.6666 31 17.6666Z" fill="#6D17E1" /></svg>
-                            </div>
-                            <div className="info-text">
-                                <h5>Deadline</h5>
-                                <p>{job.deadline ? new Date(job.deadline).toLocaleDateString() : 'N/A'}</p>
-                            </div>
-                        </div>
-                    )}
-                    {skillsList.length > 0 && (
-                        <div className="info-item">
-                            <div className="logo-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none"><rect width="62" height="62" rx="18" fill="#F0E4FF" /><path d="M31 30.3333C30.1159 30.3333 29.2681 29.9821 28.6429 29.357C28.0178 28.7319 27.6666 27.884 27.6666 27C27.6666 26.1159 28.0178 25.2681 28.6429 24.6429C29.2681 24.0178 30.1159 23.6666 31 23.6666C31.884 23.6666 32.7319 24.0178 33.357 24.6429C33.9821 25.2681 34.3333 26.1159 34.3333 27C34.3333 27.4377 34.2471 27.8712 34.0796 28.2756C33.912 28.68 33.6665 29.0475 33.357 29.357C33.0475 29.6665 32.68 29.912 32.2756 30.0796C31.8712 30.2471 31.4377 30.3333 31 30.3333ZM31 17.6666C28.5246 17.6666 26.1506 18.65 24.4003 20.4003C22.65 22.1506 21.6666 24.5246 21.6666 27C21.6666 34 31 44.3333 31 44.3333C31 44.3333 40.3333 34 40.3333 27C40.3333 24.5246 39.35 22.1506 37.5996 20.4003C35.8493 18.65 33.4753 17.6666 31 17.6666Z" fill="#6D17E1" /></svg>
-                            </div>
-                            <div className="info-text">
-                                <h5>Skills</h5>
-                                <p className='skills'>{skillsList.map((skill, idx) => (
-                                    <span key={idx} className="skill-tag">{skill}{idx < skillsList.length - 1 && ", "} </span>
-                                ))}</p>
-                            </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
-            {job.description && (
-                <div className="section">
-                    <h4>Job Description</h4>
-                    <p>{job.description}</p>
-                </div>
-            )}
         </div>
     );
 }

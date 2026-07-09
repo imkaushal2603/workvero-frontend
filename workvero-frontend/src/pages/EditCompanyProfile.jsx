@@ -188,7 +188,7 @@ function EditCompanyProfile() {
                         <div className="form_fields logo_upload">
                             <div className="logo_upload_box">
                                 {formData.logo ? (
-                                    <div 
+                                    <div
                                         className="img_preview_trigger"
                                         onClick={() => setModalImage(getFileUrl(formData.logo))}
                                         style={{ cursor: 'pointer' }}
@@ -197,8 +197,8 @@ function EditCompanyProfile() {
                                         <img src={getFileUrl(formData.logo)} alt="Company Logo" />
                                     </div>
                                 ) : (
-                                    <div 
-                                        style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }} 
+                                    <div
+                                        style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
                                         onClick={() => logoInputRef.current.click()}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -345,7 +345,7 @@ function EditCompanyProfile() {
                                                         <span>View PDF</span>
                                                     </a>
                                                 ) : (
-                                                    <div 
+                                                    <div
                                                         className="img_preview_trigger"
                                                         onClick={() => setModalImage(getFileUrl(formData.panDocument))}
                                                         style={{ cursor: 'pointer' }}
@@ -388,7 +388,7 @@ function EditCompanyProfile() {
                                                         <span>View PDF</span>
                                                     </a>
                                                 ) : (
-                                                    <div 
+                                                    <div
                                                         className="img_preview_trigger"
                                                         onClick={() => setModalImage(getFileUrl(formData.incorporationCertificate))}
                                                         style={{ cursor: 'pointer' }}
@@ -431,7 +431,7 @@ function EditCompanyProfile() {
                                                         <span>View PDF</span>
                                                     </a>
                                                 ) : (
-                                                    <div 
+                                                    <div
                                                         className="img_preview_trigger"
                                                         onClick={() => setModalImage(getFileUrl(formData.govIdProof))}
                                                         style={{ cursor: 'pointer' }}

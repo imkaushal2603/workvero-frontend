@@ -2457,7 +2457,7 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main {
   display: flex;
   flex-wrap: wrap;
-  background: #F5F7FC;
+  background: #fff;
 }
 
 .dashboard-main .content-area {
@@ -2466,24 +2466,22 @@ header .account_dropdown .dropdown_menu button {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: #F5F7FC;
 }
 
 .dashboard-main .sidebar {
   width: 260px;
   background: #FFFFFF;
   padding: 40px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  height: calc(100vh - 96px);
 }
 
 .dashboard-main .sidebar .sidebar-menu {
   display: flex;
   flex-direction: column;
   row-gap: 8px;
+  position: fixed;
+  width: 220px;
 }
 
 .dashboard-main .sidebar-menu .menu-item {
@@ -2507,7 +2505,8 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .content-area .edit_candidate_profile h2,
 .dashboard-main .candidate-profile h2,
 .dashboard-main .content-area .my_resumes h2,
-.dashboard-main .content-area .applicants h2 {
+.dashboard-main .content-area .applicants h2,
+.dashboard-main .content-area .company-profile-container h2 {
   font-size: 38px;
   font-weight: 500;
   line-height: 100%;
@@ -2669,6 +2668,7 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .form_fields .form_full textarea {
   min-height: 151px;
   line-height: 20px;
+  width: 100% !important;
 }
 
 .dashboard-main .form_fields .form_skills {
@@ -3188,10 +3188,6 @@ header .account_dropdown .dropdown_menu button {
   color: #000000;
 }
 
-.dashboard-main .header-row h2 {
-  margin: 0 0 16px;
-}
-
 .dashboard-main .profile-card .banner-bg {
   background: linear-gradient(90deg, #6d17e1d1 0%, #3c0d7bd4 100%);
   height: 145px;
@@ -3492,7 +3488,8 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main form .form_buttons .submit-btn[disabled],
 .job_listings .job_listings_content .pagination_wrapper button[disabled],
 .dashboard-main .pagination button[disabled],
-.dashboard-main .profile-picture-container button[disabled] {
+.dashboard-main .profile-picture-container button[disabled],
+.dashboard-main .job_btns_info .job_btns button.apply-btn[disabled] {
   opacity: 0.5;
   pointer-events: none;
 }
@@ -3897,16 +3894,14 @@ header .account_dropdown .dropdown_menu button {
 }
 
 .dashboard-main .browse_jobs_section .browse_jobs button {
-  background: #6D17E1;
+  background: transparent;
   border: none;
-  padding: 15px 25px;
-  border-radius: 14px;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 100%;
-  letter-spacing: 1px;
-  color: #FFFFFF;
+  color: #636363;
   cursor: pointer;
+  text-decoration: underline;
 }
 
 .dashboard-main .browse_jobs .browse_jobs_location {
@@ -3927,7 +3922,8 @@ header .account_dropdown .dropdown_menu button {
   cursor: pointer;
 }
 
-.dashboard-main .browse_jobs_section .browse_jobs h3:hover {
+.dashboard-main .browse_jobs_section .browse_jobs h3:hover,
+.dashboard-main .browse_jobs_section .browse_jobs button:hover {
   color: #6D17E1;
 }
 
@@ -3937,6 +3933,258 @@ header .account_dropdown .dropdown_menu button {
   height: 18px;
   accent-color: #6D17E1;
   cursor: pointer;
+}
+
+.dashboard-main .controls .refresh-page {
+  line-height: 0;
+}
+
+.dashboard-main .controls .refresh-page svg {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.refresh-page svg.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.dashboard-main .job_detailed_info {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.dashboard-main .job_detailed_info .job_info {
+  width: 80%;
+  border-right: 1px solid #e9e9e9;
+}
+
+.dashboard-main .job_detailed_info .job_btns_info {
+  width: 20%;
+}
+
+.dashboard-main .job_info .company-info,
+.dashboard-main .job_info .job_description,
+.dashboard-main .job_info .job_related_details,
+.dashboard-main .job_info .job_skills {
+  padding: 40px;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.dashboard-main .job_info .company-info h3 {
+  margin: 0 0 25px;
+}
+
+.dashboard-main .company-info .job_location_time {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-main .job_location_time .job_location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dashboard-main .company-info .job_location_time span {
+  font-size: 14px;
+  line-height: normal;
+  color: #636363;
+}
+
+.dashboard-main .job_info .job_description span {
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 150%;
+  display: block;
+  color: #636363;
+}
+
+.dashboard-main .job_info .job_description p {
+  font-size: 15px;
+  line-height: 150%;
+  display: block;
+  white-space: pre-line;
+  color: #636363;
+}
+
+.dashboard-main .job_btns_info .job_btns {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}
+
+.dashboard-main .job_btns_info .job_btns button.apply-btn {
+  background: #6D17E1;
+  border: none;
+  padding: 18px 37px;
+  border-radius: 14px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  cursor: pointer;
+  width: 100%;
+}
+
+.dashboard-main .job_btns_info .job_company_info {
+  padding: 0 40px 40px;
+}
+
+.dashboard-main .job_btns_info .job_company_info h4 {
+  margin: 0 0 14px;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 150%;
+  letter-spacing: 1px;
+  color: #000000;
+}
+
+.dashboard-main .job_company_info .job_company_name h5 {
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: #636363;
+}
+
+.dashboard-main .job_company_info .job_company_name p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 150%;
+  color: #636363;
+}
+
+.dashboard-main .job_btns_info .job_company_info h6 {
+  margin: 15px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 150%;
+  color: #636363;
+}
+
+.dashboard-main .job-detail-page button.back-btn {
+  background: transparent;
+  padding: 0;
+  border: none;
+  margin: 0 0 15px;
+  cursor: pointer;
+}
+
+.dashboard-main .job-detail-page button.back-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.dashboard-main .job_info .job_skills h4 {
+  font-size: 18px;
+  line-height: 150%;
+  color: #636363;
+  margin: 0 0 18px;
+}
+
+.dashboard-main .job_skills .job_skill_section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.dashboard-main .job_skill_section span.skill-tag {
+  background: #f1f1f1;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: .6px;
+  padding: 8px 15px;
+  border-radius: 50px;
+  text-transform: capitalize;
+  line-height: normal;
+}
+
+.dashboard-main .job_info .job_related_details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.dashboard-main .job_related_details .job_related_card {
+  width: calc(33.33% - 21.33px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.dashboard-main .job_related_card .job_related_icon {
+  width: 24px;
+  line-height: 0;
+}
+
+.dashboard-main .job_related_card .job_related_content {
+  width: calc(100% - 24px);
+  padding: 0 0 0 10px;
+}
+
+.dashboard-main .job_related_card .job_related_content h6 {
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 150%;
+  display: block;
+  color: #636363;
+  margin: 0;
+}
+
+.dashboard-main .job_related_card .job_related_content p {
+  font-size: 15px;
+  line-height: 150%;
+  display: block;
+  color: #636363;
+}
+
+.dashboard-main .job_btns_info .job_btn_sticky {
+  position: sticky;
+  top: 100px;
+  left: 0;
+}
+
+.dashboard-main .job_btns_info .job_btns button.save-btn {
+  background: transparent;
+  color: #6D17E1;
+  padding: 14.5px 37px;
+  border-radius: 14px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  border: 1px solid #6D17E1;
+}
+
+.dashboard-main .job_btns_info .job_btns button.save-btn svg path {
+  fill: #6D17E1;
+}
+
+.dashboard-main .job_btns_info .job_btns button.save-btn.saved {
+  background: #6D17E1;
+  color: #fff;
+}
+
+.dashboard-main .job_btns_info .job_btns button.save-btn.saved svg path {
+  fill: #fff;
 }
 
 @media screen and (max-width: 991px) {
