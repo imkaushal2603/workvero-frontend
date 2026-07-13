@@ -98,8 +98,8 @@ function CandidateSavedJobs() {
 
     return (
         <div className="manage-jobs-container">
-            <div className="manage-jobs-header">
-                <h2>Saved Job</h2>
+            <div className="manage-jobs-header jobs_candidate">
+                <h2>Saved Jobs</h2>
                 <div className="controls">
                     <div className="search-bar">
                         <input

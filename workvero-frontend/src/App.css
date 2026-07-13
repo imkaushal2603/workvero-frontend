@@ -2456,32 +2456,43 @@ header .account_dropdown .dropdown_menu button {
 
 .dashboard-main {
   display: flex;
-  flex-wrap: wrap;
-  background: #fff;
+  min-height: calc(100vh - 96px);
 }
 
 .dashboard-main .content-area {
-  width: calc(100% - 260px);
+  width: 100%;
   padding: 65px 55px 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background: #F5F7FC;
+  margin-left: 260px;
 }
 
 .dashboard-main .sidebar {
   width: 260px;
   background: #FFFFFF;
   padding: 40px 20px;
-  height: calc(100vh - 96px);
+  position: fixed;
+  top: 96px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  bottom: 0;
+}
+
+.dashboard-main .sidebar .sidebar_section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
 }
 
 .dashboard-main .sidebar .sidebar-menu {
   display: flex;
   flex-direction: column;
   row-gap: 8px;
-  position: fixed;
-  width: 220px;
 }
 
 .dashboard-main .sidebar-menu .menu-item {
@@ -2506,7 +2517,8 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .candidate-profile h2,
 .dashboard-main .content-area .my_resumes h2,
 .dashboard-main .content-area .applicants h2,
-.dashboard-main .content-area .company-profile-container h2 {
+.dashboard-main .content-area .company-profile-container h2,
+.dashboard-main main.content-area .candidate_dashboard h2 {
   font-size: 38px;
   font-weight: 500;
   line-height: 100%;
@@ -3075,7 +3087,8 @@ header .account_dropdown .dropdown_menu button {
   width: 11.4285%;
 }
 
-.dashboard-main .jobs_table_body .jobs_table_row p {
+.dashboard-main .jobs_table_body .jobs_table_row p,
+.dashboard-main .browse_title_save .applied_jobs_status span:first-child {
   font-weight: 400;
   font-size: 14px;
   line-height: 100%;
@@ -3488,8 +3501,7 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main form .form_buttons .submit-btn[disabled],
 .job_listings .job_listings_content .pagination_wrapper button[disabled],
 .dashboard-main .pagination button[disabled],
-.dashboard-main .profile-picture-container button[disabled],
-.dashboard-main .job_btns_info .job_btns button.apply-btn[disabled] {
+.dashboard-main .profile-picture-container button[disabled] {
   opacity: 0.5;
   pointer-events: none;
 }
@@ -3703,11 +3715,11 @@ header .account_dropdown .dropdown_menu button {
   box-shadow: 0px 0px 8px 0px #8492A657;
   border-radius: 50px;
   border: none;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   line-height: 26px;
   letter-spacing: 1px;
-  color: #696969;
+  color: #636363;
   padding: 6px 25px;
   cursor: pointer;
 }
@@ -3717,7 +3729,8 @@ header .account_dropdown .dropdown_menu button {
   color: #FFFFFF;
 }
 
-.dashboard-main .jobs_table_row .status-badge.pending {
+.dashboard-main .jobs_table_row .status-badge.in-review,
+.dashboard-main .browse_title_save .applied_jobs_status span.in-review {
   background: #E2EAFF;
   font-weight: 500;
   font-size: 12px;
@@ -3891,6 +3904,7 @@ header .account_dropdown .dropdown_menu button {
   border-radius: 50px;
   text-transform: capitalize;
   line-height: normal;
+  color: #636363;
 }
 
 .dashboard-main .browse_jobs_section .browse_jobs button {
@@ -3902,15 +3916,17 @@ header .account_dropdown .dropdown_menu button {
   color: #636363;
   cursor: pointer;
   text-decoration: underline;
+  padding: 0;
 }
 
 .dashboard-main .browse_jobs .browse_jobs_location {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 20px 0 30px;
+  margin: 20px 0 10px;
   font-size: 14px;
   line-height: normal;
+  color: #636363;
 }
 
 .dashboard-main .browse_jobs .browse_title_save {
@@ -3923,7 +3939,9 @@ header .account_dropdown .dropdown_menu button {
 }
 
 .dashboard-main .browse_jobs_section .browse_jobs h3:hover,
-.dashboard-main .browse_jobs_section .browse_jobs button:hover {
+.dashboard-main .browse_jobs_section .browse_jobs button:hover,
+.dashboard-main .applied_jobs_section .browse_title_save h3:hover,
+.dashboard-main .applied_jobs_view .applied_jobs_section button:hover {
   color: #6D17E1;
 }
 
@@ -4185,6 +4203,287 @@ header .account_dropdown .dropdown_menu button {
 
 .dashboard-main .job_btns_info .job_btns button.save-btn.saved svg path {
   fill: #fff;
+}
+
+.dashboard-main .job_company_info .job_company_logo {
+  line-height: 0;
+  margin: 0 0 20px;
+}
+
+.dashboard-main .job_company_info .job_company_logo img {
+  width: 100%;
+  max-height: 50px;
+  height: 100%;
+  object-fit: contain;
+  object-position: left;
+}
+
+.dashboard-main .job_btns_info .job_btns button.apply-btn[disabled] {
+  background: #0146EE;
+}
+
+.dashboard-main .browse_jobs .browse_exp_salary,
+.dashboard-main .browse_exp_salary .browse_jobs_exp,
+.dashboard-main .browse_exp_salary .browse_jobs_salary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dashboard-main .browse_jobs .browse_exp_salary span {
+  font-size: 14px;
+  line-height: normal;
+  color: #636363;
+}
+
+.dashboard-main .browse_jobs .browse_exp_salary {
+  margin: 0 0 30px;
+}
+
+.dashboard-main .content-area .my_resumes_cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 30px;
+}
+
+.dashboard-main .content-area .my_resumes_cta button {
+  background: #6D17E1;
+  border: none;
+  padding: 18px 37px;
+  border-radius: 14px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.dashboard-main .content-area .my_resumes h2 {
+  margin: 0;
+}
+
+.dashboard-main .manage-jobs-header.jobs_candidate {
+  align-items: center;
+}
+
+.dashboard-main .manage-jobs-header.jobs_candidate h2 {
+  margin: 0;
+}
+
+.dashboard-main .logo_upload_box .img_preview_trigger {
+  width: 100%;
+  height: 100%;
+}
+
+.dashboard-main .manage-jobs-container.jobs_candidate_section .pagination {
+  padding: 60px 0 0;
+}
+
+.dashboard-main .browse_jobs_section .no-jobs {
+  text-align: center;
+  width: 100%;
+  font-size: 32px;
+  margin: 100px 0;
+  color: #636363;
+  line-height: normal;
+}
+
+.dashboard-main .applied_jobs_view {
+  display: flex;
+  gap: 20px;
+  margin: 50px 0 0;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.dashboard-main .applied_jobs_section .browse_title_save {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 0 0 30px;
+}
+
+.dashboard-main .applied_jobs_view .applied_jobs_section {
+  border: 1px solid #e9e9e9;
+  border-radius: 8px;
+  padding: 40px;
+  background: #F8FAFC;
+}
+
+.dashboard-main .applied_jobs_section .browse_title_save h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 400;
+  color: #000000;
+  line-height: normal;
+  cursor: pointer;
+}
+
+.dashboard-main .applied_jobs_view .applied_jobs_section p {
+  font-size: 16px;
+  line-height: 150%;
+  margin: 0 0 25px;
+  color: #636363;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dashboard-main .applied_jobs_section .browse_jobs_location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0 10px;
+  font-size: 14px;
+  line-height: normal;
+  color: #636363;
+}
+
+.dashboard-main .applied_jobs_section .skills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 30px 0 0;
+}
+
+.dashboard-main .applied_jobs_section .skills .skill-tag {
+  background: #e2eaff;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: .6px;
+  padding: 8px 15px;
+  border-radius: 50px;
+  text-transform: capitalize;
+  line-height: normal;
+  color: #636363;
+}
+
+.dashboard-main .applied_jobs_section .browse_exp_salary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dashboard-main .applied_jobs_section .browse_exp_salary span {
+  font-size: 14px;
+  line-height: normal;
+  color: #636363;
+}
+
+.dashboard-main .applied_jobs_view .applied_jobs_section button {
+  background: transparent;
+  border: none;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  color: #636363;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  margin: 30px 0 0;
+}
+
+.dashboard-main .browse_title_save .applied_jobs_status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+.dashboard-main .applied_jobs_view .no-jobs {
+  text-align: center;
+  width: 100%;
+  font-size: 32px;
+  margin: 100px 0;
+  color: #636363;
+  line-height: normal;
+}
+
+.dashboard-main .candidate_dashboard .candidate_dashboard_section ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.dashboard-main .candidate_dashboard .candidate_dashboard_section ul li {
+  width: calc(25% - 18.74px);
+  background: #FFFFFF;
+  box-shadow: 0px 1px 7px 0px #F0E4FFFA;
+  border-radius: 30px;
+  padding: 39px 35px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard-main .candidate_dashboard .candidate_dashboard_section ul li h3 {
+  margin: 0 0 12px;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 100%;
+  color: #6D17E1;
+}
+
+.dashboard-main .candidate_dashboard .candidate_dashboard_section ul li p {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  display: inline-block;
+  color: #6C6969;
+}
+
+.dashboard-main .candidate_dashboard_section ul li .candidate_dashboard_details {
+  width: calc(100% - 65px);
+  padding-right: 20px;
+}
+
+.dashboard-main .candidate_dashboard_section ul li .candidate_dashboard_icon {
+  background: #F0E4FF;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-main .candidate_dashboard .form_card {
+  margin: 40px 0 0;
+  padding: 20px 35px;
+}
+
+.dashboard-main .candidate_dashboard .candidate_dashboard_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.dashboard-main .candidate_dashboard .candidate_dashboard_title button {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  text-decoration: underline;
+  background: transparent;
+  border: none;
+  color: #6D17E1;
+  padding: 0;
+}
+
+.dashboard-main .candidate_dashboard .candidate_dashboard_title h3 {
+  padding: 0;
+  border: none;
 }
 
 @media screen and (max-width: 991px) {

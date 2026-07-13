@@ -163,7 +163,7 @@ function CandidateProfile() {
             </div>
             {profile.description && (
                 <div className="section">
-                    <h4>About Company</h4>
+                    <h4>About Candidate</h4>
                     <p>{profile.description}</p>
                 </div>
             )}

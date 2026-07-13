@@ -17,6 +17,7 @@ import CompanyProfile from './pages/CompanyProfile';
 import EditCompanyProfile from './pages/EditCompanyProfile';
 import Settings from './pages/Settings';
 import ChangePassword from './pages/ChangePassword';
+import CandidateDashboard from './pages/CandidateDashboard';
 import CandidateProfile from './pages/CandidateProfile';
 import EditCandidateProfile from './pages/EditCandidateProfile';
 import MyResumes from './pages/MyResumes';
@@ -62,6 +63,7 @@ function App() {
           <Route path="/candidate/*" element={
             <CandidateLayout>
               <Routes>
+                <Route path="dashboard" element={<CandidateDashboard />} />
                 <Route path="candidate-profile" element={<CandidateProfile />} />
                 <Route path="candidate-profile/edit" element={<EditCandidateProfile />} />
                 <Route path="my-resumes" element={<MyResumes />} />

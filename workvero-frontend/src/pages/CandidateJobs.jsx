@@ -40,6 +40,7 @@ function CandidateJobs() {
                         q: params.q,
                         jobType: params.jobType,
                         workMode: params.workMode,
+                        location: selectedLocation,
                         status: 'OPEN'
                     }
                 });
@@ -49,14 +50,16 @@ function CandidateJobs() {
                 setTotalPages(response.data.data.totalPages);
                 setError(null);
 
-                const uniqueLocations = [
-                    ...new Set(
-                        fetchedJobs
-                            .map(job => job.location?.trim())
-                            .filter(loc => loc)
-                    )
-                ];
-                setAvailableLocations(uniqueLocations);
+                if (availableLocations.length === 0 && fetchedJobs.length > 0) {
+                    const uniqueLocations = [
+                        ...new Set(
+                            fetchedJobs
+                                .map(job => job.location?.trim())
+                                .filter(loc => loc)
+                        )
+                    ];
+                    setAvailableLocations(uniqueLocations);
+                }
             } catch (err) {
                 console.error('Error fetching jobs:', err);
                 setError(err.response?.data?.message || 'Failed to fetch jobs');
@@ -65,7 +68,7 @@ function CandidateJobs() {
             }
         };
         fetchJobs();
-    }, [params, refreshTrigger]);
+    }, [params, selectedLocation, refreshTrigger]);
 
     useEffect(() => {
         const fetchSavedAndApplied = async () => {
@@ -98,29 +101,6 @@ function CandidateJobs() {
             setIsForcedRefreshing(false);
         }, 800);
     };
-
-    const getFileUrl = (path) => {
-        if (!path) return null;
-
-        if (
-            path.startsWith('http://') ||
-            path.startsWith('https://') ||
-            path.startsWith('data:')
-        ) {
-            return path;
-        }
-
-        const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, '');
-
-        return encodeURI(`${baseUrl}/${path.replace(/^\//, '')}`);
-    };
-
-    const displayedJobs = jobs.filter(job => {
-        const matchesLocation = selectedLocation === 'All Locations' || job.location?.trim() === selectedLocation;
-        const matchesJobType = params.jobType === 'All Jobs' || job.jobType === params.jobType;
-        const matchesWorkMode = params.workMode === 'All Modes' || job.workMode === params.workMode;
-        return matchesLocation && matchesJobType && matchesWorkMode;
-    });
 
     const handleSaveToggle = async (jobId) => {
         const isSaved = savedJobIds.has(jobId);
@@ -175,8 +155,8 @@ function CandidateJobs() {
     };
 
     return (
-        <div className="manage-jobs-container">
-            <div className="manage-jobs-header">
+        <div className="manage-jobs-container jobs_candidate_section">
+            <div className="manage-jobs-header jobs_candidate">
                 <h2>Browse Jobs</h2>
                 <div className="controls">
                     <div className='refresh-page'>
@@ -210,7 +190,10 @@ function CandidateJobs() {
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
                     </div>
                     <div className="select-wrapper">
-                        <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>
+                        <select value={selectedLocation} onChange={(e) => {
+                            setSelectedLocation(e.target.value);
+                            setParams(prev => ({ ...prev, page: 1 }));
+                        }}>
                             <option value="All Locations">All Locations</option>
                             {availableLocations.map((location, index) => (
                                 <option key={index} value={location}>
@@ -233,7 +216,7 @@ function CandidateJobs() {
             </div>
             {loading ? <div>Loading...</div> : error ? <div className="error">{error}</div> : (
                 <div className='browse_jobs_section'>
-                    {displayedJobs.length > 0 ? displayedJobs.map(job => {
+                    {jobs.length > 0 ? jobs.map(job => {
                         const skillsList = parseSkills(job.skills);
                         const isSaved = savedJobIds.has(job.id);
                         return (
@@ -246,18 +229,33 @@ function CandidateJobs() {
                                         </svg>
                                     </div>
                                     <p>{job.description}</p>
-                                    <div className='skills'>
-                                        {skillsList.map((skill, idx) => (
-                                            <span key={idx} className="skill-tag">
-                                                {skill}
-                                            </span>
-                                        ))}
-                                    </div>
+                                    {skillsList.length > 0 && (
+                                        <div className='skills'>
+                                            {skillsList.map((skill, idx) => (
+                                                <span key={idx} className="skill-tag">
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                     <div className='browse_jobs_location'>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16" fill="none">
                                             <path fillRule="evenodd" clipRule="evenodd" d="M6.18525 14.2267C7.04783 13.444 7.84615 12.5933 8.5725 11.6827C10.1025 9.7605 11.0332 7.86525 11.0963 6.18C11.1212 5.4951 11.0078 4.81219 10.7629 4.17209C10.518 3.53198 10.1466 2.9478 9.67087 2.45444C9.19515 1.96109 8.62486 1.56868 7.99409 1.30065C7.36331 1.03263 6.68498 0.894491 5.99963 0.894491C5.31427 0.894491 4.63594 1.03263 4.00516 1.30065C3.37439 1.56868 2.8041 1.96109 2.32838 2.45444C1.85265 2.9478 1.48125 3.53198 1.23634 4.17209C0.991443 4.81219 0.878071 5.4951 0.903 6.18C0.96675 7.86525 1.89825 9.7605 3.4275 11.6827C4.15385 12.5933 4.95217 13.444 5.81475 14.2267C5.89775 14.3018 5.9595 14.3562 6 14.3903L6.18525 14.2267ZM5.4465 15.1005C5.4465 15.1005 0 10.5135 0 6C0 4.4087 0.632141 2.88258 1.75736 1.75736C2.88258 0.632141 4.4087 0 6 0C7.5913 0 9.11742 0.632141 10.2426 1.75736C11.3679 2.88258 12 4.4087 12 6C12 10.5135 6.5535 15.1005 6.5535 15.1005C6.2505 15.3795 5.75175 15.3765 5.4465 15.1005ZM6 8.1C6.55695 8.1 7.0911 7.87875 7.48492 7.48492C7.87875 7.0911 8.1 6.55695 8.1 6C8.1 5.44305 7.87875 4.9089 7.48492 4.51508C7.0911 4.12125 6.55695 3.9 6 3.9C5.44305 3.9 4.9089 4.12125 4.51508 4.51508C4.12125 4.9089 3.9 5.44305 3.9 6C3.9 6.55695 4.12125 7.0911 4.51508 7.48492C4.9089 7.87875 5.44305 8.1 6 8.1ZM6 9C5.20435 9 4.44129 8.68393 3.87868 8.12132C3.31607 7.55871 3 6.79565 3 6C3 5.20435 3.31607 4.44129 3.87868 3.87868C4.44129 3.31607 5.20435 3 6 3C6.79565 3 7.55871 3.31607 8.12132 3.87868C8.68393 4.44129 9 5.20435 9 6C9 6.79565 8.68393 7.55871 8.12132 8.12132C7.55871 8.68393 6.79565 9 6 9Z" fill="#8492A6" />
                                         </svg>
                                         {job.location} <span>-</span><span>Posted {getRelativeTime(job.createdAt)}</span>
+                                    </div>
+                                    <div className='browse_exp_salary'>
+                                        <div className='browse_jobs_exp'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                            </svg>
+                                            <span>{job.experience}</span>
+                                        </div>
+                                        <div className='browse_jobs_salary'>
+                                            <span>-</span>
+                                            <span>{job.salary}</span>
+                                        </div>
                                     </div>
                                     <button onClick={() => navigate(`/candidate/browse-jobs/${job.id}`)}>Read more</button>
                                 </div>
@@ -266,34 +264,32 @@ function CandidateJobs() {
                     }) : <div className="no-jobs">No jobs found.</div>}
                 </div>
             )}
-            {totalPages > 1 && (
+            {totalPages > 1 && jobs.length > 0 && (
                 <div className="pagination">
                     <button disabled={params.page === 1} onClick={() => setParams({ ...params, page: params.page - 1 })}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="6" height="10" viewBox="0 0 6 10" fill="none">
                             <path d="M0.235449 5.40002L4.43545 9.67502C4.73545 9.97502 5.18545 9.97502 5.48545 9.67502C5.78545 9.37502 5.78545 8.92502 5.48545 8.62502L1.81045 4.95002L5.48545 1.27502C5.63545 1.12502 5.71045 0.975023 5.71045 0.750023C5.71045 0.300023 5.41045 2.29144e-05 4.96045 2.29538e-05C4.73545 2.29734e-05 4.58545 0.0750228 4.43545 0.225022L0.160449 4.50002C-0.0645509 4.65002 -0.0645503 5.10002 0.235449 5.40002Z" fill="#6C6969" />
                         </svg>
                     </button>
-
                     {getPaginationPages().map((p, idx) => (
                         <button
                             key={idx}
                             className={params.page === p ? 'active' : ''}
                             disabled={p === '...'}
                             onClick={() => p !== '...' && setParams({ ...params, page: p })}
-                            style={{ margin: '0 5px', fontWeight: params.page === p ? 'bold' : 'normal' }}
                         >
                             {p}
                         </button>
                     ))}
-
                     <button disabled={params.page >= totalPages} onClick={() => setParams({ ...params, page: params.page + 1 })}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="6" height="10" viewBox="0 0 6 10" fill="none">
                             <path d="M5.475 4.5L1.275 0.225C0.975 -0.075 0.525 -0.075 0.225 0.225C-0.0749998 0.525 -0.0749998 0.975 0.225 1.275L3.9 4.95L0.225 8.625C0.0750001 8.775 0 8.925 0 9.15C0 9.6 0.3 9.9 0.75 9.9C0.975 9.9 1.125 9.825 1.275 9.675L5.55 5.4C5.775 5.25 5.775 4.8 5.475 4.5Z" fill="#6C6969" />
                         </svg>
                     </button>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }
 

@@ -13,6 +13,9 @@ function CandidateJobDetail() {
     const [isApplying, setIsApplying] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
 
+    const [isPremium, setIsPremium] = useState(false);
+    const [applicationCount, setApplicationCount] = useState(0);
+
     useEffect(() => {
         const fetchJob = async () => {
             setLoading(true);
@@ -40,7 +43,7 @@ function CandidateJobDetail() {
 
                 const appliedList = appliedRes.data.applications?.applications || [];
                 const savedList = savedRes.data.savedJobs?.savedJobs || [];
-
+                setApplicationCount(appliedList.length);
                 setIsApplied(appliedList.some(item => item.jobId === Number(id)));
                 setIsSaved(savedList.some(item => Number(item.jobId) === Number(id)));
             } catch (err) {
@@ -60,10 +63,39 @@ function CandidateJobDetail() {
     };
 
     const handleApply = async () => {
+        if (!isPremium && applicationCount >= 5) {
+            toast((t) => (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontFamily: 'sans-serif' }}>
+                    <span style={{ fontSize: '14px', color: '#333' }}>
+                        ⚠️ You have used your limit of <b>5 free applications</b>. Please purchase a plan to apply for more jobs!
+                    </span>
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                        <button
+                            onClick={() => {
+                                toast.dismiss(t.id);
+                                navigate('/candidate/pricing');
+                            }}
+                            style={{ background: '#0146EE', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                        >
+                            View Plans
+                        </button>
+                        <button
+                            onClick={() => toast.dismiss(t.id)}
+                            style={{ background: '#ccc', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            ), { duration: 6000 });
+            return;
+        }
+
         setIsApplying(true);
         try {
             await api.post('/candidate/me/applications', { jobId: Number(id) });
             setIsApplied(true);
+            setApplicationCount(prev => prev + 1);
             toast.success('Application submitted!');
         } catch (err) {
             toast.error(err.response?.data?.message || 'Failed to apply. Please try again.');
@@ -286,6 +318,15 @@ function CandidateJobDetail() {
                         {(job.company?.companyName?.length || job.company?.industry?.length || job.company?.companySize?.length) > 0 && (
                             <div className='job_company_info'>
                                 <h4>About the Client</h4>
+                                <div className='job_company_logo'>
+                                    {job.company?.logo ? (
+                                        <img src={getFileUrl(job.company.logo)} alt={job.company?.companyName} />
+                                    ) : (
+                                        <div className="placeholder-logo">
+                                            {job.company?.companyName?.charAt(0).toUpperCase() || 'C'}
+                                        </div>
+                                    )}
+                                </div>
                                 <div className='job_company_name'>
                                     {job.company?.companyName && <h5>{job.company.companyName}</h5>}
                                     {job.company?.industry && <p>{job.company.industry}</p>}

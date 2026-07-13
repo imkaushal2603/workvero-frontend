@@ -111,7 +111,10 @@ function MyResumes() {
 
   return (
     <div className="my_resumes">
-      <h2>My Resumes</h2>
+      <div className='my_resumes_cta'>
+        <h2>My Resumes</h2>
+        <button>Create Resume with AI</button>
+      </div>
       <div className="form_card">
         <h3>Upload CV File</h3>
         <div className="form_fields">
