@@ -198,7 +198,6 @@ function CandidateSavedJobs() {
                     }) : <div className="no-jobs">No saved jobs found.</div>}
                 </div>
             )}
-
             {totalPages > 1 && (
                 <div className="pagination">
                     <button disabled={params.page === 1} onClick={() => setParams({ ...params, page: params.page - 1 })}>
@@ -206,7 +205,6 @@ function CandidateSavedJobs() {
                             <path d="M0.235449 5.40002L4.43545 9.67502C4.73545 9.97502 5.18545 9.97502 5.48545 9.67502C5.78545 9.37502 5.78545 8.92502 5.48545 8.62502L1.81045 4.95002L5.48545 1.27502C5.63545 1.12502 5.71045 0.975023 5.71045 0.750023C5.71045 0.300023 5.41045 2.29144e-05 4.96045 2.29538e-05C4.73545 2.29734e-05 4.58545 0.0750228 4.43545 0.225022L0.160449 4.50002C-0.0645509 4.65002 -0.0645503 5.10002 0.235449 5.40002Z" fill="#6C6969" />
                         </svg>
                     </button>
-
                     {getPaginationPages().map((p, idx) => (
                         <button
                             key={idx}
@@ -218,7 +216,6 @@ function CandidateSavedJobs() {
                             {p}
                         </button>
                     ))}
-
                     <button disabled={params.page >= totalPages} onClick={() => setParams({ ...params, page: params.page + 1 })}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="6" height="10" viewBox="0 0 6 10" fill="none">
                             <path d="M5.475 4.5L1.275 0.225C0.975 -0.075 0.525 -0.075 0.225 0.225C-0.0749998 0.525 -0.0749998 0.975 0.225 1.275L3.9 4.95L0.225 8.625C0.0750001 8.775 0 8.925 0 9.15C0 9.6 0.3 9.9 0.75 9.9C0.975 9.9 1.125 9.825 1.275 9.675L5.55 5.4C5.775 5.25 5.775 4.8 5.475 4.5Z" fill="#6C6969" />

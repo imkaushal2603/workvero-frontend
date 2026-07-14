@@ -317,7 +317,7 @@ function CandidateJobDetail() {
                         </div>
                         {(job.company?.companyName?.length || job.company?.industry?.length || job.company?.companySize?.length) > 0 && (
                             <div className='job_company_info'>
-                                <h4>About the Client</h4>
+                                <h4>About the Company</h4>
                                 <div className='job_company_logo'>
                                     {job.company?.logo ? (
                                         <img src={getFileUrl(job.company.logo)} alt={job.company?.companyName} />

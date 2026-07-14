@@ -240,7 +240,7 @@ function ManageJobs() {
                                 </div>
                             </div>
                             <div className="jobs_table_row">
-                                <p>120</p>
+                                <p>{job.applicantsCount ?? 0}</p>
                             </div>
                             <div className="jobs_table_row">
                                 <p>{job.jobType}</p>

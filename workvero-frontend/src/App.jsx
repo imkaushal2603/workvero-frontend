@@ -9,6 +9,7 @@ import './App.css';
 import PublicLayout from './layouts/PublicLayout';
 import EmployerLayout from './layouts/EmployerLayout';
 import CandidateLayout from './layouts/CandidateLayout';
+import CompanyDashboard from './pages/CompanyDashboard';
 import PostJob from './pages/PostJob';
 import ManageJobs from './pages/ManageJobs';
 import EditJob from './pages/EditJob';
@@ -48,8 +49,9 @@ function App() {
           <Route path="/employer/*" element={
             <EmployerLayout>
               <Routes>
-                <Route path="company-profile" element={<CompanyProfile />} />
-                <Route path="company-profile/edit" element={<EditCompanyProfile />} />
+                <Route path="dashboard" element={<CompanyDashboard />} />
+                <Route path="profile" element={<CompanyProfile />} />
+                <Route path="profile/edit" element={<EditCompanyProfile />} />
                 <Route path="post-job" element={<PostJob />} />
                 <Route path="manage-jobs" element={<ManageJobs />} />
                 <Route path="manage-jobs/:id" element={<EditJob />} />
@@ -64,9 +66,9 @@ function App() {
             <CandidateLayout>
               <Routes>
                 <Route path="dashboard" element={<CandidateDashboard />} />
-                <Route path="candidate-profile" element={<CandidateProfile />} />
-                <Route path="candidate-profile/edit" element={<EditCandidateProfile />} />
-                <Route path="my-resumes" element={<MyResumes />} />
+                <Route path="profile" element={<CandidateProfile />} />
+                <Route path="profile/edit" element={<EditCandidateProfile />} />
+                <Route path="resumes" element={<MyResumes />} />
                 <Route path="browse-jobs" element={<CandidateJobs />} />
                 <Route path="/browse-jobs/:id" element={<CandidateJobDetail />} />
                 <Route path="/applied-jobs" element={<AppliedJobs />} />

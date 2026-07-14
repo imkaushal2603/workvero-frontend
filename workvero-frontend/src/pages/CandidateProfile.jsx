@@ -63,7 +63,7 @@ function CandidateProfile() {
                                 </div>
                             )}
                         </div>
-                        <button onClick={() => navigate('/candidate/candidate-profile/edit')} className="edit-btn">Edit Profile</button>
+                        <button onClick={() => navigate('/candidate/profile/edit')} className="edit-btn">Edit Profile</button>
                     </div>
                     <div className="company-info">
                         <h3>{profile.firstName} {profile.lastName}</h3>

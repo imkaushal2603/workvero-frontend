@@ -73,7 +73,7 @@ function CompanyProfile() {
                                 </div>
                             )}
                         </div>
-                        <button onClick={() => navigate('/employer/company-profile/edit')} className="edit-btn">Edit Profile</button>
+                        <button onClick={() => navigate('/employer/profile/edit')} className="edit-btn">Edit Profile</button>
                     </div>
                     <div className="company-info">
                         <h3>{profile.companyName}</h3>

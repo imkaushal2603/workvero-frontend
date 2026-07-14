@@ -26,6 +26,15 @@ function Login({ isOpen, onClose, onSwitchToRegister, onSwitchToReset }) {
             });
 
             const data = response.data;
+            const returnedRole = data.role ? data.role.toUpperCase() : 'CANDIDATE';
+
+            if (returnedRole !== userType) {
+                const expected = userType === 'CANDIDATE' ? 'Candidate' : 'Employer';
+                const actual = returnedRole === 'CANDIDATE' ? 'Candidate' : 'Employer';
+                setError(`This account is registered as ${actual}. Please switch to the ${actual} tab to log in.`);
+                setLoading(false);
+                return;
+            }
 
             localStorage.setItem('token', data.accessToken);
             localStorage.setItem('role', data.role ? data.role.toLowerCase() : 'candidate');
@@ -52,6 +61,22 @@ function Login({ isOpen, onClose, onSwitchToRegister, onSwitchToReset }) {
                 <p>Ready to get started? Sign up now</p>
                 {error && <div className="auth_error_message" style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
                 <form onSubmit={handleSubmit}>
+                    <div className="auth_tab_container">
+                        <button
+                            type="button"
+                            className={`auth_tab ${userType === 'CANDIDATE' ? 'active' : ''}`}
+                            onClick={() => { setUserType('CANDIDATE'); setError(''); }}
+                        >
+                            Candidate
+                        </button>
+                        <button
+                            type="button"
+                            className={`auth_tab ${userType === 'RECRUITER' ? 'active' : ''}`}
+                            onClick={() => { setUserType('RECRUITER'); setError(''); }}
+                        >
+                            Employer
+                        </button>
+                    </div>
                     <div className="input_group">
                         <label htmlFor="email">Email*</label>
                         <input type="email" id="email" placeholder="info@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
