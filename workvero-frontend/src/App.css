@@ -3092,8 +3092,7 @@ header .account_dropdown .dropdown_menu button {
   width: 11.4285%;
 }
 
-.dashboard-main .jobs_table_body .jobs_table_row p,
-.dashboard-main .browse_title_save .applied_jobs_status span:first-child {
+.dashboard-main .jobs_table_body .jobs_table_row p {
   font-weight: 400;
   font-size: 14px;
   line-height: 100%;
@@ -3128,6 +3127,7 @@ header .account_dropdown .dropdown_menu button {
   line-height: 26px;
   letter-spacing: 1px;
   color: #000000;
+  cursor: pointer;
 }
 
 .dashboard-main .jobs_table_body .jobs_table_row.open p {
@@ -3696,7 +3696,7 @@ header .account_dropdown .dropdown_menu button {
   padding: 16px 37px;
 }
 
-.dashboard-main .jobs_candidate_view .status-badge.saved {
+.dashboard-main .status-badge.saved {
   background: #F0E4FF;
   font-weight: 500;
   font-size: 12px;
@@ -3721,11 +3721,11 @@ header .account_dropdown .dropdown_menu button {
   border-radius: 50px;
   border: none;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 26px;
   letter-spacing: 1px;
   color: #636363;
-  padding: 6px 25px;
+  padding: 4px 18px;
   cursor: pointer;
 }
 
@@ -3889,7 +3889,8 @@ header .account_dropdown .dropdown_menu button {
   gap: 20px;
 }
 
-.dashboard-main .browse_title_save .browse_save_logo img {
+.dashboard-main .browse_title_save .browse_save_logo img,
+.dashboard-main .browse_title_save .applied_jobs_status img {
   height: 52px;
   width: 52px;
   border: 1px solid #e9e9e9;
@@ -3964,7 +3965,8 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .browse_jobs_section .browse_jobs h3:hover,
 .dashboard-main .browse_jobs_section .browse_jobs button:hover,
 .dashboard-main .applied_jobs_section .browse_title_save h3:hover,
-.dashboard-main .applied_jobs_view .applied_jobs_section button:hover {
+.dashboard-main .applied_jobs_view .applied_jobs_section button:hover,
+.dashboard-main .jobs_table_body .jobs_table_row:first-child h6:hover {
   color: #6D17E1;
 }
 
@@ -4232,7 +4234,9 @@ header .account_dropdown .dropdown_menu button {
 }
 
 .dashboard-main .job_btns_info .job_btns button.apply-btn[disabled] {
-  background: #0146EE;
+  background: transparent;
+  border: 1px solid #6D17E1;
+  color: #6D17E1;
 }
 
 .dashboard-main .browse_jobs .browse_exp_salary,
@@ -4383,10 +4387,11 @@ header .account_dropdown .dropdown_menu button {
   gap: 10px;
 }
 
-.dashboard-main .applied_jobs_section .browse_exp_salary span {
+.dashboard-main .applied_jobs_section span {
   font-size: 14px;
   line-height: normal;
   color: #636363;
+  display: inline-block;
 }
 
 .dashboard-main .applied_jobs_view .applied_jobs_section button {
@@ -4400,6 +4405,7 @@ header .account_dropdown .dropdown_menu button {
   text-decoration: underline;
   padding: 0;
   margin: 30px 0 0;
+  display: block;
 }
 
 .dashboard-main .browse_title_save .applied_jobs_status {
@@ -4518,7 +4524,7 @@ header .account_dropdown .dropdown_menu button {
 
 .dashboard-main .candidate_dashboard .jobs_table_heading,
 .dashboard-main .candidate_dashboard .jobs_table_row {
-  width: 18.75%;
+  width: 15%;
 }
 
 .company_dashboard .company_jobs_applicants {
@@ -4578,7 +4584,8 @@ header .account_dropdown .dropdown_menu button {
   cursor: pointer;
 }
 
-.dashboard-main .browse_jobs_section .browse_jobs span {
+.dashboard-main .browse_jobs_section .browse_jobs span,
+.dashboard-main .applied_jobs_section .browse_title_save span {
   font-size: 14px;
   line-height: normal;
   font-weight: 500;
@@ -4588,7 +4595,6 @@ header .account_dropdown .dropdown_menu button {
 .loader-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(2px);
   display: flex;
   justify-content: center;
@@ -4617,6 +4623,16 @@ header .account_dropdown .dropdown_menu button {
 
 .loading {
   visibility: hidden;
+}
+
+.refresh-page svg.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media screen and (max-width: 991px) {

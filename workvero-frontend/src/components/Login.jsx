@@ -31,7 +31,7 @@ function Login({ isOpen, onClose, onSwitchToRegister, onSwitchToReset }) {
             if (returnedRole !== userType) {
                 const expected = userType === 'CANDIDATE' ? 'Candidate' : 'Employer';
                 const actual = returnedRole === 'CANDIDATE' ? 'Candidate' : 'Employer';
-                setError(`This account is registered as ${actual}. Please switch to the ${actual} tab to log in.`);
+                setError(`This account is not registered as ${expected}.`);
                 setLoading(false);
                 return;
             }

@@ -152,6 +152,15 @@ function AppliedJobs() {
         return `${diffYears} year${diffYears > 1 ? 's' : ''} ago`;
     };
 
+    const getFileUrl = (path) => {
+        if (!path) return null;
+        if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+            return path;
+        }
+        const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, '');
+        return encodeURI(`${baseUrl}/${path.replace(/^\//, '')}`);
+    };
+
     return (
         <>
             {loading && <Loader />}
@@ -212,9 +221,18 @@ function AppliedJobs() {
                             return (
                                 <div className='applied_jobs_section' key={app.id}>
                                     <div className='browse_title_save'>
-                                        <h3 onClick={() => navigate(`/candidate/browse-jobs/${job.id}`)}>{job.title}</h3>
+                                        <div className='browse_title_company'>
+                                            <h3 onClick={() => navigate(`/candidate/browse-jobs/${job.id}`)}>{job.title}</h3>
+                                            <span>{job.user?.company_profile?.companyName}</span>
+                                        </div>
                                         <div className='applied_jobs_status'>
-                                            <span>Applied on {app.createdAt ? new Date(app.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}</span>
+                                            {job.user?.company_profile?.logo ? (
+                                                <img src={getFileUrl(job.user.company_profile.logo)} alt={job.user?.company?.companyName} />
+                                            ) : (
+                                                <div className="placeholder-logo">
+                                                    {job.user?.company?.companyName?.charAt(0).toUpperCase() || 'C'}
+                                                </div>
+                                            )}
                                             <span className={`status-badge ${badge.className}`}>{badge.label}</span>
                                             <svg
                                                 onClick={() => handleWithdraw(app.id)}
@@ -245,6 +263,7 @@ function AppliedJobs() {
                                             <span>{job.salary}</span>
                                         </div>
                                     </div>
+                                    <span>Applied on {app.createdAt ? new Date(app.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}</span>
                                     {skillsList.length > 0 && (
                                         <div className='skills'>
                                             {skillsList.map((skill, idx) => (

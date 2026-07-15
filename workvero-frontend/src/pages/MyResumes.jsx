@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import Loader from "../components/Loader";
 
 const MAX_RESUMES = 5;
 
@@ -13,10 +14,14 @@ function MyResumes() {
   useEffect(() => {
     const fetchCvFiles = async () => {
       try {
-        const res = await api.get('/candidate/me/cv');
+        const [res] = await Promise.all([
+          api.get('/candidate/me/cv'),
+          new Promise(resolve => setTimeout(resolve, 800))
+        ]);
         setCvFiles(res.data.cv || []);
       } catch (err) {
         console.error('Failed to fetch CV files', err);
+        toast.error('Failed to fetch resumes.');
       } finally {
         setLoading(false);
       }
@@ -107,86 +112,86 @@ function MyResumes() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-
   return (
-    <div className="my_resumes">
-      <div className='my_resumes_cta'>
-        <h2>My Resumes</h2>
-        <button>Create Resume with AI</button>
-      </div>
-      <div className="form_card">
-        <h3>Upload CV File</h3>
-        <div className="form_fields">
-          <div className="form_fielset">
-            <div className="form_field">
-              <label>CV Attachment<span>*</span></label>
+    <>
+      {loading && <Loader />}
+      <div className={`my_resumes ${loading ? "loading" : ""}`}>
+        <div className='my_resumes_cta'>
+          <h2>My Resumes</h2>
+          <button>Create Resume with AI</button>
+        </div>
+        <div className="form_card">
+          <h3>Upload CV File</h3>
+          <div className="form_fields">
+            <div className="form_fielset">
+              <div className="form_field">
+                <label>CV Attachment<span>*</span></label>
+              </div>
+              {cvFiles.map((cv) => (
+                <div className="form_field cv_row" key={cv.id}>
+                  <a href={getFileUrl(cv.fileUrl)} target="_blank" rel="noopener noreferrer">
+                    {cv.fileName || 'DOC, PDF'}
+                  </a>
+                  <button type="button" className="cv_remove_btn" onClick={() => handleRemove(cv.id)} aria-label="Remove resume">×</button>
+                </div>
+              ))}
+              {cvFiles.length < MAX_RESUMES && (
+                <div className="form_field upload_cv_field">
+                  <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }} onChange={handleFileChange} />
+                  <button type="button" className="upload_cv_btn" onClick={handleUploadClick} disabled={isUploading}>
+                    + {isUploading ? 'Uploading...' : 'Upload CV'}
+                  </button>
+                  <p className="upload_hint">Upload file .pdf, .doc, .docx ({cvFiles.length}/{MAX_RESUMES})</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        {cvFiles.length > 0 && (
+          <div className='jobs_table resumes_tables'>
+            <div className="jobs_table_header">
+              <div className='jobs_table_heading'>Resume Name</div>
+              <div className='jobs_table_heading'>Uploaded Date</div>
+              <div className='jobs_table_heading'>Active</div>
             </div>
             {cvFiles.map((cv) => (
-              <div className="form_field cv_row" key={cv.id}>
-                <a href={getFileUrl(cv.fileUrl)} target="_blank" rel="noopener noreferrer">
-                  {cv.fileName || 'DOC, PDF'}
-                </a>
-                <button type="button" className="cv_remove_btn" onClick={() => handleRemove(cv.id)} aria-label="Remove resume">×</button>
+              <div className="jobs_table_body" key={cv.id}>
+                <div className="jobs_table_row">
+                  <p>
+                    <a href={getFileUrl(cv.fileUrl)} target="_blank" rel="noopener noreferrer">
+                      {cv.fileName || 'Untitled Resume'}
+                    </a>
+                  </p>
+                </div>
+                <div className="jobs_table_row">
+                  <p>
+                    {cv.uploadedAt
+                      ? new Date(cv.uploadedAt).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                      })
+                      : 'N/A'}
+                  </p>
+                </div>
+                <div className="jobs_table_row">
+                  <p>
+                    <label className="toggle_switch">
+                      <input
+                        type="checkbox"
+                        checked={!!cv.isActive}
+                        onChange={() => !cv.isActive && handleSetActive(cv.id)}
+                      />
+                      <span className="toggle_slider" />
+                    </label>
+                  </p>
+                </div>
               </div>
             ))}
-            {cvFiles.length < MAX_RESUMES && (
-              <div className="form_field upload_cv_field">
-                <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }} onChange={handleFileChange} />
-                <button type="button" className="upload_cv_btn" onClick={handleUploadClick} disabled={isUploading}>
-                  + {isUploading ? 'Uploading...' : 'Upload CV'}
-                </button>
-                <p className="upload_hint">Upload file .pdf, .doc, .docx ({cvFiles.length}/{MAX_RESUMES})</p>
-              </div>
-            )}
           </div>
-        </div>
+        )}
       </div>
-
-      {cvFiles.length > 0 && (
-        <div className='jobs_table resumes_tables'>
-          <div className="jobs_table_header">
-            <div className='jobs_table_heading'>Resume Name</div>
-            <div className='jobs_table_heading'>Uploaded Date</div>
-            <div className='jobs_table_heading'>Active</div>
-          </div>
-          {cvFiles.map((cv) => (
-            <div className="jobs_table_body" key={cv.id}>
-              <div className="jobs_table_row">
-                <p>
-                  <a href={getFileUrl(cv.fileUrl)} target="_blank" rel="noopener noreferrer">
-                    {cv.fileName || 'Untitled Resume'}
-                  </a>
-                </p>
-              </div>
-              <div className="jobs_table_row">
-                <p>
-                  {cv.uploadedAt
-                    ? new Date(cv.uploadedAt).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric'
-                    })
-                    : 'N/A'}
-                </p>
-              </div>
-              <div className="jobs_table_row">
-                <p>
-                  <label className="toggle_switch">
-                    <input
-                      type="checkbox"
-                      checked={!!cv.isActive}
-                      onChange={() => !cv.isActive && handleSetActive(cv.id)}
-                    />
-                    <span className="toggle_slider" />
-                  </label>
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    </>
   );
 }
 

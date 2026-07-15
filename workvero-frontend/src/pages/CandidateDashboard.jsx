@@ -29,7 +29,7 @@ function CandidateDashboard() {
                 const [appliedResponse, savedResponse] = await Promise.all([
                     api.get("/candidate/me/applications"),
                     api.get("/candidate/me/saved-jobs"),
-                    new Promise((resolve) => setTimeout(resolve, 800)),
+                    new Promise((resolve) => setTimeout(resolve, 600)),
                 ]);
                 const appliedDataList = appliedResponse.data?.applications?.applications || [];
                 const appliedCount = appliedResponse.data?.applications?.total || appliedDataList.length || 0;
@@ -136,6 +136,7 @@ function CandidateDashboard() {
                                 <div className='jobs_table_heading'>Type</div>
                                 <div className='jobs_table_heading'>Salary</div>
                                 <div className='jobs_table_heading'>Status</div>
+                                <div className='jobs_table_heading'>Action</div>
                             </div>
                             {appliedJobs.length > 0 ? (
                                 appliedJobs.map(application => {
@@ -155,7 +156,7 @@ function CandidateDashboard() {
                                                     )}
                                                 </div>
                                                 <div className='jobs_table_title'>
-                                                    <h6>{company?.companyName || 'N/A'}</h6>
+                                                    <h6 onClick={() => navigate(`/candidate/browse-jobs/${job.id}`)}>{company?.companyName || 'N/A'}</h6>
                                                     {company?.city && (
                                                         <p>{company.city}</p>
                                                     )}
@@ -174,6 +175,15 @@ function CandidateDashboard() {
                                                 <span className={`status-badge ${badge.className}`}>
                                                     {badge.label}
                                                 </span>
+                                            </div>
+                                            <div className="jobs_table_row">
+                                                <svg
+                                                    onClick={() => navigate(`/candidate/browse-jobs/${job.id}`)}
+                                                    style={{ cursor: 'pointer' }}
+                                                    xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                                    <rect width="32" height="32" rx="4" fill="#E2EAFF" />
+                                                    <path fillRule="evenodd" clipRule="evenodd" d="M24.3571 16L24.8907 15.7326V15.73L24.8869 15.7261L24.8791 15.7107L24.8521 15.6593L24.7493 15.4741C24.6238 15.2576 24.4904 15.0458 24.3494 14.839C23.879 14.1485 23.3383 13.5086 22.7359 12.9297C21.2881 11.5411 19.06 10.1243 16 10.1243C12.9426 10.1243 10.7131 11.5398 9.26542 12.9297C8.66302 13.5086 8.12227 14.1485 7.65185 14.839C7.46097 15.1206 7.28418 15.4115 7.12214 15.7107L7.11442 15.7261L7.11185 15.73V15.7313C7.11185 15.7313 7.11057 15.7326 7.64414 16L7.11057 15.7313C7.06931 15.8146 7.04785 15.9063 7.04785 15.9993C7.04785 16.0923 7.06931 16.1841 7.11057 16.2674L7.10928 16.27L7.11314 16.2738L7.12085 16.2893C7.16094 16.3696 7.20383 16.4485 7.24942 16.5258C7.80305 17.4611 8.4803 18.3174 9.26285 19.0716C10.7119 20.4601 12.94 21.8744 16 21.8744C19.0587 21.8744 21.2881 20.4601 22.7371 19.0703C23.3384 18.4906 23.8787 17.8509 24.3494 17.161C24.5297 16.8955 24.6975 16.6218 24.8521 16.3407L24.8791 16.2893L24.8869 16.2738L24.8894 16.27V16.2687C24.8894 16.2687 24.8907 16.2674 24.3571 16ZM24.3571 16L24.8907 16.2687C24.932 16.1854 24.9534 16.0936 24.9534 16.0006C24.9534 15.9076 24.932 15.8159 24.8907 15.7326L24.3571 16ZM15.9229 14.0251C15.3991 14.0251 14.8968 14.2332 14.5264 14.6035C14.1561 14.9739 13.948 15.4762 13.948 16C13.948 16.5237 14.1561 17.0261 14.5264 17.3964C14.8968 17.7668 15.3991 17.9748 15.9229 17.9748C16.4466 17.9748 16.9489 17.7668 17.3193 17.3964C17.6896 17.0261 17.8977 16.5237 17.8977 16C17.8977 15.4762 17.6896 14.9739 17.3193 14.6035C16.9489 14.2332 16.4466 14.0251 15.9229 14.0251ZM12.7574 16C12.7574 15.1598 13.0912 14.354 13.6853 13.7599C14.2794 13.1658 15.0852 12.832 15.9254 12.832C16.7656 12.832 17.5714 13.1658 18.1655 13.7599C18.7597 14.354 19.0934 15.1598 19.0934 16C19.0934 16.8402 18.7597 17.646 18.1655 18.2401C17.5714 18.8342 16.7656 19.168 15.9254 19.168C15.0852 19.168 14.2794 18.8342 13.6853 18.2401C13.0912 17.646 12.7574 16.8402 12.7574 16Z" fill="#0146EE" />
+                                                </svg>
                                             </div>
                                         </div>
                                     );

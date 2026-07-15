@@ -13,6 +13,7 @@ function CandidateJobs() {
     const [error, setError] = useState(null);
     const [params, setParams] = useState({ page: 1, limit: 4, q: '', jobType: 'All Jobs', workMode: 'All Modes' });
     const [totalPages, setTotalPages] = useState(0);
+    const [searchInput, setSearchInput] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('All Locations');
     const [availableLocations, setAvailableLocations] = useState([]);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -32,22 +33,25 @@ function CandidateJobs() {
 
     useEffect(() => {
         const fetchJobs = async () => {
-            setLoading(true);
+            if (!isForcedRefreshing) {
+                setLoading(true);
+            }
             try {
-                const [response] = await Promise.all([
-                    api.get('/job', {
-                        params: {
-                            offset: params.page,
-                            limit: params.limit,
-                            q: params.q,
-                            jobType: params.jobType,
-                            workMode: params.workMode,
-                            location: selectedLocation,
-                            status: 'OPEN',
-                        },
-                    }),
-                    new Promise(resolve => setTimeout(resolve, 800)),
-                ]);
+                const response = await api.get('/job', {
+                    params: {
+                        offset: params.page,
+                        limit: params.limit,
+                        q: params.q,
+                        jobType: params.jobType,
+                        workMode: params.workMode,
+                        location: selectedLocation,
+                        status: 'OPEN',
+                    },
+                });
+
+                if (!isForcedRefreshing) {
+                    await new Promise(resolve => setTimeout(resolve, 600));
+                }
 
                 const fetchedJobs = response.data.data.jobs || [];
                 setJobs(fetchedJobs);
@@ -96,12 +100,14 @@ function CandidateJobs() {
     }, []);
 
     const handleManualRefresh = () => {
-        if (loading || isForcedRefreshing) return;
+        if (isForcedRefreshing) return;
 
         setIsForcedRefreshing(true);
-        toast.success("Refreshing job listings...");
+        toast.success('Refreshing job listings...');
 
-        setRefreshTrigger(prev => prev + 1);
+        setTimeout(() => {
+            setRefreshTrigger(prev => prev + 1);
+        }, 600);
     };
 
     const handleSaveToggle = async (jobId) => {
@@ -165,10 +171,20 @@ function CandidateJobs() {
         return encodeURI(`${baseUrl}/${path.replace(/^\//, '')}`);
     };
 
+    const executeSearch = () => {
+        setParams(prev => ({ ...prev, q: searchInput, page: 1 }));
+    };
+
+    const handleSearchKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            executeSearch();
+        }
+    };
+
     return (
         <>
-            {loading && <Loader />}
-            <div className={`manage-jobs-container jobs_candidate_section ${loading ? "loading" : ""}`}>
+            {loading && !isForcedRefreshing && <Loader />}
+            <div className={`manage-jobs-container jobs_candidate_section ${loading ? "loading" : ""} ${isForcedRefreshing ? "refreshing" : ""}`}>
                 <div className="manage-jobs-header jobs_candidate">
                     <h2>Browse Jobs</h2>
                     <div className="controls">
@@ -177,10 +193,12 @@ function CandidateJobs() {
                         </div>
                         <div className="search-bar">
                             <input
-                                placeholder="Search jobs..."
-                                onChange={(e) => setParams({ ...params, q: e.target.value, page: 1 })}
+                                placeholder="Search Jobs..."
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
+                                onKeyDown={handleSearchKeyDown}
                             />
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <svg onClick={executeSearch} style={{ cursor: 'pointer' }} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
                                 <path d="M9.375 8.25H8.7825L8.5725 8.0475C9.33296 7.16555 9.75089 6.03953 9.75 4.875C9.75 3.91082 9.46409 2.96829 8.92842 2.1666C8.39274 1.36491 7.63137 0.740067 6.74058 0.371089C5.84979 0.00211226 4.86959 -0.094429 3.92394 0.0936739C2.97828 0.281777 2.10964 0.746075 1.42786 1.42786C0.746075 2.10964 0.281777 2.97828 0.0936739 3.92394C-0.094429 4.86959 0.00211226 5.84979 0.371089 6.74058C0.740067 7.63137 1.36491 8.39274 2.1666 8.92842C2.96829 9.46409 3.91082 9.75 4.875 9.75C6.0825 9.75 7.1925 9.3075 8.0475 8.5725L8.25 8.7825V9.375L12 13.1175L13.1175 12L9.375 8.25ZM4.875 8.25C3.0075 8.25 1.5 6.7425 1.5 4.875C1.5 3.0075 3.0075 1.5 4.875 1.5C6.7425 1.5 8.25 3.0075 8.25 4.875C8.25 6.7425 6.7425 8.25 4.875 8.25Z" fill="#696969" />
                             </svg>
                         </div>

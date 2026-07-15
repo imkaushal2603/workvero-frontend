@@ -123,7 +123,7 @@ function DashboardHeader() {
                                     ) : profileImgSrc ? (
                                         <img src={profileImgSrc} alt={profileAltText} />
                                     ) : (
-                                        <DefaultProfileIcon />
+                                        <img />
                                     )}
                                 </div>
                                 My Account
