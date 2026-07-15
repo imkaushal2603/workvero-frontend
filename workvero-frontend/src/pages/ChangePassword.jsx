@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import Loader from "../components/Loader";
 
 function ChangePassword() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         current_password: '',
@@ -12,25 +14,34 @@ function ChangePassword() {
         confirm_password: ''
     });
 
+    useEffect(() => {
+        const loadPage = async () => {
+            await new Promise(resolve => setTimeout(resolve, 600));
+            setLoading(false);
+        };
+
+        loadPage();
+    }, []);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (formData.new_password !== formData.confirm_password) {
             toast.error('New passwords do not match');
             return;
         }
-
         setIsSubmitting(true);
         try {
-            const email = localStorage.getItem('email');
-            await api.post('/auth/change-password', {
-                oldPassword: formData.current_password,
-                newPassword: formData.new_password
-            });
+            await Promise.all([
+                api.post('/auth/change-password', {
+                    oldPassword: formData.current_password,
+                    newPassword: formData.new_password
+                }),
+                new Promise(resolve => setTimeout(resolve, 600))
+            ]);
             toast.success('Password changed successfully!');
             navigate('/employer/settings');
         } catch (err) {
@@ -41,39 +52,42 @@ function ChangePassword() {
     };
 
     return (
-        <div className="change_password">
-            <h2>Change Password</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form_card">
-                    <h3>Change Password</h3>
-                    <div className="form_fields">
-                        <div className="form_full">
-                            <div className="form_field">
-                                <label htmlFor="current_password">Current Password<span>*</span></label>
-                                <input type="password" name="current_password" id="current_password" value={formData.current_password} onChange={handleChange} placeholder="Enter Current Password" required />
+        <>
+            {loading && <Loader />}
+            <div className={`change_password ${loading ? "loading" : ""}`}>
+                <h2>Change Password</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="form_card">
+                        <h3>Change Password</h3>
+                        <div className="form_fields">
+                            <div className="form_full">
+                                <div className="form_field">
+                                    <label htmlFor="current_password">Current Password<span>*</span></label>
+                                    <input type="password" name="current_password" id="current_password" value={formData.current_password} onChange={handleChange} placeholder="Enter Current Password" required />
+                                </div>
                             </div>
-                        </div>
-                        <div className="form_full">
-                            <div className="form_field">
-                                <label htmlFor="new_password">New Password<span>*</span></label>
-                                <input type="password" name="new_password" id="new_password" value={formData.new_password} onChange={handleChange} placeholder="Enter New Password" required />
+                            <div className="form_full">
+                                <div className="form_field">
+                                    <label htmlFor="new_password">New Password<span>*</span></label>
+                                    <input type="password" name="new_password" id="new_password" value={formData.new_password} onChange={handleChange} placeholder="Enter New Password" required />
+                                </div>
                             </div>
-                        </div>
-                        <div className="form_full">
-                            <div className="form_field">
-                                <label htmlFor="confirm_password">Confirm New Password<span>*</span></label>
-                                <input type="password" name="confirm_password" id="confirm_password" value={formData.confirm_password} onChange={handleChange} placeholder="Confirm New Password" required />
+                            <div className="form_full">
+                                <div className="form_field">
+                                    <label htmlFor="confirm_password">Confirm New Password<span>*</span></label>
+                                    <input type="password" name="confirm_password" id="confirm_password" value={formData.confirm_password} onChange={handleChange} placeholder="Confirm New Password" required />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="form_buttons">
-                    <button type="submit" className="submit-btn" disabled={isSubmitting}>
-                        {isSubmitting ? 'Changing...' : 'Change Password'}
-                    </button>
-                </div>
-            </form>
-        </div>
+                    <div className="form_buttons">
+                        <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                            {isSubmitting ? 'Changing...' : 'Change Password'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </>
     );
 }
 

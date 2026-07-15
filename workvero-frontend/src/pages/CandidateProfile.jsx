@@ -36,14 +36,13 @@ function CandidateProfile() {
                 ]);
                 const hasCompletedProfile = res.data.profile?.firstName && res.data.profile?.lastName && res.data.profile?.phone;
                 if (!hasCompletedProfile) {
-                    navigate('/candidate/profile/edit');
+                    navigate('/candidate/profile/edit', { state: { profile: res.data.profile } });
                     return;
                 }
                 setProfile(res.data.profile);
+                setLoading(false);
             } catch (err) {
                 navigate('/candidate/profile/edit');
-            } finally {
-                setLoading(false);
             }
         };
         fetchProfile();

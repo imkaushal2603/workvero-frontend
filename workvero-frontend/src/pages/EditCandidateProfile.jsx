@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import Loader from "../components/Loader";
 
 function EditCandidateProfile() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState({
         basic: false,
@@ -39,6 +40,32 @@ function EditCandidateProfile() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
+                const preloaded = location.state?.profile;
+                if (preloaded) {
+                    setFormData(prev => ({
+                        ...prev,
+                        logo: preloaded.photoUrl || '',
+                        firstName: preloaded.firstName || '',
+                        lastName: preloaded.lastName || '',
+                        email: preloaded.email || '',
+                        phone: preloaded.phone || '',
+                        currentPosition: preloaded.currentPosition || '',
+                        description: preloaded.description || '',
+                        dateOfBirth: preloaded.dob ? preloaded.dob.split('T')[0] : '',
+                        gender: preloaded.gender || '',
+                        qualification: preloaded.qualification || '',
+                        currentSalary: preloaded.currentSalary || '',
+                        expectedSalary: preloaded.expectedSalary || '',
+                        country: preloaded.country || '',
+                        city: preloaded.city || '',
+                        state: preloaded.state || '',
+                        zipCode: preloaded.zipCode || '',
+                        linkedin: preloaded.linkedin || '',
+                        github: preloaded.github || ''
+                    }));
+                    setLoading(false);
+                    return;
+                }
                 const [res] = await Promise.all([
                     api.get('/candidate/me'),
                     new Promise(resolve => setTimeout(resolve, 800))
