@@ -2630,7 +2630,8 @@ header .account_dropdown .dropdown_menu button {
   row-gap: 24px;
 }
 
-.dashboard-main .form_fielset .form_field .form_select_field {
+.dashboard-main .form_fielset .form_field .form_select_field,
+.dashboard-main .application_status .form_select_field {
   position: relative;
 }
 
@@ -2638,7 +2639,8 @@ header .account_dropdown .dropdown_menu button {
   appearance: none;
 }
 
-.dashboard-main .form_fielset .form_field .form_select_field svg {
+.dashboard-main .form_fielset .form_field .form_select_field svg,
+.dashboard-main .application_status .form_select_field svg {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -3966,7 +3968,13 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .browse_jobs_section .browse_jobs button:hover,
 .dashboard-main .applied_jobs_section .browse_title_save h3:hover,
 .dashboard-main .applied_jobs_view .applied_jobs_section button:hover,
-.dashboard-main .jobs_table_body .jobs_table_row:first-child h6:hover {
+.dashboard-main .jobs_table_body .jobs_table_row:first-child h6:hover,
+.dashboard-main .applicants_table .applicants_section h3:hover,
+.dashboard-main .job_related_card .job_related_content h6 a:hover,
+.dashboard-main .social-item .info-text p a:hover,
+.company_dashboard .company_dashboard_applicants ul li h4:hover,
+.company_dashboard .company_jobs_applicants .company_dashboard_jobs ul li h4:hover,
+.dashboard_header .notification_dropdown .notification_item h6:hover {
   color: #6D17E1;
 }
 
@@ -4106,7 +4114,8 @@ header .account_dropdown .dropdown_menu button {
   color: #636363;
 }
 
-.dashboard-main .job-detail-page button.back-btn {
+.dashboard-main .job-detail-page button.back-btn,
+.dashboard-main .header-row button.back-btn {
   background: transparent;
   padding: 0;
   border: none;
@@ -4114,7 +4123,8 @@ header .account_dropdown .dropdown_menu button {
   cursor: pointer;
 }
 
-.dashboard-main .job-detail-page button.back-btn svg {
+.dashboard-main .job-detail-page button.back-btn svg,
+.dashboard-main .header-row button.back-btn svg {
   width: 24px;
   height: 24px;
 }
@@ -4237,6 +4247,7 @@ header .account_dropdown .dropdown_menu button {
   background: transparent;
   border: 1px solid #6D17E1;
   color: #6D17E1;
+  pointer-events: none;
 }
 
 .dashboard-main .browse_jobs .browse_exp_salary,
@@ -4415,7 +4426,8 @@ header .account_dropdown .dropdown_menu button {
   gap: 20px;
 }
 
-.dashboard-main .applied_jobs_view .no-jobs {
+.dashboard-main .applied_jobs_view .no-jobs,
+.dashboard-main .applicants_table .no-jobs {
   text-align: center;
   width: 100%;
   font-size: 32px;
@@ -4539,13 +4551,15 @@ header .account_dropdown .dropdown_menu button {
   width: calc(50% - 12.5px);
 }
 
-.company_dashboard .company_jobs_applicants .company_dashboard_jobs ul {
+.company_dashboard .company_jobs_applicants .company_dashboard_jobs ul,
+.company_dashboard .company_jobs_applicants .company_dashboard_applicants ul {
   padding: 0 35px;
   margin: 0;
   list-style: none;
 }
 
-.company_dashboard .company_jobs_applicants .company_dashboard_jobs ul li {
+.company_dashboard .company_jobs_applicants .company_dashboard_jobs ul li,
+.company_dashboard .company_jobs_applicants .company_dashboard_applicants ul li {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -4560,6 +4574,7 @@ header .account_dropdown .dropdown_menu button {
   letter-spacing: 1px;
   color: #000000;
   margin: 0;
+  cursor: pointer;
 }
 
 .company_dashboard .company_jobs_applicants .company_dashboard_jobs ul li span {
@@ -4633,6 +4648,338 @@ header .account_dropdown .dropdown_menu button {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.dashboard-main .applicants .applicants_header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 40px;
+}
+
+.dashboard-main .applicants .applicants_header h2 {
+  margin: 0;
+}
+
+.dashboard-main .applicants_header .applicants_filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  align-items: center;
+}
+
+.dashboard-main .applicants_filter .select-wrapper {
+  position: relative;
+}
+
+.dashboard-main .applicants_filter .select-wrapper select {
+  background: #FFFFFF;
+  box-shadow: 0px 0px 4px 0px #69696924;
+  outline: none;
+  border-radius: 12px;
+  border: none;
+  padding: 15.5px 30px 15.5px 14px;
+  width: 145px;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 110%;
+  letter-spacing: 1px;
+  color: #636363;
+  appearance: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.dashboard-main .applicants_filter .select-wrapper svg {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  width: 11px;
+}
+
+.dashboard-main .applicants .applicants_table {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.dashboard-main .applicants_table .applicants_section {
+  width: calc(50% - 20px);
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.dashboard-main .applicants_table .applicants_section h3 {
+  color: #000;
+  cursor: pointer;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 150%;
+  width: fit-content;
+}
+
+.dashboard-main .applicants_section .applicants_img_info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.dashboard-main .applicants_img_info .applicant_img {
+  width: 90px;
+  line-height: 0;
+}
+
+.dashboard-main .applicants_img_info .applicant_info {
+  width: calc(100% - 90px);
+  padding: 0 0 0 26px;
+}
+
+.dashboard-main .applicants_img_info .applicant_img img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.dashboard-main .applicant_info .applicant_position_location {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.dashboard-main .applicant_info .applicant_position_location span {
+  letter-spacing: 1px;
+  color: #0146EE !important;
+}
+
+.dashboard-main .applicant_info .applicant_position_location p {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  letter-spacing: 1px;
+  color: #636363;
+}
+
+.dashboard-main .applicant_info .applicant_position_location .applicant_view {
+  flex: 1;
+  display: flex;
+  justify-content: end;
+}
+
+.dashboard-main .applicants_img_info .applicant_info span {
+  font-size: 14px;
+  line-height: 150%;
+  color: #636363;
+  display: inline-block;
+}
+
+.dashboard-main .applicants_view .company-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.dashboard-main .applicants_view .applicant_img {
+  width: 110px;
+  line-height: 0;
+}
+
+.dashboard-main .applicants_view .applicant_img img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.dashboard-main .applicants_view .applicant_info {
+  width: calc(100% - 110px);
+  padding-left: 25px;
+}
+
+.dashboard-main .applicants_view .applicant_info h2 {
+  letter-spacing: 1px;
+  color: #000;
+  margin: 0;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 120%;
+}
+
+.dashboard-main .applicants_view .applicant_info span {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: normal;
+  letter-spacing: 1px;
+  color: #636363;
+  display: inline-block;
+}
+
+.dashboard-main .job_info .job_skills {
+  border-bottom: none;
+}
+
+.dashboard-main .job_related_card .job_related_content h6 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.dashboard-main .job_btns_info .job_btns button.resume-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.dashboard_header .dashboard_header_notifications .notification_dropdown {
+  position: absolute;
+  background: #fff;
+  top: 100%;
+  box-shadow: 0px 4px 6px 0px #69696926;
+  border-radius: 8px;
+  max-width: 280px;
+}
+
+.dashboard_header .dashboard_header_content .dashboard_header_notifications button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.dashboard-main .job_btns_info .application_status label {
+  letter-spacing: 1px;
+  color: #6c6969;
+  width: 100%;
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 100%;
+  display: inline-block;
+}
+
+.dashboard-main .job_btns_info .application_status select {
+  letter-spacing: 1px;
+  color: #636363;
+  background: #fff;
+  border: 1px solid #f0e4ff;
+  border-radius: 10px;
+  outline: none;
+  width: 100%;
+  padding: 16px 18px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 100%;
+  appearance: none;
+}
+
+.company_dashboard .company_dashboard_applicants ul li .company_applicant_img {
+  width: 48px;
+  line-height: 0;
+}
+
+.company_dashboard .company_dashboard_applicants ul li .company_applicant_img img {
+  width: 100%;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.company_dashboard .company_dashboard_applicants ul li .company_applicant_info {
+  width: calc(100% - 48px);
+  padding-left: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.company_dashboard .company_dashboard_applicants ul li h4 {
+  margin: 0;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #000000;
+  cursor: pointer;
+}
+
+.company_dashboard .company_dashboard_applicants ul li p,
+.company_dashboard .company_dashboard_applicants ul li span {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 1px;
+  color: #8492A6;
+  display: inline-block;
+}
+
+.dashboard_header .dashboard_header_notifications .notification_dropdown h4 {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: normal;
+  letter-spacing: 1px;
+  color: #000000;
+  margin: 0;
+  border-bottom: 1px solid #E2EAFF;
+  padding: 12px 15px;
+}
+
+.dashboard_header .notification_dropdown .notification_item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px dotted #E2EAFF;
+}
+
+.dashboard_header .notification_dropdown .notification_item h6 {
+  font-size: 14px;
+  line-height: 120%;
+  margin: 0;
+  color: #000000;
+  font-weight: 500;
+  cursor: pointer;
+  max-width: 40%;
+}
+
+.dashboard_header .notification_dropdown .notification_item p {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 120%;
+  display: inline-block;
+  color: #6C6969;
+  padding-left: 12px;
+  max-width: 60%;
+  text-align: end;
+}
+
+.dashboard_header .dashboard_header_notifications .notification_dropdown button {
+  width: 100%;
+  background: #6D17E1;
+  border: none;
+  padding: 12px 37px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  cursor: pointer;
+  border-radius: 0 0 8px 8px;
 }
 
 @media screen and (max-width: 991px) {

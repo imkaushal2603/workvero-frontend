@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import Loader from "../components/Loader";
 
 function PostJob() {
     const navigate = useNavigate();
@@ -24,18 +25,20 @@ function PostJob() {
     const [logoFile, setLogoFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [jobCount, setJobCount] = useState(null);
-    const [loadingCount, setLoadingCount] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchJobCount = async () => {
             try {
-                const res = await api.get('/job/my-jobs', { params: { limit: 100 } });
-                const count = res.data.data.total;
-                setJobCount(count);
+                const [res] = await Promise.all([
+                    api.get('/job/my-jobs', { params: { limit: 100 } }),
+                    new Promise(resolve => setTimeout(resolve, 600))
+                ]);
+                setJobCount(res.data.data.total);
             } catch (err) {
                 console.error('Failed to fetch job count');
             } finally {
-                setLoadingCount(false);
+                setLoading(false);
             }
         };
         fetchJobCount();
@@ -94,7 +97,6 @@ function PostJob() {
 
     const getFileUrl = (path) => {
         if (!path) return null;
-
         if (
             path.startsWith("http://") ||
             path.startsWith("https://") ||
@@ -102,9 +104,7 @@ function PostJob() {
         ) {
             return path;
         }
-
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
-
         return encodeURI(
             `${baseUrl}/${path.replace(/^\//, "")}`
         );
@@ -112,224 +112,222 @@ function PostJob() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (formData.sponsorshipType === 'Sponsored') {
             toast.error("Redirecting to Premium Billing setup to activate your Sponsored Plan...");
             setTimeout(() => navigate('/employer/billing'), 2000);
             return;
         }
-
         if (jobCount >= 2) {
             toast.error("You've reached the 2 job limit. Upgrade your plan to post more jobs.");
             return;
         }
-
         setIsSubmitting(true);
-
         const payload = {
             ...formData,
             skills: JSON.stringify(formData.skills)
         };
-
         try {
-            const response = await api.post('/job/create', payload);
-
+            const [response] = await Promise.all([
+                api.post('/job/create', payload),
+                new Promise(resolve => setTimeout(resolve, 600))
+            ]);
             if (response.status === 201) {
                 toast.success("Job posted successfully!");
                 navigate('/employer/manage-jobs');
             }
         } catch (error) {
             console.error("Submission failed:", error);
-            setIsSubmitting(false);
             toast.error(error.response?.data?.message || "Something went wrong.");
+            setIsSubmitting(false);
         }
     };
 
-    if (loadingCount) return <div>Loading...</div>;
-
     return (
-        <div className='post_job'>
-            <div className='post_job_details'>
-                <h2>Post Job</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="form_card">
-                        <h3>Basic Information</h3>
-                        <div className='form_fields'>
-                            <div className='form_fielset'>
-                                <div className='form_field'>
-                                    <label htmlFor="title">Job Title<span>*</span></label>
-                                    <input type='text' id="title" name="title" required placeholder="e.g. Senior Frontend Developer" onChange={handleChange} />
-                                </div>
-                                <div className='form_field'>
-                                    <label htmlFor="location">Job Location<span>*</span></label>
-                                    <input type='text' id="location" name="location" required placeholder="e.g. Mohali, Punjab" onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='form_fielset'>
-                                <div className='form_field'>
-                                    <label htmlFor="jobType">Job Type<span>*</span></label>
-                                    <div className='form_select_field'>
-                                        <select id="jobType" name="jobType" required onChange={handleChange}>
-                                            <option value="">Select Job Type</option>
-                                            <option value="Full Time">Full Time</option>
-                                            <option value="Part Time">Part Time</option>
-                                            <option value="Hybrid">Hybrid</option>
-                                        </select>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+        <>
+            {loading && <Loader />}
+            <div className={`post_job ${loading ? "loading" : ""}`}>
+                <div className='post_job_details'>
+                    <h2>Post Job</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form_card">
+                            <h3>Basic Information</h3>
+                            <div className='form_fields'>
+                                <div className='form_fielset'>
+                                    <div className='form_field'>
+                                        <label htmlFor="title">Job Title<span>*</span></label>
+                                        <input type='text' id="title" name="title" required placeholder="e.g. Senior Frontend Developer" onChange={handleChange} />
+                                    </div>
+                                    <div className='form_field'>
+                                        <label htmlFor="location">Job Location<span>*</span></label>
+                                        <input type='text' id="location" name="location" required placeholder="e.g. Mohali, Punjab" onChange={handleChange} />
                                     </div>
                                 </div>
-                                <div className='form_field'>
-                                    <label htmlFor="workMode">Work Mode<span>*</span></label>
-                                    <div className='form_select_field'>
-                                        <select id="workMode" name="workMode" required onChange={handleChange}>
-                                            <option value="">Select Work Mode</option>
-                                            <option value="Remote">Remote</option>
-                                            <option value="On-site">On-site</option>
-                                            <option value="Hybrid">Hybrid</option>
-                                        </select>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                <div className='form_fielset'>
+                                    <div className='form_field'>
+                                        <label htmlFor="jobType">Job Type<span>*</span></label>
+                                        <div className='form_select_field'>
+                                            <select id="jobType" name="jobType" required onChange={handleChange}>
+                                                <option value="">Select Job Type</option>
+                                                <option value="Full Time">Full Time</option>
+                                                <option value="Part Time">Part Time</option>
+                                                <option value="Hybrid">Hybrid</option>
+                                            </select>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                        </div>
+                                    </div>
+                                    <div className='form_field'>
+                                        <label htmlFor="workMode">Work Mode<span>*</span></label>
+                                        <div className='form_select_field'>
+                                            <select id="workMode" name="workMode" required onChange={handleChange}>
+                                                <option value="">Select Work Mode</option>
+                                                <option value="Remote">Remote</option>
+                                                <option value="On-site">On-site</option>
+                                                <option value="Hybrid">Hybrid</option>
+                                            </select>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className='form_fielset'>
-                                <div className='form_field'>
-                                    <label htmlFor="experience">Experience Level<span>*</span></label>
-                                    <div className='form_select_field'>
-                                        <select id="experience" name="experience" required onChange={handleChange}>
-                                            <option>Select Experience</option>
-                                            <option>Entry Level</option>
-                                            <option>Mid Level</option>
-                                            <option>Senior</option>
-                                        </select>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                <div className='form_fielset'>
+                                    <div className='form_field'>
+                                        <label htmlFor="experience">Experience Level<span>*</span></label>
+                                        <div className='form_select_field'>
+                                            <select id="experience" name="experience" required onChange={handleChange}>
+                                                <option>Select Experience</option>
+                                                <option>Entry Level</option>
+                                                <option>Mid Level</option>
+                                                <option>Senior</option>
+                                            </select>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className='form_field'>
-                                    <label htmlFor="salary">Salary Range<span>*</span></label>
-                                    <input
-                                        type="text"
-                                        id="salary"
-                                        name="salary"
-                                        required
-                                        placeholder="e.g. $4k - $6k"
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="form_card">
-                        <h3>Additional Information</h3>
-                        <div className='form_fields'>
-                            <div className='form_fielset'>
-                                <div className='form_field'>
-                                    <label htmlFor='openings'>Number of Openings</label>
-                                    <input id="openings" name="openings" type="number" placeholder="e.g. 2" onChange={handleChange} />
-                                </div>
-                                <div className='form_field'>
-                                    <label htmlFor='deadline'>Application Deadline</label>
-                                    <input id="deadline" name="deadline" type="date" onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className='form_fielset'>
-                                <div className='form_field'>
-                                    <label htmlFor='openings'>Sponsorship Type<span>*</span></label>
-                                    <div className='form_select_field'>
-                                        <select
-                                            id="sponsorshipType"
-                                            name="sponsorshipType"
-                                            value={formData.sponsorshipType}
-                                            onChange={handleChange}
+                                    <div className='form_field'>
+                                        <label htmlFor="salary">Salary Range<span>*</span></label>
+                                        <input
+                                            type="text"
+                                            id="salary"
+                                            name="salary"
                                             required
-                                        >
-                                            <option value="Free">Free</option>
-                                            <option value="Sponsored">Sponsored</option>
-                                        </select>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                            placeholder="e.g. $4k - $6k"
+                                            onChange={handleChange}
+                                        />
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div className="form_card">
+                            <h3>Additional Information</h3>
+                            <div className='form_fields'>
+                                <div className='form_fielset'>
+                                    <div className='form_field'>
+                                        <label htmlFor='openings'>Number of Openings</label>
+                                        <input id="openings" name="openings" type="number" placeholder="e.g. 2" onChange={handleChange} />
+                                    </div>
+                                    <div className='form_field'>
+                                        <label htmlFor='deadline'>Application Deadline</label>
+                                        <input id="deadline" name="deadline" type="date" onChange={handleChange} />
+                                    </div>
+                                </div>
+                                <div className='form_fielset'>
+                                    <div className='form_field'>
+                                        <label htmlFor='openings'>Sponsorship Type<span>*</span></label>
+                                        <div className='form_select_field'>
+                                            <select
+                                                id="sponsorshipType"
+                                                name="sponsorshipType"
+                                                value={formData.sponsorshipType}
+                                                onChange={handleChange}
+                                                required
+                                            >
+                                                <option value="Free">Free</option>
+                                                <option value="Sponsored">Sponsored</option>
+                                            </select>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="form_card">
+                            <h3>Skills</h3>
+                            <div className='form_fields'>
+                                {formData.skills.length > 0 && (
+                                    <div className='form_skills'>{formData.skills.map((skill, index) => (
+                                        <span key={index}>{skill}
+                                            <button type="button" onClick={() => handleDeleteSkill(skill)}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 9 9" fill="none">
+                                                    <path d="M1 1L4.33333 4.33333M4.33333 4.33333L7.66667 7.66667M4.33333 4.33333L7.66667 1M4.33333 4.33333L1 7.66667" stroke="#0146EE" strokeWidth="2" strokeLinecap="round" />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    ))}</div>
+                                )}
+                                <div className='form_full form_full_skills'>
+                                    <input name="skills" id="skills" placeholder="Enter Skills" value={skillInput} onChange={(e) => setSkillInput(e.target.value)} />
+                                    <button type="button" onClick={handleAddSkill} disabled={!skillInput.trim()}>+ Add Skills</button>
+                                </div>
+                                <div className='form_full'>
+                                    <label htmlFor='description'>Job Description</label>
+                                    <textarea name="description" id="description" placeholder="Job Description" onChange={handleChange} />
+                                </div>
+                            </div>
+                        </div>
+                        <div className='form_buttons'>
+                            <button type="submit" className='submit-btn' disabled={isSubmitting || jobCount >= 2}>
+                                {isSubmitting ? "Publishing..." : "Save & Publish"}
+                            </button>
+                            <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <aside>
+                    <div className="card">
+                        <h3>Job Preview</h3>
+                        <div className='job_preview_company'>
+                            <div className='job_preview_logo'>
+                                {companyProfile?.logo ? (
+                                    <img src={getFileUrl(companyProfile.logo)} alt={companyProfile.companyName} />
+                                ) : (
+                                    <img style={{ border: '1px dashed #6D17E1' }} />
+                                )}
+                            </div>
+                            <div className='job_preview_title'>
+                                <h6>{companyProfile?.companyName || ""}</h6>
+                                <p>{formData.title || ""}</p>
+                            </div>
+                        </div>
+                        <div className='job_preview_details'>
+                            <h6>Job Title</h6>
+                            <div className='job_preview_info'>
+                                <ul>
+                                    <li>Location: {formData.location || ""}</li>
+                                    <li>Job Type: {formData.jobType || ""}</li>
+                                    <li>Work Mode: {formData.workMode || ""}</li>
+                                    <li>Experience: {formData.experience || ""}</li>
+                                    <li>Salary Range: {formData.salary || ""}</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div className="form_card">
+                    <div className="card">
                         <h3>Skills</h3>
-                        <div className='form_fields'>
-                            {formData.skills.length > 0 && (
-                                <div className='form_skills'>{formData.skills.map((skill, index) => (
-                                    <span key={index}>{skill}
-                                        <button type="button" onClick={() => handleDeleteSkill(skill)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 9 9" fill="none">
-                                                <path d="M1 1L4.33333 4.33333M4.33333 4.33333L7.66667 7.66667M4.33333 4.33333L7.66667 1M4.33333 4.33333L1 7.66667" stroke="#0146EE" strokeWidth="2" strokeLinecap="round" />
-                                            </svg>
-                                        </button>
-                                    </span>
-                                ))}</div>
-                            )}
-                            <div className='form_full form_full_skills'>
-                                <input name="skills" id="skills" placeholder="Enter Skills" value={skillInput} onChange={(e) => setSkillInput(e.target.value)} />
-                                <button type="button" onClick={handleAddSkill} disabled={!skillInput.trim()}>+ Add Skills</button>
-                            </div>
-                            <div className='form_full'>
-                                <label htmlFor='description'>Job Description</label>
-                                <textarea name="description" id="description" placeholder="Job Description" onChange={handleChange} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='form_buttons'>
-                        <button type="submit" className='submit-btn' disabled={isSubmitting || jobCount >= 2}>
-                            {isSubmitting ? "Posting..." : "Save & Publish"}
-                        </button>
-                        <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
-                    </div>
-                </form>
-            </div>
-            <aside>
-                <div className="card">
-                    <h3>Job Preview</h3>
-                    <div className='job_preview_company'>
-                        <div className='job_preview_logo'>
-                            {companyProfile?.logo ? (
-                                <img src={getFileUrl(companyProfile.logo)} alt={companyProfile.companyName} />
+                        <div className='card_preview_skills'>
+                            {formData.skills.length > 0 ? (
+                                formData.skills.map((skill, index) => (
+                                    <p key={index}>{skill}</p>
+                                ))
                             ) : (
-                                <img style={{ border: '1px dashed #6D17E1' }} />
+                                <p>Skills preview...</p>
                             )}
                         </div>
-                        <div className='job_preview_title'>
-                            <h6>{companyProfile?.companyName || ""}</h6>
-                            <p>{formData.title || ""}</p>
+                        <div className='card_preview_description'>
+                            <h5>Description</h5>
+                            <p>{formData.description || "Description preview..."}</p>
                         </div>
                     </div>
-                    <div className='job_preview_details'>
-                        <h6>Job Title</h6>
-                        <div className='job_preview_info'>
-                            <ul>
-                                <li>Location: {formData.location || ""}</li>
-                                <li>Job Type: {formData.jobType || ""}</li>
-                                <li>Work Mode: {formData.workMode || ""}</li>
-                                <li>Experience: {formData.experience || ""}</li>
-                                <li>Salary Range: {formData.salary || ""}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div className="card">
-                    <h3>Skills</h3>
-                    <div className='card_preview_skills'>
-                        {formData.skills.length > 0 ? (
-                            formData.skills.map((skill, index) => (
-                                <p key={index}>{skill}</p>
-                            ))
-                        ) : (
-                            <p>Skills preview...</p>
-                        )}
-                    </div>
-                    <div className='card_preview_description'>
-                        <h5>Description</h5>
-                        <p>{formData.description || "Description preview..."}</p>
-                    </div>
-                </div>
-            </aside>
-        </div>
+                </aside>
+            </div>
+        </>
     );
 }
 
