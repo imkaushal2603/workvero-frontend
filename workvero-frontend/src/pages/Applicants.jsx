@@ -62,11 +62,7 @@ function Applicants() {
 
     const getFileUrl = (path) => {
         if (!path) return null;
-        if (
-            path.startsWith("http://") ||
-            path.startsWith("https://") ||
-            path.startsWith("data:")
-        ) {
+        if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("data:")) {
             return path;
         }
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
@@ -105,6 +101,7 @@ function Applicants() {
                             applicants.map((application) => {
                                 const candidate = application.user.candidate_profile;
                                 const badge = STATUS_BADGE_MAP[application.status] || { label: application.status, className: '' };
+                                const jobId = application?.appliedJobs?.[0]?.jobId;
                                 return (
                                     <div className="applicants_section" key={application.id}>
                                         <div className="applicants_img_info">
@@ -116,6 +113,7 @@ function Applicants() {
                                                 )}
                                             </div>
                                             <div className="applicant_info">
+                                                <span><span>Applied for</span> <span onClick={() => navigate(`/employer/manage-jobs/${jobId}`)}>{application.appliedJobs?.[0]?.jobTitle || "N/A"}</span></span>
                                                 <h3 onClick={() => navigate(`/employer/applicants/${application?.id}`)}>{candidate?.firstName} {candidate?.lastName}</h3>
                                                 <div className="applicant_position_location">
                                                     <span>{candidate?.currentPosition}</span>
@@ -132,7 +130,6 @@ function Applicants() {
                                                         </svg>
                                                     </div>
                                                 </div>
-                                                <span>Applied for {application.appliedJobs?.[0]?.jobTitle || "N/A"} role</span>
                                             </div>
                                         </div>
                                     </div>

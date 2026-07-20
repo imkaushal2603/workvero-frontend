@@ -105,7 +105,6 @@ function EditCandidateProfile() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         if (name === 'phone') {
             const sanitizedValue = value.replace(/[^0-9+\s-]/g, '');
             setFormData({ ...formData, [name]: sanitizedValue });
@@ -117,21 +116,17 @@ function EditCandidateProfile() {
     const handleDocUpload = (field, ref) => (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
         if (file.size > 1024 * 1024) {
             toast.error('File size exceeds the 1MB limit.');
             if (ref?.current) ref.current.value = '';
             return;
         }
-
         if (!file.type.startsWith('image/')) {
             toast.error('Only image files are allowed.');
             e.target.value = '';
             return;
         }
-
         setFileObjects(prev => ({ ...prev, [field]: file }));
-
         const reader = new FileReader();
         reader.onloadend = () => {
             setFormData(prev => ({ ...prev, [field]: reader.result }));
@@ -265,8 +260,7 @@ function EditCandidateProfile() {
                                 <div className="form_fields logo_upload">
                                     <div
                                         className="logo_upload_box"
-                                        onClick={() => document.getElementById('logoUpload').click()}
-                                    >
+                                        onClick={() => document.getElementById('logoUpload').click()}>
                                         {formData.logo ? (
                                             <img src={getFileUrl(formData.logo)} alt="Profile Photo" />
                                         ) : (
@@ -291,8 +285,7 @@ function EditCandidateProfile() {
                                             <button
                                                 type="button"
                                                 className="logo_delete_btn"
-                                                onClick={() => handleRemoveFile('logo', logoInputRef)}
-                                            >
+                                                onClick={() => handleRemoveFile('logo', logoInputRef)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                                                     <rect width="48" height="48" rx="12" fill="#E2EAFF" />
                                                     <path d="M31.9999 33.3333C31.9999 34.3942 31.5785 35.4116 30.8283 36.1618C30.0782 36.9119 29.0608 37.3333 27.9999 37.3333H18.6666C17.6057 37.3333 16.5883 36.9119 15.8382 36.1618C15.088 35.4116 14.6666 34.3942 14.6666 33.3333V17.3333H13.3333V13.3333H19.3333L20.6666 12H25.9999L27.3333 13.3333H33.3333V17.3333H31.9999V33.3333ZM15.9999 17.3333V33.3333C15.9999 34.0406 16.2809 34.7189 16.781 35.219C17.2811 35.719 17.9593 36 18.6666 36H27.9999C28.7072 36 29.3854 35.719 29.8855 35.219C30.3856 34.7189 30.6666 34.0406 30.6666 33.3333V17.3333H15.9999ZM31.9999 16V14.6667H26.6666L25.3333 13.3333H21.3333L19.9999 14.6667H14.6666V16H31.9999ZM18.6666 20H19.9999V33.3333H18.6666V20ZM26.6666 20H27.9999V33.3333H26.6666V20Z" fill="#6D17E1" />

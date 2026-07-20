@@ -34,11 +34,11 @@ function CandidateDashboard() {
                 const appliedDataList = appliedResponse.data?.applications?.applications || [];
                 const appliedCount = appliedResponse.data?.applications?.total || appliedDataList.length || 0;
                 const savedCount = savedResponse.data?.savedJobs?.total || 0;
-
+                const statusCounts = appliedResponse.data?.applications?.statusCounts || {};
                 setStats({
                     appliedCount,
                     savedCount,
-                    shortlistCount: 0,
+                    shortlistCount: statusCounts.HIRED || 0,
                     messagesCount: 0,
                 });
                 setAppliedJobs(appliedDataList.slice(0, 3));
@@ -96,7 +96,7 @@ function CandidateDashboard() {
                         <li>
                             <div className="candidate_dashboard_details">
                                 <h3>{stats.shortlistCount}</h3>
-                                <p>Shortlist</p>
+                                <p>Hired</p>
                             </div>
                             <div className="candidate_dashboard_icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="30" viewBox="0 0 24 30" fill="none">
@@ -144,7 +144,6 @@ function CandidateDashboard() {
                                     const company = job?.user?.company_profile;
                                     const status = application.status || "APPLIED";
                                     const badge = STATUS_BADGE_MAP[application.status] || { label: application.status, className: '' };
-
                                     return (
                                         <div className="jobs_table_body" key={application.id}>
                                             <div className="jobs_table_row">

@@ -193,6 +193,11 @@ function CandidateSavedJobs() {
                                 <div className='applied_jobs_section' key={app.id}>
                                     <div className='browse_title_save'>
                                         <div className='browse_title_company'>
+                                            {job.status === 'CLOSED' && (
+                                                <div className='saved_job_closed'>
+                                                    <h4>Job is no longer available</h4>
+                                                </div>
+                                            )}
                                             <h3 onClick={() => navigate(`/candidate/browse-jobs/${job.id}`)}>{job.title}</h3>
                                             <span>{job.user?.company_profile?.companyName}</span>
                                         </div>

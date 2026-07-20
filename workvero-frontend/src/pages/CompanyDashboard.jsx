@@ -21,22 +21,18 @@ function CompanyDashboard() {
             try {
                 setLoading(true);
                 setError(null);
-
                 const [jobsResponse, applicantsResponse] = await Promise.all([
                     api.get("/job/my-jobs"),
                     api.get("/company/me/applicants?page=1&pageSize=4"),
                     new Promise(resolve => setTimeout(resolve, 600))
                 ]);
-
                 const jobsData = jobsResponse.data?.data?.jobs || [];
                 const recentApplicants = applicantsResponse.data?.applications || [];
                 const statusCounts = applicantsResponse.data?.statusCounts || {};
                 const totalApplications = applicantsResponse.data?.totalApplications || 0;
-
                 if (Array.isArray(jobsData)) {
                     setJobs(jobsData);
                 }
-
                 setApplicants(recentApplicants);
                 setStats({
                     totalJobs: jobsData.length,
@@ -61,34 +57,26 @@ function CompanyDashboard() {
 
     const getRelativeTime = (dateStr) => {
         if (!dateStr) return 'N/A';
-
         const posted = new Date(dateStr);
         const now = new Date();
         const diffMs = now - posted;
         const diffMinutes = Math.floor(diffMs / (1000 * 60));
         const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
         if (diffMinutes < 1) return 'Just now';
         if (diffMinutes < 60) return `${diffMinutes} min ago`;
         if (diffHours < 24) return `${diffHours} hr${diffHours > 1 ? 's' : ''} ago`;
         if (diffDays === 1) return 'Yesterday';
         if (diffDays < 30) return `${diffDays} days ago`;
-
         const diffMonths = Math.floor(diffDays / 30);
         if (diffMonths < 12) return `${diffMonths} month${diffMonths > 1 ? 's' : ''} ago`;
-
         const diffYears = Math.floor(diffDays / 365);
         return `${diffYears} year${diffYears > 1 ? 's' : ''} ago`;
     };
 
     const getFileUrl = (path) => {
         if (!path) return null;
-        if (
-            path.startsWith("http://") ||
-            path.startsWith("https://") ||
-            path.startsWith("data:")
-        ) {
+        if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("data:")) {
             return path;
         }
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
@@ -128,7 +116,7 @@ function CompanyDashboard() {
                         <li>
                             <div className="company_dashboard_details">
                                 <h3>{stats.shortlistedCount}</h3>
-                                <p>Shortlisted</p>
+                                <p>Hired</p>
                             </div>
                             <div className="company_dashboard_icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="30" viewBox="0 0 24 30" fill="none">
@@ -197,7 +185,7 @@ function CompanyDashboard() {
                                             </div>
                                             <div className="company_applicant_info">
                                                 <div className="company_applicant_detail">
-                                                    <h4 onClick={() => navigate(`/employer/applicant/${applicant?.id}`)}>{candidateName}</h4>
+                                                    <h4 onClick={() => navigate(`/employer/applicants/${applicant?.id}`)}>{candidateName}</h4>
                                                     <p>{jobTitle}</p>
                                                 </div>
                                                 <div className="company_applicant_applied">

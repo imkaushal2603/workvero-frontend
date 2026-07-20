@@ -11,11 +11,7 @@ function CompanyProfile() {
 
     const getFileUrl = (path) => {
         if (!path) return null;
-        if (
-            path.startsWith("http://") ||
-            path.startsWith("https://") ||
-            path.startsWith("data:")
-        ) {
+        if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("data:")) {
             return path;
         }
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
@@ -180,13 +176,11 @@ function CompanyProfile() {
                                                 />
                                             )}
                                         </div>
-
                                     </div>
                                 )}
                                 {profile?.incorporationCertificate && (
                                     <div className='form_field'>
                                         <h5>Incorporation Certificate</h5>
-
                                         <div className="kyc-doc-item">
                                             {isPdf(profile?.incorporationCertificate) ? (
                                                 <a
@@ -205,13 +199,11 @@ function CompanyProfile() {
                                                 />
                                             )}
                                         </div>
-
                                     </div>
                                 )}
                                 {profile?.govIdProof && (
                                     <div className='form_field'>
                                         <h5>Government ID Proof</h5>
-
                                         <div className="kyc-doc-item">
                                             {isPdf(profile?.govIdProof) ? (
                                                 <a

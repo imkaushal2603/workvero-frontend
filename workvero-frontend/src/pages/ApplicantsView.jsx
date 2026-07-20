@@ -30,7 +30,6 @@ function ApplicantsView() {
                 setLoading(false);
             }
         };
-
         if (id) {
             fetchApplicantDetails();
         }
@@ -45,10 +44,8 @@ function ApplicantsView() {
     const handleStatusChange = async (e) => {
         const newStatus = e.target.value;
         const previousStatus = status;
-
         setStatus(newStatus);
         setUpdatingStatus(true);
-
         try {
             await api.patch(`/company/me/applicants/${id}`, { status: newStatus });
             toast.success('Application Status updated successfully!');
@@ -62,11 +59,7 @@ function ApplicantsView() {
 
     const getFileUrl = (path) => {
         if (!path) return null;
-        if (
-            path.startsWith("http://") ||
-            path.startsWith("https://") ||
-            path.startsWith("data:")
-        ) {
+        if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("data:")) {
             return path;
         }
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
@@ -212,9 +205,8 @@ function ApplicantsView() {
                         {appliedJobsList?.length > 0 && (
                             <div className='job_skills'>
                                 <h4>Applied for role</h4>
-                                <div className='job_skill_section'>
-                                    <span className="skill-tag">{appliedJobsList[0]?.jobTitle || "N/A"}</span>
-                                </div>
+                                <span onClick={() => navigate(`/employer/manage-jobs/${appliedJobsList[0]?.jobId}`)}>{appliedJobsList[0]?.jobTitle || "N/A"}</span>
+                                <p>{appliedJobsList[0]?.jobDescription || "N/A"}</p>
                             </div>
                         )}
                     </div>
@@ -228,8 +220,7 @@ function ApplicantsView() {
                                         if (cvFile?.[0]?.fileUrl) {
                                             window.open(getFileUrl(cvFile[0].fileUrl), '_blank', 'noopener,noreferrer');
                                         }
-                                    }}
-                                >
+                                    }}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                         <polyline points="14 2 14 8 20 8"></polyline>

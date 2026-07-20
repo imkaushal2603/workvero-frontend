@@ -48,16 +48,13 @@ function CandidateJobs() {
                         status: 'OPEN',
                     },
                 });
-
                 if (!isForcedRefreshing) {
                     await new Promise(resolve => setTimeout(resolve, 600));
                 }
-
                 const fetchedJobs = response.data.data.jobs || [];
                 setJobs(fetchedJobs);
                 setTotalPages(response.data.data.totalPages);
                 setError(null);
-
                 if (availableLocations.length === 0 && fetchedJobs.length > 0) {
                     const uniqueLocations = [
                         ...new Set(
@@ -86,10 +83,8 @@ function CandidateJobs() {
                     api.get('/candidate/me/saved-jobs'),
                     api.get('/candidate/me/applications')
                 ]);
-
                 const savedList = savedRes.data.savedJobs?.savedJobs || [];
                 const appliedList = appliedRes.data.applications?.applications || [];
-
                 setSavedJobIds(new Set(savedList.map(item => Number(item.jobId))));
                 setAppliedJobIds(new Set(appliedList.map(item => Number(item.jobId))));
             } catch (err) {
@@ -101,10 +96,8 @@ function CandidateJobs() {
 
     const handleManualRefresh = () => {
         if (isForcedRefreshing) return;
-
         setIsForcedRefreshing(true);
         toast.success('Refreshing job listings...');
-
         setTimeout(() => {
             setRefreshTrigger(prev => prev + 1);
         }, 600);
@@ -141,23 +134,19 @@ function CandidateJobs() {
 
     const getRelativeTime = (dateStr) => {
         if (!dateStr) return 'N/A';
-
         const posted = new Date(dateStr);
         const now = new Date();
         const diffMs = now - posted;
         const diffMinutes = Math.floor(diffMs / (1000 * 60));
         const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
         if (diffMinutes < 1) return 'Just now';
         if (diffMinutes < 60) return `${diffMinutes} min ago`;
         if (diffHours < 24) return `${diffHours} hr${diffHours > 1 ? 's' : ''} ago`;
         if (diffDays === 1) return 'Yesterday';
         if (diffDays < 30) return `${diffDays} days ago`;
-
         const diffMonths = Math.floor(diffDays / 30);
         if (diffMonths < 12) return `${diffMonths} month${diffMonths > 1 ? 's' : ''} ago`;
-
         const diffYears = Math.floor(diffDays / 365);
         return `${diffYears} year${diffYears > 1 ? 's' : ''} ago`;
     };

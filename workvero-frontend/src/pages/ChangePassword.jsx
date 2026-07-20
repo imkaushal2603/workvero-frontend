@@ -19,7 +19,6 @@ function ChangePassword() {
             await new Promise(resolve => setTimeout(resolve, 600));
             setLoading(false);
         };
-
         loadPage();
     }, []);
 

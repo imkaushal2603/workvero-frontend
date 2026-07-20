@@ -117,24 +117,19 @@ function EditCompanyProfile() {
     const handleDocUpload = (field, ref) => (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
         if (file.size > 1024 * 1024) {
             toast.error('File size exceeds the 1MB limit.');
             if (ref?.current) ref.current.value = '';
             return;
         }
-
         const isPdfFile = file.type === 'application/pdf';
         const isImageFile = file.type.startsWith('image/');
-
         if (!isPdfFile && !isImageFile) {
             toast.error('Only PDF or image files are allowed.');
             e.target.value = '';
             return;
         }
-
         setFileObjects(prev => ({ ...prev, [field]: file }));
-
         const reader = new FileReader();
         reader.onloadend = () => {
             setFormData(prev => ({ ...prev, [field]: reader.result }));
@@ -156,14 +151,12 @@ function EditCompanyProfile() {
         if (!file) return '';
         if (file.startsWith('data:')) return file;
         if (file.startsWith('http')) return file;
-
         return `${API_BASE}${file}`;
     };
 
     const isPdf = (file) => {
         if (!file) return false;
         if (file.startsWith('data:application/pdf')) return true;
-
         return file.toLowerCase().endsWith('.pdf');
     };
 
@@ -173,7 +166,6 @@ function EditCompanyProfile() {
         try {
             const data = new FormData();
             const fileFields = ['logo', 'panDocument', 'incorporationCertificate', 'govIdProof'];
-
             Object.keys(formData).forEach((key) => {
                 if (!fileFields.includes(key)) {
                     data.append(key, formData[key]);
@@ -185,17 +177,14 @@ function EditCompanyProfile() {
                     }
                 }
             });
-
             Object.keys(fileObjects).forEach((key) => {
                 if (fileObjects[key]) {
                     data.append(key, fileObjects[key]);
                 }
             });
-
             const config = {
                 headers: { 'Content-Type': 'multipart/form-data' }
             };
-
             if (isNew) {
                 await api.post('/company', data, config);
             } else {

@@ -138,16 +138,13 @@ function AppliedJobs() {
         const diffMinutes = Math.floor(diffMs / (1000 * 60));
         const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
         if (diffMinutes < 1) return 'Just now';
         if (diffMinutes < 60) return `${diffMinutes} min ago`;
         if (diffHours < 24) return `${diffHours} hr${diffHours > 1 ? 's' : ''} ago`;
         if (diffDays === 1) return 'Yesterday';
         if (diffDays < 30) return `${diffDays} days ago`;
-
         const diffMonths = Math.floor(diffDays / 30);
         if (diffMonths < 12) return `${diffMonths} month${diffMonths > 1 ? 's' : ''} ago`;
-
         const diffYears = Math.floor(diffDays / 365);
         return `${diffYears} year${diffYears > 1 ? 's' : ''} ago`;
     };
@@ -205,8 +202,7 @@ function AppliedJobs() {
                             onClick={() => {
                                 setActiveTab(tab.label);
                                 setParams(prev => ({ ...prev, page: 1 }));
-                            }}
-                        >
+                            }}>
                             {tab.label}
                         </button>
                     ))}
@@ -220,6 +216,11 @@ function AppliedJobs() {
                             const skillsList = parseSkills(job.skills);
                             return (
                                 <div className='applied_jobs_section' key={app.id}>
+                                    {job.status === 'CLOSED' && (
+                                        <div className='saved_job_closed'>
+                                            <h4>Job is no longer available</h4>
+                                        </div>
+                                    )}
                                     <div className='browse_title_save'>
                                         <div className='browse_title_company'>
                                             <h3 onClick={() => navigate(`/candidate/browse-jobs/${job.id}`)}>{job.title}</h3>

@@ -10,17 +10,10 @@ function CandidateProfile() {
 
     const getFileUrl = (path) => {
         if (!path) return null;
-
-        if (
-            path.startsWith("http://") ||
-            path.startsWith("https://") ||
-            path.startsWith("data:")
-        ) {
+        if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("data:")) {
             return path;
         }
-
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
-
         return encodeURI(
             `${baseUrl}/${path.replace(/^\//, "")}`
         );
