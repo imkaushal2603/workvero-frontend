@@ -104,3 +104,553 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.resume_builder_page {
+  min-height: 100vh;
+  padding: 35px;
+  background: #f6f7fb;
+}
+
+.resume_builder_container {
+  max-width: 1300px;
+  margin: auto;
+  background: #fff;
+  border-radius: 14px;
+  padding: 30px 40px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
+}
+
+.resume_builder_back {
+  border: 0;
+  background: none;
+  color: #6d28d9;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
+  position: absolute;
+}
+
+.resume_builder_header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.resume_builder_header h2 {
+  margin: 0;
+  font-size: 32px;
+  color: black;
+}
+
+.resume_builder_header p {
+  margin-top: 8px;
+  color: #777;
+}
+
+.resume_builder_footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 35px;
+}
+
+.resume_builder_continue {
+  width: 220px;
+  height: 46px;
+  border: 0;
+  border-radius: 8px;
+  background: #6d28d9;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resume_builder_continue:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.resume_templates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  justify-content: center;
+}
+
+.resume_template {
+  position: relative;
+  border: 2px solid #ececec;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.resume_template:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+}
+
+.resume_template.active {
+  border-color: #6d28d9;
+}
+
+.resume_template_image {
+  padding: 14px;
+}
+
+.resume_template_image img {
+  width: 100%;
+  height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  background: #fafafa;
+}
+
+.resume_template_name {
+  padding: 14px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #08060d;
+}
+
+.resume_template_check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #6d28d9;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.resume_builder_edit {
+  box-shadow: 0px 2px 2px 0px #D9D9D93D;
+  display: flex;
+  height: calc(100vh - 96px);
+  background: #F5F7FC;
+}
+
+.resume_builder_sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: #fff;
+  max-width: 260px;
+  width: 100%;
+}
+
+button.resume_builder_sidebar_button {
+  background: transparent;
+  padding: 15px 18px;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  display: flex;
+  border: none;
+  color: #6C6969;
+  text-decoration: none;
+  gap: 10px;
+  border-radius: 16px;
+  align-items: center;
+  cursor: pointer;
+}
+
+button.resume_builder_sidebar_button.active {
+  background: linear-gradient(90deg, #6D17E1 0%, #6B18DB 100%);
+  color: #FFFFFF;
+}
+
+.resume_builder_content {
+  width: 100%;
+  padding: 20px;
+  overflow: auto;
+}
+
+.resume_builder_content .resume_section,
+.resume_builder_content form,
+.resume_builder_content .edit_candidate_basic {
+  width: 100%;
+}
+
+.resume_builder_content .resume_section {
+  padding-bottom: 20px;
+}
+
+form .logo_upload {
+  border-bottom: 1px solid #E2EAFF;
+  flex-direction: unset;
+  gap: 22px;
+  align-items: center;
+}
+
+.resume_section .logo_preview {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  cursor: pointer;
+  flex-direction: column;
+}
+
+.resume_builder_content .logo_upload_box {
+  width: 200px !important;
+  height: 150px !important;
+}
+
+
+.resume_builder_content .form_fielset .form_field {
+  width: calc(33% - 10px) !important;
+}
+
+.add_section {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #0146EE;
+  border: 1px solid #0146EE;
+  background: transparent;
+  opacity: 1;
+  border-width: 1px;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.resume_section .resume_section_header h3 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.resume_footer.form_fields {
+  flex-direction: row !important;
+  justify-content: space-between;
+}
+
+.resume_item_actions {
+  display: flex;
+  gap: 10px;
+}
+
+.resume_item {
+  margin: 10px 20px;
+  box-shadow: 0px 1px 7px 0px #F0E4FFFA;
+  border-radius: 30px;
+}
+
+.resume_item .resume_item_header,
+.resume_item .resume_item_info {
+  display: flex;
+  justify-content: space-between;
+  background: #F5F7FC;
+  padding: 15px 20px;
+  font-family: Rubik;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 0px;
+  color: black;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+}
+
+button.icon-btn {
+  width: 24px;
+  height: 24px;
+  opacity: 1;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.resume_item .resume_item_header h4,
+.resume_item .resume_item_info h4 {
+  margin: 0;
+}
+
+.form_field.checkbox_field input {
+  width: 20px !important;
+  height: 50px;
+  cursor: pointer;
+}
+
+.resume_item_info p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.resume_item_info svg {
+  width: 16px;
+  height: 16px;
+  color: #6D17E1;
+  flex-shrink: 0;
+}
+
+.resume_item_info span {
+  line-height: 1.4;
+}
+
+.resume_item .resume_item_info {
+  margin-top: 10px;
+  flex-direction: column;
+  background: transparent;
+}
+
+.resume_item .resume_item_info h4 {
+  font-size: 20px;
+}
+
+.resume_builder_content .form_fielset .form_field.full_width {
+  width: 100% !important;
+}
+
+.form_field textarea {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid #F0E4FF;
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #636363;
+  outline: none;
+}
+
+.skill_form_fields {
+  padding: 10px 20px;
+  display: flex;
+  align-items: end;
+  gap: 20px;
+  width: 100%;
+}
+
+.skill_form_fields .form_fielset .form_field {
+  width: 100% !important;
+}
+
+.skill_form_fields .add_section {
+  margin-bottom: 3px;
+  width: 90px;
+}
+
+.skill_list {
+  padding: 10px 25px;
+  display: flex;
+  gap: 10px;
+}
+
+.skill_chip {
+  border-radius: 4px;
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  display: flex;
+  gap: 5px;
+  padding-right: 5px;
+  background-color: #e4e4e4;
+  border: 1px solid #aaa;
+}
+
+.skill_chip button {
+  background: transparent;
+  border: none;
+  color: #08060d;
+  cursor: pointer;
+  border-right: 1px solid #aaa;
+  font-size: 16px;
+}
+
+.resume_preview_page {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+.resume_preview_header {
+  height: 72px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 30px;
+  border-bottom: 1px solid #e8e8e8;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.resume_preview_header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: black;
+}
+
+.preview_back_btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #555;
+  position: absolute;
+  left: 10px;
+}
+
+.preview_back_btn:hover {
+  color: #111;
+}
+
+.preview_header_actions {
+  display: flex;
+  gap: 12px;
+}
+
+.preview_header_actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action_btn button {
+  border: 1px solid;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  background: transparent;
+  color: black;
+}
+
+button.btn_secondary {
+  border-color: #6D17E1;
+  background: transparent;
+  color: #6D17E1;
+}
+
+.action_btn {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  right: 10px;
+}
+
+button.btn_primary {
+  background: linear-gradient(90deg, #6D17E1 0%, #6B18DB 100%);
+  color: #FFFFFF;
+}
+
+.resume_preview_body {
+
+  height: calc(100vh - 79px)
+}
+
+.resume_preview_card {
+  width: 100%;
+  height: 100%
+    /* background:#fff;
+    border-radius:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+    overflow:hidden; */
+}
+
+.resume_preview_card iframe {
+  width: 100%;
+  height: 100%;
+}
+
+/* .resume_preview_iframe{
+    width:100%;
+    height:1123px;
+    border:none;
+    display:block;
+    background:#fff;
+} */
+.form_card.resume_builder_view {
+  margin-top: 20px;
+}
+
+.resume_builder_row {
+  display: flex;
+  padding: 20px;
+}
+
+.resume_builder_left,
+.resume_builder_actions {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.resume_builder_left img {
+  width: 25%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.resume_builder_left {
+  align-items: center;
+  gap: 20px;
+  color: #000;
+}
+
+.resume_builder_actions.action_btn {
+  position: relative;
+}
+
+.resume_builder_actions.action_btn {
+  justify-content: end;
+}
+
+.resume_builder_actions.action_btn button {
+  width: 100px;
+  display: flex;
+  justify-content: center;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resume_builder_info h4 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.resume_builder_info .resume_builder_info {
+  margin-left: 10px;
+}
+
+.resume_preview_information {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  gap: 15px;
+  color: #636363;
+}
+
+.resume_builder_info .resume_template_name {
+  padding: 10px 0px;
+}

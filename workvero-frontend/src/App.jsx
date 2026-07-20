@@ -28,6 +28,9 @@ import CandidateJobDetail from './pages/CandidateJobDetail';
 import AppliedJobs from './pages/AppliedJobs';
 import SavedJobs from './pages/SavedJobs';
 import { Toaster } from 'react-hot-toast';
+import ResumeBuilder from './pages/ResumeBuilder';
+import ResumeBuilderEdit from './pages/ResumeBuilderEdit';
+import ResumePreview from './pages/ResumePreview';
 
 function App() {
   return (
@@ -80,6 +83,9 @@ function App() {
               </Routes>
             </CandidateLayout>
           } />
+          <Route path="/candidate/resume-builder" element={<ResumeBuilder />} />
+          <Route path="/candidate/resumes/builder/edit" element={<ResumeBuilderEdit />} />
+          <Route path="/candidate/resumes/builder/preview" element={<ResumePreview />} />
         </Routes>
       </main>
     </div>

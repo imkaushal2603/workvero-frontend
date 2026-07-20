@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import Loader from "../components/Loader";
+import { useNavigate } from "react-router-dom";
 
 const MAX_RESUMES = 5;
 
@@ -9,26 +10,32 @@ function MyResumes() {
   const [cvFiles, setCvFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [resumeBuilder, setResumeBuilder] = useState({ exists: false });
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
+
+  const fetchResumeData = async () => {
+    setLoading(true);
+
+    try {
+      const [cvRes, builderRes] = await Promise.all([
+        api.get("/candidate/me/cv"),
+        api.get("/candidate/resume-builder/status"),
+      ]);
+
+      setCvFiles(cvRes.data.cv || []);
+      setResumeBuilder(builderRes.data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch resumes.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCvFiles = async () => {
-      try {
-        const [res] = await Promise.all([
-          api.get('/candidate/me/cv'),
-          new Promise(resolve => setTimeout(resolve, 800))
-        ]);
-        setCvFiles(res.data.cv || []);
-      } catch (err) {
-        console.error('Failed to fetch CV files', err);
-        toast.error('Failed to fetch resumes.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCvFiles();
+    fetchResumeData();
   }, []);
-
   const getFileUrl = (path) => {
     if (!path) return '';
     if (path.startsWith('http://') || path.startsWith('https://')) return path;
@@ -112,13 +119,42 @@ function MyResumes() {
     }
   };
 
+  const handleDeleteResumeBuilder = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your Resume Builder?"
+    );
+
+    if (!confirmed) return;
+
+    const loadingToast = toast.loading("Deleting resume...");
+
+    try {
+      await api.delete("/candidate/resume-builder");
+
+      toast.dismiss(loadingToast);
+      toast.success("Resume Builder deleted successfully.");
+
+      await fetchResumeData();
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      console.log(err)
+      toast.error(
+        err.response?.data?.message || "Failed to delete resume builder."
+      );
+    }
+  };
+
   return (
     <>
       {loading && <Loader />}
       <div className={`my_resumes ${loading ? "loading" : ""}`}>
         <div className='my_resumes_cta'>
           <h2>My Resumes</h2>
-          <button>Create Resume with AI</button>
+          {!resumeBuilder?.exists && (
+            <button onClick={() => navigate("/candidate/resume-builder")}>
+              Create Resume
+            </button>
+          )}
         </div>
         <div className="form_card">
           <h3>Upload CV File</h3>
@@ -189,6 +225,52 @@ function MyResumes() {
               </div>
             ))}
           </div>
+        )}
+        {resumeBuilder?.exists && (
+
+          <div className="form_card resume_builder_view">
+            <h3> Resume Builder</h3>
+            <div className="resume_builder_row">
+              <div className="resume_builder_left">
+                <img src={getFileUrl(resumeBuilder?.data?.resume_templates?.preview)} alt="Template Preview" />
+                <div className="resume_builder_info">
+                  <h4>{resumeBuilder?.data?.name}</h4>
+                  <div className="resume_preview_information">
+                    <p className="resume_last_updated">Template: {resumeBuilder?.data?.resume_templates?.name}</p>
+                    <p className="resume_last_updated">• {" "} Last edited on{" "}
+                      {new Date(resumeBuilder?.data?.updatedAt).toLocaleDateString(
+                        "en-GB",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        }
+                      )}
+                    </p>
+                  </div>
+
+
+                </div>
+
+              </div>
+              <div className="resume_builder_actions action_btn">
+                <button className="btn_secondary" onClick={() => navigate("/candidate/resumes/builder/preview")}>
+                  Preview
+                </button>
+                <button className="btn_secondary" onClick={() => navigate("/candidate/resumes/builder/edit")}>
+                  Edit
+                </button>
+                <button className="btn_primary" onClick={handleDeleteResumeBuilder}
+                >
+                  Delete
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
         )}
       </div>
     </>
