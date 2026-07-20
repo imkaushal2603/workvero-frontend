@@ -88,6 +88,8 @@ function DashboardHeader() {
 
     useEffect(() => {
         fetchNotifications();
+        const interval = setInterval(fetchNotifications, 30000);
+        return () => clearInterval(interval);
     }, [userRole]);
 
     const fetchNotifications = async () => {
@@ -123,10 +125,13 @@ function DashboardHeader() {
         return encodeURI(`${baseUrl}/${path.replace(/^\//, "")}`);
     };
 
-    const markAsSeen = (id) => {
+    const getNotificationKey = (item) => `${item.id}_${item.status}`;
+
+    const markAsSeen = (item) => {
+        const key = getNotificationKey(item);
         setSeenIds(prev => {
-            if (prev.includes(id)) return prev;
-            const updated = [...prev, id];
+            if (prev.includes(key)) return prev;
+            const updated = [...prev, key];
             localStorage.setItem(seenStorageKey, JSON.stringify(updated));
             return updated;
         });
@@ -153,7 +158,7 @@ function DashboardHeader() {
     };
 
     const handleNotificationClick = (item) => {
-        markAsSeen(item.id);
+        markAsSeen(item);
         setIsNotifOpen(false);
         if (userRole === 'recruiter') {
             navigate(`/employer/applicants/${item.id}`);
@@ -163,8 +168,8 @@ function DashboardHeader() {
     };
 
     const handleReadMore = () => {
-        const allIds = notifications.map(n => n.id);
-        const updated = Array.from(new Set([...seenIds, ...allIds]));
+        const allKeys = notifications.map(getNotificationKey);
+        const updated = Array.from(new Set([...seenIds, ...allKeys]));
         localStorage.setItem(seenStorageKey, JSON.stringify(updated));
         setSeenIds(updated);
         setIsNotifOpen(false);
@@ -197,7 +202,7 @@ function DashboardHeader() {
     const profileImgPath = profile?.logo || profile?.photoUrl;
     const profileImgSrc = getFileUrl(profileImgPath);
     const profileAltText = profile?.companyName ? profile.companyName : `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim() || 'User Profile';
-    const unreadCount = notifications.filter(n => !seenIds.includes(n.id)).length;
+    const unreadCount = notifications.filter(n => !seenIds.includes(getNotificationKey(n))).length;
 
     return (
         <div className={`dashboard_header ${isSticky ? 'sticky' : ''}`}>
@@ -226,7 +231,7 @@ function DashboardHeader() {
                                     ) : notifications.length > 0 ? (
                                         <>
                                             {notifications.map((item) => {
-                                                const isUnread = !seenIds.includes(item.id);
+                                                const isUnread = !seenIds.includes(getNotificationKey(item));
                                                 if (userRole === 'recruiter') {
                                                     const candidate = item.user?.candidate_profile;
                                                     return (
