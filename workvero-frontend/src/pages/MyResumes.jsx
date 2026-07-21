@@ -3,6 +3,7 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 import Loader from "../components/Loader";
 import { useNavigate } from "react-router-dom";
+import { confirmDialog, successDialog, errorDialog, infoDialog } from "../services/confirmDialog";
 
 const MAX_RESUMES = 5;
 
@@ -120,11 +121,15 @@ function MyResumes() {
   };
 
   const handleDeleteResumeBuilder = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete your Resume Builder?"
-    );
+    const result = await confirmDialog();
 
-    if (!confirmed) return;
+    if (!result.isConfirmed) {
+      await infoDialog({
+        title: "Cancelled",
+        text: "Resume Builder was not deleted.",
+      });
+      return;
+    }
 
     const loadingToast = toast.loading("Deleting resume...");
 
@@ -132,15 +137,22 @@ function MyResumes() {
       await api.delete("/candidate/resume-builder");
 
       toast.dismiss(loadingToast);
-      toast.success("Resume Builder deleted successfully.");
+
+      await successDialog({
+        title: "Deleted!",
+        text: "Resume Template deleted successfully.",
+      });
 
       await fetchResumeData();
     } catch (err) {
       toast.dismiss(loadingToast);
-      console.log(err)
-      toast.error(
-        err.response?.data?.message || "Failed to delete resume builder."
-      );
+
+      await errorDialog({
+        title: "Delete Failed",
+        text:
+          err.response?.data?.message ||
+          "Failed to delete Resume Builder.",
+      });
     }
   };
 

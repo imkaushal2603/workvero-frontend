@@ -138,7 +138,7 @@ function Skills({ setActiveSection }) {
                 </div>
                 <div className="resume_footer form_fields">
                     <button type="button" className="outline-btn" onClick={() => setActiveSection("experience")}>Back</button>
-                    <button type="button" className="submit-btn" onClick={() => setActiveSection("preview")}>Next</button>
+                    <button type="button" className="submit-btn" onClick={() => setActiveSection("summary")}>Next</button>
                 </div>
 
             </div>
