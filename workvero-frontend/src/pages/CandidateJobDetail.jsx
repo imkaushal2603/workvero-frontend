@@ -205,6 +205,12 @@ function CandidateJobDetail() {
                         </div>
                     </div>
                 )}
+                {isApplied && (
+                    <div className='appled_job_already'>
+                        <h4>Application Under Review</h4>
+                        <p>Your application has been submitted successfully. Please wait while the employer reviews your profile.</p>
+                    </div>
+                )}
                 <div className="profile-card job_detailed_info">
                     <div className='job_info'>
                         <div className="company-info">
@@ -340,7 +346,7 @@ function CandidateJobDetail() {
                                 <h4>Skills and Expertise</h4>
                                 <div className='job_skill_section'>
                                     {skillsList.map((skill, idx) => (
-                                        <span key={idx} className="skill-tag">{skill}</span>
+                                        <span style={{pointerEvents: 'none'}} key={idx} className="skill-tag">{skill}</span>
                                     ))}
                                 </div>
                             </div>

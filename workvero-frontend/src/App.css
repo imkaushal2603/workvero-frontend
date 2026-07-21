@@ -2525,7 +2525,8 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .content-area .applicants h2,
 .dashboard-main .content-area .company-profile-container h2,
 .dashboard-main main.content-area .candidate_dashboard h2,
-.dashboard-main main.content-area .company_dashboard h2 {
+.dashboard-main main.content-area .company_dashboard h2,
+.dashboard-main .messages h2 {
   font-size: 38px;
   font-weight: 500;
   line-height: 100%;
@@ -4258,10 +4259,10 @@ header .account_dropdown .dropdown_menu button {
 }
 
 .dashboard-main .job_btns_info .job_btns button.apply-btn[disabled] {
-  background: transparent;
-  border: 1px solid #6D17E1;
-  color: #6D17E1;
+  color: #fff;
   pointer-events: none;
+  background: green;
+  border: 1px solid green;
 }
 
 .dashboard-main .browse_jobs .browse_exp_salary,
@@ -5112,6 +5113,43 @@ header .account_dropdown .dropdown_menu button {
   margin: 0;
   font-size: 14px;
   display: block;
+}
+
+.dashboard-main .appled_job_already {
+  margin: 20px 0;
+}
+
+.dashboard-main .appled_job_already h4 {
+  color: #856404;
+  margin: 0 0 8px;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.dashboard-main .appled_job_already p {
+  color: #636363;
+  font-size: 16px;
+  line-height: 150%;
+  display: block;
+}
+
+.dashboard-main .job_btns_info .job_btns button.message-btn {
+  background: transparent;
+  padding: 18px 20px;
+  border-radius: 14px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #6D17E1;
+  cursor: pointer;
+  width: 100%;
+  border: 1px solid #6D17E1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 @media screen and (max-width: 991px) {
