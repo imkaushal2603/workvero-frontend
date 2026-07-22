@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 function ResumeSection({ title, items, emptyItem, setItems, renderTitle, renderSummary, renderForm,
     onSave, onDelete, onBack, onNext, addButtonText = "Add", }) {
@@ -151,9 +152,9 @@ function ResumeSection({ title, items, emptyItem, setItems, renderTitle, renderS
                 ))}
                 {editing === null && <div className="resume_footer form_fields">
 
-                    {onBack && (<button type="button" className="outline-btn" onClick={onBack}>Back</button>)}
+                    {onBack && (<button type="button" className="outline-btn tab_action_arrow back" onClick={onBack}><ArrowLeft /></button>)}
 
-                    {onNext && (<button type="button" className="submit-btn" onClick={onNext}>Next</button>)}
+                    {onNext && (<button type="button" className="submit-btn tab_action_arrow" onClick={onNext}><ArrowRight /></button>)}
 
                 </div>}
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 function Summary({ setActiveSection }) {
 
@@ -41,7 +42,7 @@ function Summary({ setActiveSection }) {
             await api.put("/candidate/resume-builder", formData 
             );
 
-            navigate("/candidate/resumes/builder/preview");
+            setActiveSection("preview")
 
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to save summary.");
@@ -90,8 +91,8 @@ function Summary({ setActiveSection }) {
 
                     </div>
                     <div className="resume_footer form_fields">
-                        <button type="button" className="outline-btn" onClick={() => setActiveSection("skills")}>Back</button>
-                        <button type="button" className="submit-btn" onClick={saveSummary}>Preview</button>
+                        <button type="button" className="outline-btn tab_action_arrow back" onClick={() => setActiveSection("skills")}><ArrowLeft/></button>
+                        <button type="button" className="submit-btn tab_action_arrow" onClick={saveSummary}><ArrowRight/></button>
                     </div>
 
                 </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../services/api";
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 function Skills({ setActiveSection }) {
 
@@ -137,8 +138,8 @@ function Skills({ setActiveSection }) {
 
                 </div>
                 <div className="resume_footer form_fields">
-                    <button type="button" className="outline-btn" onClick={() => setActiveSection("experience")}>Back</button>
-                    <button type="button" className="submit-btn" onClick={() => setActiveSection("summary")}>Next</button>
+                    <button type="button" className="outline-btn tab_action_arrow back" onClick={() => setActiveSection("experience")}><ArrowLeft/></button>
+                    <button type="button" className="submit-btn tab_action_arrow" onClick={() => setActiveSection("summary")}><ArrowRight/></button>
                 </div>
 
             </div>

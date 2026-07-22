@@ -105,15 +105,15 @@ code {
   background: var(--code-bg);
 }
 
-.resume_builder_page {
+/* .resume_builder_page {
   min-height: 100vh;
   padding: 35px;
   background: #f6f7fb;
-}
+} */
 
 .resume_builder_container {
-  max-width: 1300px;
-  margin: auto;
+  /* max-width: 1300px;
+  margin: auto; */
   background: #fff;
   border-radius: 14px;
   padding: 30px 40px;
@@ -531,17 +531,6 @@ button.icon-btn {
   gap: 8px;
 }
 
-.action_btn button {
-  border: 1px solid;
-  padding: 10px;
-  display: flex;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 14px;
-  border-radius: 5px;
-  background: transparent;
-  color: black;
-}
 
 button.btn_secondary {
   border-color: #6D17E1;
@@ -551,9 +540,9 @@ button.btn_secondary {
 
 .action_btn {
   display: flex;
+  align-items: center;
+  justify-content: end;
   gap: 10px;
-  position: absolute;
-  right: 10px;
 }
 
 button.btn_primary {
@@ -569,15 +558,13 @@ button.btn_primary {
 .resume_preview_card {
   width: 100%;
   height: 100%
-    /* background:#fff;
-    border-radius:10px;
-    box-shadow:0 10px 30px rgba(0,0,0,.12);
-    overflow:hidden; */
+
 }
 
 .resume_preview_card iframe {
   width: 100%;
-  height: 100%;
+  height: 80%;
+  border: none;
 }
 
 /* .resume_preview_iframe{
@@ -615,19 +602,6 @@ button.btn_primary {
   color: #000;
 }
 
-.resume_builder_actions.action_btn {
-  position: relative;
-}
-
-.resume_builder_actions.action_btn {
-  justify-content: end;
-}
-
-.resume_builder_actions.action_btn button {
-  width: 100px;
-  display: flex;
-  justify-content: center;
-}
 
 button:disabled {
   opacity: 0.5;
@@ -653,4 +627,98 @@ button:disabled {
 
 .resume_builder_info .resume_template_name {
   padding: 10px 0px;
+}
+
+.action_icon_btn {
+  width: auto !important;
+  border: none;
+  padding: 5px;
+  background: none;
+  color: #6D17E1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dots_menu {
+  position: absolute;
+  top: 100%;
+  width: max-content;
+  z-index: 5;
+  padding: 10px 0;
+  background: #fff;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 7px 0px #F0E4FFFA;
+  border-radius: 10px;
+  right: 30%;
+  display: none;
+}
+
+.dots_action_icon {
+  position: relative;
+}
+
+button.action_icon_btn.dots_action_icon:hover .dots_menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.dots_menu .action_icon_btn {
+  width: 100% !important;
+  color: black;
+  padding: 5px 10px;
+  gap: 5px;
+}
+
+.dots_menu .action_icon_btn:hover {
+  background: #1f1f1f14;
+}
+
+.dots_menu .action_icon_btn svg {
+  width: 20px;
+  height: 25px;
+}
+
+.sub_header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sub_header span {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #636363;
+  display: inline-block;
+}
+
+.resume_builder_content.dashboard-main {
+  overflow: hidden;
+}
+
+.resume_builder_sidebar_button.back {
+    padding: 10px;
+    background: #F5F3FF;
+    border: 1px solid #E9D5FF;
+    border-radius: 0px;
+    gap: 10px;
+    font-size: 14px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.resume_builder_sidebar_button.back:hover {
+    background: #EDE9FE;
+    border-color: #C4B5FD;
+    color: #5B21B6;
+}
+button.tab_action_arrow {
+ padding: 13px 16px !important;
+}
+button.outline-btn.tab_action_arrow.back {
+    color: #6d17e1;
+    background: #F5F3FF;
+    border: 1px solid #E9D5FF;
 }
