@@ -17,6 +17,8 @@ function Messages() {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [sending, setSending] = useState(false);
+    const [myUserId, setMyUserId] = useState(null);
+    const [onlineUserIds, setOnlineUserIds] = useState([]);
     const socketRef = useRef(null);
     const messageEndRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -24,8 +26,6 @@ function Messages() {
     const [searchParams] = useSearchParams();
     const targetConversationId = searchParams.get('conversation');
     const userRole = localStorage.getItem("role");
-    const [myUserId, setMyUserId] = useState(null);
-    const [onlineUserIds, setOnlineUserIds] = useState([]);
 
     const formatTimestamp = (dateString) => {
         if (!dateString) return "";
@@ -133,7 +133,10 @@ function Messages() {
         socketRef.current.emit("join_conversation", activeConversation.id);
         const handleNewMessage = (message) => {
             if (message.conversationId === activeConversation.id) {
-                setMessages((prev) => [...prev, message]);
+                setMessages((prev) => {
+                    const alreadyExists = prev.some(m => m.id === message.id);
+                    return alreadyExists ? prev : [...prev, message];
+                });
             }
             setConversations((prevList) =>
                 prevList.map((conv) => {
@@ -197,6 +200,10 @@ function Messages() {
                 });
             }
             const savedMsg = res.data?.message;
+            setMessages((prev) => {
+                const alreadyExists = prev.some(m => m.id === savedMsg.id);
+                return alreadyExists ? prev : [...prev, savedMsg];
+            });
             setConversations((prevList) =>
                 prevList.map((conv) => {
                     if (conv.id === activeConversation.id) {
