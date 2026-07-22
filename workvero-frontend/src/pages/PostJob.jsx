@@ -146,7 +146,7 @@ function PostJob() {
         <>
             {loading && <Loader />}
             <div className={`post_job ${loading ? "loading" : ""}`}>
-                <div className='post_job_details'>
+                <div className='post_job_details post_job_section'>
                     <h2>Post Job</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form_card">

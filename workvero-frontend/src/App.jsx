@@ -80,6 +80,7 @@ function App() {
                 <Route path="/browse-jobs/:id" element={<CandidateJobDetail />} />
                 <Route path="/applied-jobs" element={<AppliedJobs />} />
                 <Route path="/saved-jobs" element={<SavedJobs />} />
+                <Route path="messages" element={<Messages />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="settings/change-password" element={<ChangePassword />} />
               </Routes>

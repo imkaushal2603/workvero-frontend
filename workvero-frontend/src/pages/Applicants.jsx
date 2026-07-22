@@ -94,7 +94,7 @@ function Applicants() {
                     </div>
                 </div>
                 {error ? (
-                    <div className="error" style={{ color: 'red', padding: '1rem' }}>{error}</div>
+                    <div className="error">{error}</div>
                 ) : (
                     <div className="applicants_table">
                         {applicants.length > 0 ? (

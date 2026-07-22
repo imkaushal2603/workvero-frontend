@@ -2526,7 +2526,7 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .content-area .company-profile-container h2,
 .dashboard-main main.content-area .candidate_dashboard h2,
 .dashboard-main main.content-area .company_dashboard h2,
-.dashboard-main .messages h2 {
+.dashboard-main .messages-page h2 {
   font-size: 38px;
   font-weight: 500;
   line-height: 100%;
@@ -2625,12 +2625,6 @@ header .account_dropdown .dropdown_menu button {
 .dashboard-main .form_fields .form_full textarea::placeholder,
 .dashboard-main .form_fields .form_full input::placeholder {
   color: #636363;
-}
-
-.dashboard-main form {
-  display: flex;
-  flex-direction: column;
-  row-gap: 24px;
 }
 
 .dashboard-main .form_fielset .form_field .form_select_field,
@@ -3002,14 +2996,16 @@ header .account_dropdown .dropdown_menu button {
   color: #636363;
 }
 
-.dashboard-main .controls .search-bar {
+.dashboard-main .controls .search-bar,
+.dashboard-main .chats-sidebar .search-box {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   position: relative;
 }
 
-.dashboard-main .controls .search-bar svg {
+.dashboard-main .controls .search-bar svg,
+.dashboard-main .chats-sidebar .search-box svg {
   position: absolute;
   right: 18px;
   top: 50%;
@@ -5150,6 +5146,357 @@ header .account_dropdown .dropdown_menu button {
   align-items: center;
   justify-content: center;
   gap: 10px;
+}
+
+.dashboard-main .messages-page .messages-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.dashboard-main .messages-layout .chats-sidebar {
+  width: calc(35% - 16px);
+  background: #FFFFFF;
+  box-shadow: 0px 1px 7px 0px #F0E4FFFA;
+  border-radius: 30px;
+  padding: 30px 25px;
+}
+
+.dashboard-main .messages-layout .chat-window {
+  width: calc(65% - 16px);
+  background: #FFFFFF;
+  box-shadow: 0px 1px 7px 0px #F0E4FFFA;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-main .messages-layout .chats-sidebar h3 {
+  margin: 0 0 25px;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #000000;
+}
+
+.dashboard-main .chats-sidebar .search-box input {
+  border: 1px solid #F0E4FF;
+  background: #FFFFFF;
+  width: 100%;
+  border-radius: 50px;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #636363;
+  padding: 15.5px 14px;
+  outline: none;
+}
+
+.dashboard-main .chats-sidebar .sidebar-header {
+  margin-bottom: 35px;
+}
+
+.dashboard-main .chats-sidebar .chats-list {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}
+
+.dashboard-main .chats-list .chat-item {
+  border-radius: 20px;
+  padding: 26px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.dashboard-main .chats-list .chat-item.active {
+  border: 2px solid #6D17E1;
+  background: #F5F7FC;
+}
+
+.dashboard-main .chat-item .avatar-wrapper {
+  line-height: 0;
+  width: 52px;
+}
+
+.dashboard-main .chat-item .avatar-wrapper img {
+  width: 100%;
+  height: 52px;
+  box-shadow: 0px 0px 4px 2px #00000040;
+  border-radius: 50%;
+}
+
+.dashboard-main .chat-item .chat-item-details {
+  width: calc(100% - 52px);
+  padding-left: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.dashboard-main .chat-item .chat-item-details h4 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: normal;
+  letter-spacing: 1px;
+  color: #000000;
+}
+
+.dashboard-main .chat-item .chat-item-details p {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #8492A6;
+  display: inline-block;
+}
+
+.dashboard-main .chat-item .chat-item-details span {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: normal;
+  letter-spacing: 1px;
+  color: #8492A6;
+}
+
+.dashboard-main .chat-window .chat-window-header {
+  padding: 20px;
+  border-bottom: 1px solid #E2EAFF;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.dashboard-main .chat-window-header .avatar-wrapper {
+  width: 66px;
+  line-height: 0;
+}
+
+.dashboard-main .chat-window-header .avatar-wrapper img {
+  width: 100%;
+  height: 66px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 4px 2px #00000040;
+}
+
+.dashboard-main .chat-window-header .header-info {
+  width: calc(100% - 66px);
+  padding-left: 20px;
+}
+
+.dashboard-main .chat-window-header .header-info h4 {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 1px;
+  color: #000000;
+  margin: 0;
+}
+
+.dashboard-main .chat-window-header .header-info .status-indicator {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 130%;
+  letter-spacing: 1px;
+  color: #0146EE;
+  display: inline-block;
+}
+
+.dashboard-main .messages-layout .chat-window form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  padding: 40px 28px;
+  border-top: 1px solid #E2EAFF;
+  gap: 15px;
+}
+
+.dashboard-main .chat-window .chat-window-messages {
+  padding: 48px 28px;
+  flex: 1;
+}
+
+.dashboard-main .chat-window-messages .message-bubble-wrapper {
+  max-width: 453px;
+}
+
+.dashboard-main .chat-window-messages .message-bubble {
+  background: #F5F7FC;
+  padding: 16px 20px;
+  border-radius: 14px 14px 14px 0;
+}
+
+.dashboard-main .chat-window-messages .message-bubble p,
+.dashboard-main .chat-window-messages .message-bubble a {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 1px;
+  color: #8492A6;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dashboard-main .chat-window-messages .message-bubble-wrapper span {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  text-align: right;
+  width: 100%;
+  display: inline-block;
+  color: #8492A6;
+  margin: 6px 0 0;
+}
+
+.dashboard-main .message-group.me .message-bubble-wrapper {
+  margin: 0 0 0 auto;
+  text-align: end;
+}
+
+.dashboard-main .message-group.me .message-bubble {
+  background: #6D17E1;
+  border-radius: 14px 14px 0 14px;
+}
+
+.dashboard-main .message-group.me .message-bubble p,
+.dashboard-main .message-group.me .message-bubble a {
+  color: #fff;
+}
+
+.dashboard-main .chat-item .avatar-wrapper.company-logo img,
+.dashboard-main .chat-window-header .avatar-wrapper.company-logo img {
+  object-fit: contain;
+}
+
+.dashboard-main .chat-item .avatar-wrapper.candidate-avatar img,
+.dashboard-main .chat-window-header .avatar-wrapper.candidate-avatar img {
+  object-fit: cover;
+}
+
+.dashboard-main .chat-window-messages .message-group {
+  margin-bottom: 24px;
+}
+
+.chat-window-messages .message-group:not(:has(~ .message-group)) {
+  margin-bottom: 0;
+}
+
+.dashboard-main .chat-window form .emoji-wrapper,
+.dashboard-main .chat-window form .attachement-wrapper {
+  width: 48px;
+  line-height: 0;
+  height: 48px;
+}
+
+.dashboard-main .chat-window form button.icon-btn {
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-main .messages-layout .chat-window form input[type="text"] {
+  border: 1px solid #F0E4FF;
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #636363;
+  outline: none;
+  width: calc(100% - 255.4px);
+}
+
+.dashboard-main .messages-layout .chat-window form button.send-btn {
+  background: #6D17E1;
+  border-radius: 50px;
+  padding: 17px 38px;
+  border: none;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.dashboard-main .chat-window form .emoji-wrapper {
+  position: relative;
+}
+
+.dashboard-main .chat-window form .emoji-picker-container {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  z-index: 1;
+  margin-bottom: 8px;
+}
+
+.dashboard-main .chat-window form .selected-file-preview {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dashboard-main .chat-window form .selected-file-preview span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  color: #8492A6;
+}
+
+.dashboard-main .chat-window form .selected-file-preview button {
+  background: transparent;
+  padding: 2px;
+  border: none;
+  cursor: pointer;
+}
+
+.dashboard-main .message-group.me .message-bubble-wrapper svg path {
+  stroke: #fff;
+}
+
+.company_dashboard .company_jobs_applicants p.no_data_message {
+  padding: 30px 0;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  display: inline-block;
+  color: #6C6969;
+}
+
+.dashboard-main .manage-jobs-container .error,
+.dashboard-main .applicants .error {
+  padding: 80px 0;
+  text-align: center;
+  color: red;
+}
+
+.dashboard-main .post_job .post_job_section form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+
+.dashboard-main .chat-item-details .chat-item-header {
+  max-width: 80%;
 }
 
 @media screen and (max-width: 991px) {

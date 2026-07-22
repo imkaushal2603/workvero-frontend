@@ -162,7 +162,9 @@ function CompanyDashboard() {
                                 <p className="no_data_message">No jobs posted yet.</p>
                             )}
                         </ul>
-                        <button onClick={() => navigate(`/employer/manage-jobs`)}>View All</button>
+                        {recentJobs.length > 0 && (
+                            <button onClick={() => navigate(`/employer/manage-jobs`)}>View All</button>
+                        )}
                     </div>
                     <div className="company_dashboard_applicants form_card">
                         <h3>Recent Applicants</h3>
