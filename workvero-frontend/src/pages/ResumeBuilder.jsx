@@ -92,13 +92,6 @@ function ResumeBuilder() {
 
                 <div className="resume_builder_container">
 
-                    <button
-                        className="resume_builder_back"
-                        onClick={() => navigate("/candidate/resumes")}
-                    >
-                        ← Back
-                    </button>
-
                     <div className="resume_builder_header">
                         <h2>Choose a Template</h2>
                         <p>Select a template and start building your resume.</p>

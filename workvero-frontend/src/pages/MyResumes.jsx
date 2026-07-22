@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 import Loader from "../components/Loader";
 import { useNavigate } from "react-router-dom";
 import { confirmDialog, successDialog, errorDialog, infoDialog } from "../services/confirmDialog";
+import { Eye, PencilLine, EllipsisVertical, Trash2, FileText, FileType2, FilePen } from "lucide-react";
+import useDownload from '../services/API/fileDownload';
 
 const MAX_RESUMES = 5;
 
@@ -14,6 +16,7 @@ function MyResumes() {
   const [resumeBuilder, setResumeBuilder] = useState({ exists: false });
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const { downloading, download } = useDownload();
 
   const fetchResumeData = async () => {
     setLoading(true);
@@ -155,6 +158,13 @@ function MyResumes() {
       });
     }
   };
+  const downloadResume = ({ format = "pdf" }) => {
+    download({
+      url: "/candidate/resume-builder/download",
+      params: { format },
+      fileName: `resume.${format}`,
+    });
+  };
 
   return (
     <>
@@ -163,7 +173,7 @@ function MyResumes() {
         <div className='my_resumes_cta'>
           <h2>My Resumes</h2>
           {!resumeBuilder?.exists && (
-            <button onClick={() => navigate("/candidate/resume-builder")}>
+            <button onClick={() => navigate("resume-builder")}>
               Create Resume
             </button>
           )}
@@ -241,7 +251,9 @@ function MyResumes() {
         {resumeBuilder?.exists && (
 
           <div className="form_card resume_builder_view">
-            <h3> Resume Builder</h3>
+            <h3 className='sub_header'> Resume Manager
+              <span>Keep your resume updated with smart AI suggestions and professional templates.</span>
+            </h3>
             <div className="resume_builder_row">
               <div className="resume_builder_left">
                 <img src={getFileUrl(resumeBuilder?.data?.resume_templates?.preview)} alt="Template Preview" />
@@ -266,16 +278,38 @@ function MyResumes() {
 
               </div>
               <div className="resume_builder_actions action_btn">
-                <button className="btn_secondary" onClick={() => navigate("/candidate/resumes/builder/preview")}>
-                  Preview
+                <button className="action_icon_btn" onClick={() =>
+                  navigate("/candidate/resumes/builder/edit", {
+                    state: { tab: "preview" },
+                  })
+                }>
+                  <Eye />
                 </button>
-                <button className="btn_secondary" onClick={() => navigate("/candidate/resumes/builder/edit")}>
-                  Edit
+                <button className="action_icon_btn" onClick={() =>
+                  navigate("/candidate/resumes/builder/edit")
+                }>
+                  <PencilLine />
                 </button>
-                <button className="btn_primary" onClick={handleDeleteResumeBuilder}
-                >
-                  Delete
+                <button className="action_icon_btn dots_action_icon">
+                  <EllipsisVertical />
+                  <div className="dots_menu">
+                    <button className="action_icon_btn edit" onClick={() => navigate("/candidate/resumes/resume-builder")}>
+                      <FilePen />
+                      Edit Template
+                    </button>
+                    <button className="action_icon_btn delete" onClick={handleDeleteResumeBuilder}>
+                      <Trash2 />
+                      Delete
+                    </button>
+                    <button className="action_icon_btn download" disabled={downloading} onClick={downloadResume}>
+                      <FileType2 /> Download as PDF
+                    </button>
+                    {/* <button className="action_icon_btn download">
+                      <FileText /> Download as Word (.docx)
+                    </button> */}
+                  </div>
                 </button>
+
 
               </div>
 

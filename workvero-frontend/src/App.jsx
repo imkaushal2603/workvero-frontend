@@ -31,7 +31,6 @@ import SavedJobs from './pages/SavedJobs';
 import { Toaster } from 'react-hot-toast';
 import ResumeBuilder from './pages/ResumeBuilder';
 import ResumeBuilderEdit from './pages/ResumeBuilderEdit';
-import ResumePreview from './pages/ResumePreview';
 
 function App() {
   return (
@@ -82,13 +81,13 @@ function App() {
                 <Route path="/saved-jobs" element={<SavedJobs />} />
                 <Route path="messages" element={<Messages />} />
                 <Route path="settings" element={<Settings />} />
+                <Route path="resumes/resume-builder" element={<ResumeBuilder />} />
                 <Route path="settings/change-password" element={<ChangePassword />} />
               </Routes>
             </CandidateLayout>
           } />
-          <Route path="/candidate/resume-builder" element={<ResumeBuilder />} />
+          
           <Route path="/candidate/resumes/builder/edit" element={<ResumeBuilderEdit />} />
-          <Route path="/candidate/resumes/builder/preview" element={<ResumePreview />} />
         </Routes>
       </main>
     </div>

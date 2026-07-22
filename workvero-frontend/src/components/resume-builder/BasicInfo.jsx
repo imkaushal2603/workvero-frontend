@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import toast from "react-hot-toast";
-
+import { ArrowRight } from 'lucide-react';
 function BasicInfo({ setActiveSection }) {
 
     const [formData, setFormData] = useState({
@@ -325,11 +325,8 @@ function BasicInfo({ setActiveSection }) {
 
                         <div className="resume_actions">
 
-                            <button
-                                type="submit"
-                                className="submit-btn"
-                            >
-                                Save & Next
+                            <button type="submit" className="submit-btn" className="tab_action_arrow">
+                                <ArrowRight/>
                             </button>
 
                         </div>
