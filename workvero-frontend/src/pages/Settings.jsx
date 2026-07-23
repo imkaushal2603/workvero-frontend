@@ -36,7 +36,7 @@ function Settings() {
                 navigate(
                     rolePrefix === 'candidate'
                         ? '/candidate/candidate-profile/edit'
-                        : '/employer/company-profile/edit'
+                        : '/employer/profile/edit'
                 );
             } finally {
                 setLoading(false);

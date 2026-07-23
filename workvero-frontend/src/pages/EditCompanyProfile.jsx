@@ -520,7 +520,7 @@ function EditCompanyProfile() {
                             <button type="submit" className="submit-btn" disabled={isSubmitting}>
                                 {isSubmitting ? 'Saving...' : 'Save & Publish'}
                             </button>
-                            <button type="button" className="cancel-btn" onClick={() => navigate('/employer/company-profile')}>
+                            <button type="button" className="cancel-btn" onClick={() => navigate('/employer/profile')}>
                                 Cancel
                             </button>
                         </div>
