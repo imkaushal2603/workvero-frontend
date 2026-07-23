@@ -67,7 +67,7 @@ function EditJob() {
             } catch (err) {
                 console.error('Failed to fetch company profile');
                 toast.error("Session expired or unauthorized. Please log in.");
-                navigate('/login');
+                navigate('/');
             }
         };
         fetchCompany();
@@ -146,7 +146,7 @@ function EditJob() {
         <>
             {loading && <Loader />}
             <div className={`post_job ${loading ? "loading" : ""}`}>
-                <div className='post_job_details'>
+                <div className='post_job_details post_job_section'>
                     <h2>Edit Job</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form_card">

@@ -4,6 +4,8 @@ import api from "../services/api";
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import { useSearchParams } from "react-router-dom";
+import { useGoogleLogin } from '@react-oauth/google';
+import toast from 'react-hot-toast';
 
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3000";
 
@@ -26,6 +28,45 @@ function Messages() {
     const [searchParams] = useSearchParams();
     const targetConversationId = searchParams.get('conversation');
     const userRole = localStorage.getItem("role");
+    const quickRepliesRef = useRef(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
+    const [employerLastReadAt, setEmployerLastReadAt] = useState(null);
+    const [candidateLastReadAt, setCandidateLastReadAt] = useState(null);
+    const [showHeaderMenu, setShowHeaderMenu] = useState(false);
+    const headerMenuRef = useRef(null);
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [interviewDate, setInterviewDate] = useState('');
+    const [interviewTime, setInterviewTime] = useState('');
+    const [interviewNote, setInterviewNote] = useState('');
+    const [scheduling, setScheduling] = useState(false);
+    const [interviewDuration, setInterviewDuration] = useState('30');
+    const [meetingType, setMeetingType] = useState('virtual');
+    const [interviewLocation, setInterviewLocation] = useState('');
+    const [ccEmails, setCcEmails] = useState(['']);
+
+    const QUICK_REPLY_TEMPLATES = [
+        {
+            label: "Thanks for your interest. We've decided to focus on other candidates for now.",
+            getValue: (name) => `Thanks for your interest, ${name}. We've decided to focus on other candidates for now.`,
+        },
+        {
+            label: "Thanks for your interest. I'd like to set up an interview. What is your availability?",
+            getValue: (name) => `Thanks for your interest, ${name}. I'd like to set up an interview. What is your availability?`,
+        },
+        {
+            label: "I want to confirm you're still interested in this role.",
+            getValue: (name) => `Hi ${name}, I want to confirm you're still interested in this role.`,
+        },
+        {
+            label: "Thanks for your application. I'd like to talk about next steps.",
+            getValue: (name) => `Thanks for your application, ${name}. I'd like to talk about next steps.`,
+        },
+        {
+            label: "I've reviewed your resume and have some questions. Do you have time to talk?",
+            getValue: (name) => `Hi ${name}, I've reviewed your resume and have some questions. Do you have time to talk?`,
+        },
+    ];
 
     const formatTimestamp = (dateString) => {
         if (!dateString) return "";
@@ -62,13 +103,17 @@ function Messages() {
     }, [myUserId]);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (socketRef.current?.connected) {
-                socketRef.current.emit('request_online_users');
+        if (!activeConversation) return;
+        const interval = setInterval(async () => {
+            try {
+                const res = await api.get(`/messages/conversations/${activeConversation.id}/messages`);
+                setEmployerLastReadAt(res.data?.employerLastReadAt || null);
+                setCandidateLastReadAt(res.data?.candidateLastReadAt || null);
+            } catch (err) {
             }
-        }, 5000);
+        }, 8000);
         return () => clearInterval(interval);
-    }, []);
+    }, [activeConversation]);
 
     useEffect(() => {
         const fetchMyId = async () => {
@@ -125,18 +170,25 @@ function Messages() {
             try {
                 const res = await api.get(`/messages/conversations/${activeConversation.id}/messages`);
                 setMessages(res.data?.messages || []);
+                setEmployerLastReadAt(res.data?.employerLastReadAt || null);
+                setCandidateLastReadAt(res.data?.candidateLastReadAt || null);
             } catch (err) {
                 console.error("Failed to fetch messages", err);
             }
         };
         fetchMessages();
         socketRef.current.emit("join_conversation", activeConversation.id);
+
         const handleNewMessage = (message) => {
             if (message.conversationId === activeConversation.id) {
                 setMessages((prev) => {
                     const alreadyExists = prev.some(m => m.id === message.id);
                     return alreadyExists ? prev : [...prev, message];
                 });
+                const isFromMe = message.sender?.role?.toLowerCase() === userRole?.toLowerCase();
+                if (!isFromMe) {
+                    api.get(`/messages/conversations/${activeConversation.id}/messages`).catch(() => { });
+                }
             }
             setConversations((prevList) =>
                 prevList.map((conv) => {
@@ -151,9 +203,21 @@ function Messages() {
                 })
             );
         };
+
+        const handleReadReceipt = (data) => {
+            if (data.conversationId !== activeConversation.id) return;
+            if (data.readerRole === "employer") {
+                setEmployerLastReadAt(data.readAt);
+            } else {
+                setCandidateLastReadAt(data.readAt);
+            }
+        };
+
         socketRef.current.on("new_message", handleNewMessage);
+        socketRef.current.on("read_receipt", handleReadReceipt);
         return () => {
             socketRef.current.off("new_message", handleNewMessage);
+            socketRef.current.off("read_receipt", handleReadReceipt);
         };
     }, [activeConversation]);
 
@@ -217,7 +281,7 @@ function Messages() {
             setShowEmojiPicker(false);
         } catch (err) {
             console.error("Failed to send message", err);
-            alert(err.response?.data?.message || 'Failed to send message');
+            toast.error(err.response?.data?.message || 'Failed to send message');
         } finally {
             setSending(false);
         }
@@ -277,6 +341,200 @@ function Messages() {
     const filteredConversations = conversations.filter((conv) =>
         getOtherPartyName(conv).toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleQuickReplyClick = (getValueFn) => {
+        const candidateName = getOtherPartyName(activeConversation);
+        setNewMessage(getValueFn(candidateName));
+    };
+
+    const checkScrollButtons = () => {
+        const el = quickRepliesRef.current;
+        if (!el) return;
+        setCanScrollLeft(el.scrollLeft > 2);
+        setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
+    };
+
+    const scrollQuickReplies = (direction) => {
+        const el = quickRepliesRef.current;
+        if (!el) return;
+        el.scrollBy({ left: direction * 220, behavior: "smooth" });
+    };
+
+    const isMessageReadByOtherParty = (msg) => {
+        const otherPartyLastReadAt = userRole === "recruiter" ? candidateLastReadAt : employerLastReadAt;
+        if (!otherPartyLastReadAt) return false;
+        return new Date(otherPartyLastReadAt) >= new Date(msg.createdAt);
+    };
+
+    useEffect(() => {
+        const el = quickRepliesRef.current;
+        if (!el) return;
+        checkScrollButtons();
+        const resizeObserver = new ResizeObserver(() => {
+            checkScrollButtons();
+        });
+        resizeObserver.observe(el);
+        el.addEventListener("scroll", checkScrollButtons);
+        return () => {
+            resizeObserver.disconnect();
+            el.removeEventListener("scroll", checkScrollButtons);
+        };
+    }, [activeConversation]);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (headerMenuRef.current && !headerMenuRef.current.contains(e.target)) {
+                setShowHeaderMenu(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const openScheduleModal = () => {
+        setShowHeaderMenu(false);
+        setShowScheduleModal(true);
+    };
+
+    const closeScheduleModal = () => {
+        setShowScheduleModal(false);
+        setInterviewDate('');
+        setInterviewTime('');
+        setInterviewNote('');
+        setInterviewDuration('30');
+        setMeetingType('virtual');
+        setInterviewLocation('');
+        setCcEmails(['']);
+    };
+
+    const handleCcEmailChange = (index, value) => {
+        setCcEmails((prev) => {
+            const updated = [...prev];
+            updated[index] = value;
+            return updated;
+        });
+    };
+
+    const addCcEmailField = () => {
+        setCcEmails((prev) => [...prev, '']);
+    };
+
+    const removeCcEmailField = (index) => {
+        setCcEmails((prev) => {
+            if (prev.length === 1) return [''];
+            return prev.filter((_, i) => i !== index);
+        });
+    };
+
+    const linkifyText = (text) => {
+        if (!text) return null;
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const parts = text.split(urlRegex);
+
+        return parts.map((part, i) => {
+            if (part.match(urlRegex)) {
+                return (
+                    <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="message-link">
+                        {part}
+                    </a>
+                );
+            }
+            return <React.Fragment key={i}>{part}</React.Fragment>;
+        });
+    };
+
+    const requestCalendarAccess = useGoogleLogin({
+        scope: 'https://www.googleapis.com/auth/calendar.events',
+        onSuccess: async (tokenResponse) => {
+            await submitInterview(tokenResponse.access_token);
+        },
+        onError: () => {
+            toast.error('Google Calendar access denied. Cannot create the Meet link.');
+            setScheduling(false);
+        },
+    });
+
+    const handleScheduleSubmit = async (e) => {
+        e.preventDefault();
+        if (!interviewDate || !interviewTime || !activeConversation) return;
+        if (meetingType === 'in-person' && !interviewLocation.trim()) {
+            toast.error('Please enter a location for the in-person interview.');
+            return;
+        }
+
+        const invalidCcEmail = ccEmails.find((email) => email.trim() && !/^\S+@\S+\.\S+$/.test(email.trim()));
+        if (invalidCcEmail) {
+            toast.error(`"${invalidCcEmail}" doesn't look like a valid email address.`);
+            return;
+        }
+
+        setScheduling(true);
+
+        if (meetingType === 'virtual') {
+            requestCalendarAccess();
+        } else {
+            await submitInterview(null);
+        }
+    };
+
+    const submitInterview = async (accessToken) => {
+        try {
+            const candidateName = getOtherPartyName(activeConversation);
+            const candidateId = activeConversation.candidate?.id;
+            const scheduledAt = new Date(`${interviewDate}T${interviewTime}`);
+            const cleanedCcEmails = ccEmails.map((email) => email.trim()).filter((email) => email.length > 0);
+
+            const interviewRes = await api.post('/interviews', {
+                conversationId: activeConversation.id,
+                candidateId,
+                scheduledAt: scheduledAt.toISOString(),
+                durationMinutes: parseInt(interviewDuration, 10),
+                meetingType,
+                location: meetingType === 'in-person' ? interviewLocation : undefined,
+                note: interviewNote,
+                accessToken,
+                ccEmails: cleanedCcEmails,
+            });
+
+            const meetLink = interviewRes.data?.interview?.meetLink;
+
+            const formattedDate = new Date(interviewDate).toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            const durationLabel = `${interviewDuration} min`;
+            const locationLine = meetingType === 'virtual'
+                ? (meetLink ? ` Join here: ${meetLink}` : ' A meeting link will follow shortly.')
+                : ` Location: ${interviewLocation}`;
+
+            const messageContent = `Hi ${candidateName}, I'd like to schedule your interview for ${formattedDate} at ${interviewTime} (${durationLabel}, ${meetingType === 'virtual' ? 'Virtual' : 'In-person'}).${locationLine}${interviewNote ? ` ${interviewNote}` : ''} Please confirm if this works for you.`;
+
+            const res = await api.post(`/messages/conversations/${activeConversation.id}/messages`, {
+                content: messageContent
+            });
+
+            const savedMsg = res.data?.message;
+            setMessages((prev) => {
+                const alreadyExists = prev.some(m => m.id === savedMsg.id);
+                return alreadyExists ? prev : [...prev, savedMsg];
+            });
+            setConversations((prevList) =>
+                prevList.map((conv) => {
+                    if (conv.id === activeConversation.id) {
+                        return { ...conv, messages: [savedMsg], updatedAt: savedMsg.createdAt };
+                    }
+                    return conv;
+                })
+            );
+
+            toast.success('Interview scheduled successfully!');
+            closeScheduleModal();
+        } catch (err) {
+            console.error("Failed to schedule interview", err);
+            toast.error(err.response?.data?.message || 'Failed to schedule interview');
+        } finally {
+            setScheduling(false);
+        }
+    };
 
     return (
         <div className="messages-page">
@@ -348,17 +606,26 @@ function Messages() {
                                         <span className={`status-indicator ${isOtherPartyOnline(activeConversation) ? 'online' : 'offline'}`}>
                                             {isOtherPartyOnline(activeConversation) ? 'Online' : 'Offline'}
                                         </span>
+                                        <div className="header_toggle" ref={headerMenuRef}>
+                                            <svg onClick={() => setShowHeaderMenu(prev => !prev)} style={{ cursor: "pointer" }} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6C12.5523 6 13 5.55228 13 5Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20C12.5523 20 13 19.5523 13 19Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                                            {showHeaderMenu && (
+                                                <div className="header_toggle_btns">
+                                                    <button onClick={openScheduleModal}>Schedule Interview</button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="chat-window-messages">
                                     {messages.map((msg) => {
                                         const isMe = msg.sender?.role?.toLowerCase() === userRole?.toLowerCase();
+                                        const isRead = isMe && isMessageReadByOtherParty(msg);
                                         return (
                                             <div key={msg.id} className={`message-group ${isMe ? "me" : "them"}`}>
                                                 <div className="message-content">
                                                     <div className="message-bubble-wrapper">
                                                         <div className="message-bubble">
-                                                            {msg.content && <p>{msg.content}</p>}
+                                                            {msg.content && <p>{linkifyText(msg.content)}</p>}
                                                             {msg.attachmentUrl && (
                                                                 isImageFile(msg.attachmentName) ? (
                                                                     <a href={getFileUrl(msg.attachmentUrl)} target="_blank" rel="noopener noreferrer">
@@ -374,7 +641,23 @@ function Messages() {
                                                                 )
                                                             )}
                                                         </div>
-                                                        <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                                                        <span className="message-meta">
+                                                            <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                                                            {isMe && (
+                                                                <span className={`read-ticks ${isRead ? "read" : "unread"}`}>
+                                                                    {isRead ? (
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="10" viewBox="0 0 16 10" fill="none">
+                                                                            <path d="M1 5L4.5 8.5L9.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                                            <path d="M6 5L9.5 8.5L14.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                                        </svg>
+                                                                    ) : (
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10" fill="none">
+                                                                            <path d="M1 5L4.5 8.5L11 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                                        </svg>
+                                                                    )}
+                                                                </span>
+                                                            )}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -383,6 +666,28 @@ function Messages() {
                                     <div ref={messageEndRef} className="scroll-anchor" />
                                 </div>
                                 <form onSubmit={handleSendMessage} className="chat-window-input">
+                                    {userRole === 'recruiter' && activeConversation && (
+                                        <div className="quick-replies-wrapper">
+                                            <h5>Start a conversation</h5>
+                                            <div className="quick-replies-list">
+                                                <button type="button" className="quick-replies-arrow left" onClick={() => scrollQuickReplies(-1)} disabled={!canScrollLeft}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="10" viewBox="0 0 6 10" fill="none">
+                                                        <path d="M0.234961 5.40002L4.43496 9.67502C4.73496 9.97502 5.18496 9.97502 5.48496 9.67502C5.78496 9.37502 5.78496 8.92502 5.48496 8.62502L1.80996 4.95002L5.48496 1.27502C5.63496 1.12502 5.70996 0.975023 5.70996 0.750023C5.70996 0.300023 5.40996 2.29144e-05 4.95996 2.29538e-05C4.73496 2.29734e-05 4.58496 0.0750228 4.43496 0.225022L0.159961 4.50002C-0.0650391 4.65002 -0.0650386 5.10002 0.234961 5.40002Z" fill="#6C6969" />
+                                                    </svg>
+                                                </button>
+                                                <div className="quick-replies-card" ref={quickRepliesRef}>
+                                                    {QUICK_REPLY_TEMPLATES.map((item, idx) => (
+                                                        <button key={idx} type="button" className="quick-reply-chip" onClick={() => handleQuickReplyClick(item.getValue)}>{item.label}</button>
+                                                    ))}
+                                                </div>
+                                                <button type="button" className="quick-replies-arrow right" onClick={() => scrollQuickReplies(1)} disabled={!canScrollRight}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="10" viewBox="0 0 6 10" fill="none">
+                                                        <path d="M5.475 4.5L1.275 0.225C0.975 -0.075 0.525 -0.075 0.225 0.225C-0.0749998 0.525 -0.0749998 0.975 0.225 1.275L3.9 4.95L0.225 8.625C0.0750001 8.775 0 8.925 0 9.15C0 9.6 0.3 9.9 0.75 9.9C0.975 9.9 1.125 9.825 1.275 9.675L5.55 5.4C5.775 5.25 5.775 4.8 5.475 4.5Z" fill="#6C6969" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                     <div className="emoji-wrapper" ref={emojiPickerRef}>
                                         <button type="button" className="icon-btn" title="Emoji" onClick={() => setShowEmojiPicker(prev => !prev)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -428,6 +733,93 @@ function Messages() {
                                 <p>Select a conversation to start messaging</p>
                             </div>
                         )}
+                    </div>
+                </div>
+            )}
+            {showScheduleModal && (
+                <div className="modal-overlay" onClick={closeScheduleModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3>Schedule Interview</h3>
+                            <button type="button" className="modal-close" onClick={closeScheduleModal}>✕</button>
+                        </div>
+                        <form onSubmit={handleScheduleSubmit} className="modal-body">
+                            <div className="form_fields">
+                                <div className="form_fielset">
+                                    <div className="form_field">
+                                        <label htmlFor="interviewDate">Date<span>*</span></label>
+                                        <input id="interviewDate" type="date" value={interviewDate} onChange={(e) => setInterviewDate(e.target.value)} min={new Date().toISOString().split('T')[0]} required />
+                                    </div>
+                                    <div className="form_field">
+                                        <label htmlFor="interviewTime">Time<span>*</span></label>
+                                        <input id="interviewTime" type="time" value={interviewTime} onChange={(e) => setInterviewTime(e.target.value)} required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="form_fielset">
+                                    <div className="form_field">
+                                        <label htmlFor="interviewDuration">Duration<span>*</span></label>
+                                        <div className="form_select_field">
+                                            <select id="interviewDuration" value={interviewDuration} onChange={(e) => setInterviewDuration(e.target.value)} required>
+                                                <option value="15">15 min</option>
+                                                <option value="30">30 min</option>
+                                                <option value="45">45 min</option>
+                                                <option value="60">1 hour</option>
+                                                <option value="90">1.5 hours</option>
+                                            </select>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                        </div>
+                                    </div>
+                                    <div className="form_field">
+                                        <label htmlFor="meetingType">Meeting Type<span>*</span></label>
+                                        <div className="form_select_field">
+                                            <select id="meetingType" value={meetingType} onChange={(e) => setMeetingType(e.target.value)} required>
+                                                <option value="virtual">Virtual</option>
+                                                <option value="in-person">In-Person</option>
+                                            </select>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="8" viewBox="0 0 15 8" fill="none"><path d="M0 0L7.16883 7.16883L14.3377 0H0Z" fill="#200E63"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                {meetingType === 'in-person' && (
+                                    <div className="form_full">
+                                        <div className="form_field">
+                                            <label htmlFor="interviewLocation">Location<span>*</span></label>
+                                            <input id="interviewLocation" type="text" value={interviewLocation} onChange={(e) => setInterviewLocation(e.target.value)} placeholder="e.g. 123 Main St, Suite 400, or office name" required />
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="form_full">
+                                    <label>CC (optional)</label>
+                                    <div className="form_field_cc">
+                                        {ccEmails.map((email, idx) => {
+                                            const isFirst = idx === 0;
+                                            return (
+                                                <div className="cc-email-row" key={idx}>
+                                                    <input type="email" value={email} onChange={(e) => handleCcEmailChange(idx, e.target.value)} placeholder="e.g. hiring-manager@company.com" />
+                                                    {!isFirst && (
+                                                        <button type="button" className="cc-toggle-btn remove" onClick={() => removeCcEmailField(idx)} title="Remove">−</button>
+                                                    )}
+                                                    {isFirst && (
+                                                        <button type="button" className="cc-toggle-btn add" onClick={addCcEmailField} title="Add another">+</button>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                                <div className="form_full">
+                                    <div className="modal-field">
+                                        <label htmlFor="interviewNote">Additional Note (optional)</label>
+                                        <textarea id="interviewNote" value={interviewNote} onChange={(e) => setInterviewNote(e.target.value)} placeholder="e.g. This will be a video call, link to follow." rows={3} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="form_buttons">
+                                <button type="button" className="cancel-btn" onClick={closeScheduleModal}>Cancel</button>
+                                <button type="submit" className="submit-btn" disabled={scheduling}>{scheduling ? 'Sending...' : 'Send Invite'}</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}

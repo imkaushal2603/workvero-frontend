@@ -191,7 +191,7 @@ function EditCompanyProfile() {
                 await api.put('/company', data, config);
             }
             toast.success('Company profile saved successfully!');
-            navigate('/employer/company-profile');
+            navigate('/employer/profile');
         } catch (err) {
             toast.error(err.response?.data?.message || 'Failed to save profile. Please try again.');
         } finally {
@@ -203,7 +203,7 @@ function EditCompanyProfile() {
         <>
             {loading && <Loader />}
             <div className={`post_job ${loading ? "loading" : ""}`} style={{ display: 'block' }}>
-                <div className="post_job_details" style={{ width: '100%' }}>
+                <div className="post_job_details post_job_section" style={{ width: '100%' }}>
                     <h2>Company Profile</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form_card">
